@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Grid, List, ListItem, ListItemText, Paper, ListItemIcon, Collapse, IconButton, Divider, TextField, Chip, Button, Typography, ListItemSecondaryAction, FormControl, InputLabel, Select, MenuItem, NativeSelect } from '@material-ui/core';
+import { Grid, List, ListItem, ListItemText, Paper, ListItemIcon, Collapse, IconButton, Divider, TextField, Chip, Button, Typography, ListItemSecondaryAction, FormControl, InputLabel, Select, MenuItem, NativeSelect, Menu, Dialog, DialogContent, Input, DialogTitle } from '@material-ui/core';
 
 import { applyOperation } from 'fast-json-patch'
 
@@ -11,14 +11,16 @@ import NumberIcon from '@material-ui/icons/ConfirmationNumber';
 import EnumIcon from '@material-ui/icons/Menu';
 import ComputedIcon from '@material-ui/icons/Computer';
 import ArrowIcon from '@material-ui/icons/ChevronRight';
+import EditIcon from '@material-ui/icons/Edit';
 import AddIcon from '@material-ui/icons/Add';
 
 import { Attributes, Formulas } from '@/attr-parser/typings';
 import EditableChip from '@/components/common/EditableChip';
-import Expression from '@/components/common/Formula';
 import { OPERATIONS } from '@/attr-parser/evaluators';
 import { getAllReferanciables } from '@/attr-parser/convertor';
 import FormulaEditor from '@/components/common/FormulaEditor';
+import Referenciables from '@/attr-parser/Referenciables';
+import { Expression } from '@/components/common/Formula';
 
 interface IProps {
     value?: Attributes.Category;
@@ -56,9 +58,7 @@ export default class CharacterSheetEditor extends React.Component<IProps, IState
                         value: attr,
                     }).newDocument
                 })                
-            } } getRef={ path => {
-                return refs[path];
-            } }/>
+            } } refs={refs}/>
         </Paper>
     }
 
@@ -68,16 +68,16 @@ interface AttributeProps<Attr> {
     id: string;
     attr: Attr;
     onSave: ( path: string, value: Attr ) => void;
-    getRef: ( path: string ) => Attributes.ReferentiableAttribute;
+    refs: Referenciables;
 }
 
 function AttributeItem( props: AttributeProps<Attributes.Attribute> ) {
     switch (props.attr.type) {
-        case "category"         : return <CategoryAttributeItem id={props.id} attr={props.attr} onSave={props.onSave} getRef={props.getRef}/>
-        case "number"           : return <NumberAttributeItem id={props.id} attr={props.attr} onSave={props.onSave} getRef={props.getRef}/>
-        case "enum"             : return <EnumAttributeItem id={props.id} attr={props.attr} onSave={props.onSave} getRef={props.getRef}/>
-        case "computed-enum"    : return <ComputedEnumAttributeItem id={props.id} attr={props.attr} onSave={props.onSave} getRef={props.getRef}/>
-        case "computed-number"  : return <ComputedNumberAttributeItem id={props.id} attr={props.attr} onSave={props.onSave} getRef={props.getRef}/>
+        case "category"         : return <CategoryAttributeItem id={props.id} attr={props.attr} onSave={props.onSave} refs={props.refs}/>
+        case "number"           : return <NumberAttributeItem id={props.id} attr={props.attr} onSave={props.onSave} refs={props.refs}/>
+        case "enum"             : return <EnumAttributeItem id={props.id} attr={props.attr} onSave={props.onSave} refs={props.refs}/>
+        case "computed-enum"    : return <ComputedEnumAttributeItem id={props.id} attr={props.attr} onSave={props.onSave} refs={props.refs}/>
+        case "computed-number"  : return <ComputedNumberAttributeItem id={props.id} attr={props.attr} onSave={props.onSave} refs={props.refs}/>
         default: return <ListItem id={props.id}>
             <ListItemText inset primary={props.attr.name} secondary={props.attr.type}/>
         </ListItem>
@@ -138,7 +138,7 @@ class CategoryAttributeItem extends React.Component<AttributeProps<Attributes.Ca
         }
     }
     render() {
-        const { props: { id, attr, onSave, getRef }, state: { isOpen, currentNew, currentNewValue }, menuOpts } = this;
+        const { props: { id, attr, onSave, refs }, state: { isOpen, currentNew, currentNewValue }, menuOpts } = this;
         return [
             <ListItem key={id + "_item"}>
                 <ListItemIcon><CategoryIcon/></ListItemIcon>
@@ -185,7 +185,7 @@ class CategoryAttributeItem extends React.Component<AttributeProps<Attributes.Ca
                 <Divider/>
                 <List component="div" disablePadding>
                     {Object.keys(attr.attributes).map( subid => 
-                        <AttributeItem key={subid} id={id+"/attributes/"+subid} attr={attr.attributes[subid]} onSave={onSave} getRef={getRef}/>
+                        <AttributeItem key={subid} id={id+"/attributes/"+subid} attr={attr.attributes[subid]} onSave={onSave} refs={refs}/>
                     )}
                 </List>
             </Collapse>
@@ -222,8 +222,8 @@ class NumberAttributeItem extends React.Component<AttributeProps<Attributes.Numb
     }
 }
 
-class ComputedNumberAttributeItem extends React.Component<AttributeProps<Attributes.ComputedAttribute>, { formula: Formulas.Expression }> {
-    state = { formula: this.props.attr.formula }
+class ComputedNumberAttributeItem extends React.Component<AttributeProps<Attributes.ComputedAttribute>, { formula: Formulas.Expression, enableEdit: boolean }> {
+    state = { formula: this.props.attr.formula, enableEdit: true }
     componentWillReceiveProps(nextProps: AttributeProps<Attributes.ComputedAttribute>) {
         this.setState({ formula: nextProps.attr.formula })
     }
@@ -239,13 +239,20 @@ class ComputedNumberAttributeItem extends React.Component<AttributeProps<Attribu
         }
     } 
     render() {
-        const { props: { id, attr, getRef }, state: { formula }, onSave, onEnter } = this;
+        const { props: { id, attr, refs }, state: { formula, enableEdit }, onSave, onEnter } = this;
         return <ListItem key={id + "_item"}>
             <ListItemIcon><ComputedIcon/></ListItemIcon>
             <ListItemText inset primary={attr.name}/>
-            <FormulaEditor/>
-            <Expression expression={formula} getRef={getRef}/>
-            <Button onClick={onSave}>Save</Button>
+            <Expression expression={formula} getRef={ s => refs.getRef(s) }/> 
+            <Button onClick={ () => this.setState({ enableEdit: true }) }><EditIcon/> Edit</Button>
+            <Dialog onClose={ () => this.setState({ enableEdit: false })} open={enableEdit}>
+                <DialogTitle title={`Edit ${id}`}>Edit {attr.name} Formula</DialogTitle>
+                <DialogContent>
+                    <Grid container>
+                        <FormulaEditor refs={refs} formula={formula}/>
+                    </Grid>
+                </DialogContent>
+            </Dialog>
         </ListItem>
     }
 }
@@ -318,11 +325,11 @@ class EnumAttributeItem extends React.Component<AttributeProps<Attributes.EnumAt
 
 class ComputedEnumAttributeItem extends React.Component<AttributeProps<Attributes.ComputedEnumAttribute>> {
     render() {
-        const { props: { id, attr, onSave, getRef } } = this;
+        const { props: { id, attr, onSave, refs } } = this;
         return <ListItem key={id + "_item"}>
             <ListItemIcon><ComputedIcon/></ListItemIcon>
             <ListItemText inset primary={attr.name}/>
-            <Expression expression={attr.formula} getRef={getRef}/>
+            {/* <Expression expression={attr.formula} refs={refs}/> */}
             {Object.keys(attr.enum).map( name => <EditableChip key={name} defaultValue={`${name} => ${attr.enum[Number(name)]}`} onSave={ s => 
                 {
                     const [newName, val] = s.split("=>")

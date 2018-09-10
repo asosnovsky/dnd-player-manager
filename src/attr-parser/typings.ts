@@ -4,7 +4,7 @@ export namespace Attributes {
         type: "category";
         attributes: Record<string, Attribute>;
     }
-    export type ReferentiableAttribute = NumberAttribute | EnumAttribute | ComputedEnumAttribute | ComputedAttribute;
+    export type ReferentiableAttribute = { key: string; } & (NumberAttribute | EnumAttribute | ComputedEnumAttribute | ComputedAttribute);
     export type Attribute = Category | NumberAttribute | EnumAttribute | ComputedEnumAttribute | ComputedAttribute | TextAttribute;
     export interface NumberAttribute {
         name: string;
@@ -40,10 +40,11 @@ export namespace Formulas {
         DIVISION        = "/",
         POWER           = "**",
         ROOT            = "//",  
+    }
+    export enum Functions {
         MAX             = "max",      
         MIN             = "min",      
     }
-    export type FunctionalOperation = Operation.MAX | Operation.MIN;
     export interface Value {
         type: "value";
         value: number;
@@ -55,7 +56,7 @@ export namespace Formulas {
     export type Operands = Value | Expression | RefValue;
     export interface Expression {
         type: "exprs";
-        operation: Operation;
+        operation: Operation | Functions;
         operands: Operands[];
     }
 }
@@ -69,8 +70,27 @@ export namespace Tokens {
         type: "ref";
     }
     export interface Function {
-        value: Formulas.FunctionalOperation;
+        value: Formulas.Functions | "";
         type: "func";
     }
     export type Token = Char | Value | Function;
+    export type NonChar = Value | Function;
+}
+
+export const OPERATION_PRIORITY:Record<Formulas.Expression["operation"], number> = {
+    "+" : 0,
+    "-" : 0,
+    "*" : 2 ,
+    "/" : 2,
+    "**": 3,
+    "//": 3,
+    "min": 4,
+    "max": 4,
+}
+export type OPEN_BRACE = "(" | "{" | "[";
+export type CLOSE_BRACE = ")" | "}" | "]";
+export const BRACES: Record<OPEN_BRACE, CLOSE_BRACE> = {
+    "[": "]",    
+    "(": ")",    
+    "{": "}",    
 }

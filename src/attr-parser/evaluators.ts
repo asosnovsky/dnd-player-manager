@@ -1,5 +1,6 @@
 import { Formulas, Attributes } from '@/attr-parser/typings';
 export const OPERATIONS = Formulas.Operation;
+export const FUNCTIONS = Formulas.Functions;
 
 export default class Evaluator {
     constructor(
@@ -45,12 +46,12 @@ export default class Evaluator {
             Formulas.Operation.MULTIPLICATION,
             Formulas.Operation.ROOT,
             Formulas.Operation.POWER,
-        ].includes(exprs.operation) ) {
+        ].includes(exprs.operation as any) ) {
             startVal = 1;
         }   else if ( [
             Formulas.Operation.ADDITION,
             Formulas.Operation.SUBTRACTION,
-        ].includes(exprs.operation) ) {
+        ].includes(exprs.operation as any) ) {
             startVal = 0;
         }   else    {
             throw new Error(`[1] Invalid Operation "${exprs.operation}"`);

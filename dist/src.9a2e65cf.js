@@ -96286,7 +96286,7 @@ exports.registerStorage = registerStorage;
 'use strict';
 
 require('@firebase/storage');
-},{"@firebase/storage":"../node_modules/@firebase/storage/dist/index.esm.js"}],"../_secrets.ts":[function(require,module,exports) {
+},{"@firebase/storage":"../node_modules/@firebase/storage/dist/index.esm.js"}],"../config/_secrets.ts":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -96308,13 +96308,13 @@ var firebase = require("firebase/app");
 require("firebase/database");
 require("firebase/auth");
 require("firebase/storage");
-var _secrets_ts_1 = require("../../_secrets.ts");
+var _secrets_ts_1 = require("../../config/_secrets.ts");
 var app = firebase.initializeApp(_secrets_ts_1.default.firebase);
 exports.default = app;
 exports.database = app.database();
 exports.auth = app.auth();
 exports.storage = app.storage();
-},{"firebase/app":"../node_modules/firebase/app/dist/index.cjs.js","firebase/database":"../node_modules/firebase/database/dist/index.esm.js","firebase/auth":"../node_modules/firebase/auth/dist/index.esm.js","firebase/storage":"../node_modules/firebase/storage/dist/index.esm.js","../../_secrets.ts":"../_secrets.ts"}],"db/index.ts":[function(require,module,exports) {
+},{"firebase/app":"../node_modules/firebase/app/dist/index.cjs.js","firebase/database":"../node_modules/firebase/database/dist/index.esm.js","firebase/auth":"../node_modules/firebase/auth/dist/index.esm.js","firebase/storage":"../node_modules/firebase/storage/dist/index.esm.js","../../config/_secrets.ts":"../config/_secrets.ts"}],"db/index.ts":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -98469,113 +98469,725 @@ var ErrorBoundary = /** @class */function (_super) {
     return ErrorBoundary;
 }(React.Component);
 exports.default = ErrorBoundary;
-},{"tslib":"../node_modules/tslib/tslib.es6.js","react":"../node_modules/react/index.js","@material-ui/core":"../node_modules/@material-ui/core/index.es.js"}],"components/common/FormulaEditor.tsx":[function(require,module,exports) {
+},{"tslib":"../node_modules/tslib/tslib.es6.js","react":"../node_modules/react/index.js","@material-ui/core":"../node_modules/@material-ui/core/index.es.js"}],"attr-parser/typings.ts":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var Formulas;
+(function (Formulas) {
+    var Operation;
+    (function (Operation) {
+        Operation["ADDITION"] = "+";
+        Operation["SUBTRACTION"] = "-";
+        Operation["MULTIPLICATION"] = "*";
+        Operation["DIVISION"] = "/";
+        Operation["POWER"] = "**";
+        Operation["ROOT"] = "//";
+    })(Operation = Formulas.Operation || (Formulas.Operation = {}));
+    var Functions;
+    (function (Functions) {
+        Functions["MAX"] = "max";
+        Functions["MIN"] = "min";
+    })(Functions = Formulas.Functions || (Formulas.Functions = {}));
+})(Formulas = exports.Formulas || (exports.Formulas = {}));
+exports.OPERATION_PRIORITY = {
+    "+": 0,
+    "-": 0,
+    "*": 2,
+    "/": 2,
+    "**": 3,
+    "//": 3,
+    "min": 4,
+    "max": 4
+};
+exports.BRACES = {
+    "[": "]",
+    "(": ")",
+    "{": "}"
+};
+},{}],"attr-parser/Referenciables.ts":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var tslib_1 = require("tslib");
+var Referenciables = /** @class */function () {
+    function Referenciables(tree) {
+        this.tree = tree;
+        this.iters = [];
+        this.referenciables = this.getAllReferanciables(this.tree, this.iters);
+    }
+    Referenciables.prototype.getAllReferanciables = function (tree, listing, rootKey) {
+        var _this = this;
+        if (rootKey === void 0) {
+            rootKey = "$root";
+        }
+        var ret = {};
+        Object.keys(tree.attributes).forEach(function (key) {
+            var attr = tree.attributes[key];
+            if (["number", "computed-number", "enum", "computed-enum"].includes(attr.type)) {
+                ret[rootKey + "." + key] = tslib_1.__assign({}, attr, { key: rootKey + "." + key });
+                listing.push(ret[rootKey + "." + key]);
+            } else if (attr.type === "category") {
+                ret = tslib_1.__assign({}, ret, _this.getAllReferanciables(attr, listing, rootKey + "." + key));
+            }
+        });
+        return ret;
+    };
+    Referenciables.prototype.getRef = function (key, error) {
+        if (error === void 0) {
+            error = false;
+        }
+        if (key in this.referenciables) {
+            return this.referenciables[key];
+        } else if (error) {
+            throw new Error("Could not find ref to..." + key);
+        }
+        return null;
+    };
+    Object.defineProperty(Referenciables.prototype, "items", {
+        get: function get() {
+            return this.iters;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    return Referenciables;
+}();
+exports.default = Referenciables;
+},{"tslib":"../node_modules/tslib/tslib.es6.js"}],"attr-parser/evaluators.ts":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var typings_ts_1 = require("./typings.ts");
+exports.OPERATIONS = typings_ts_1.Formulas.Operation;
+exports.FUNCTIONS = typings_ts_1.Formulas.Functions;
+var Evaluator = /** @class */function () {
+    function Evaluator(tree) {
+        this.tree = tree;
+    }
+    Evaluator.prototype.evaluateRef = function (ref, data) {
+        var keys = ref.value.split('.');
+        var def = this.tree;
+        var val = data;
+        for (var _i = 0, keys_1 = keys; _i < keys_1.length; _i++) {
+            var key = keys_1[_i];
+            switch (def.type) {
+                case "category":
+                    def = def.attributes[key];
+                    val = val[key];
+                    break;
+                default:
+                    throw Error("[1] Invalid Value-reference");
+            }
+        }
+        switch (def.type) {
+            case "computed-number":
+                return this.evaluateFormula(def.formula, data);
+            case "computed-enum":
+                var evalVal = this.evaluateFormula(def.formula, data);
+                var nums = Object.keys(def.enum).map(Number).sort(function (a, b) {
+                    return a - b;
+                });
+                for (var _a = 0, nums_1 = nums; _a < nums_1.length; _a++) {
+                    var num = nums_1[_a];
+                    if (evalVal <= num) {
+                        return def.enum[num];
+                    }
+                }
+                throw Error("[2] Invalid Enum-Value");
+            case "enum":
+                if (val in def.enum) {
+                    return def.enum[val];
+                }
+                throw Error("[2] Invalid Enum-Value");
+            case "number":
+                return val;
+            default:
+                throw Error("[2] Invalid Value-reference");
+        }
+    };
+    Evaluator.prototype.evaluateFormula = function (exprs, data) {
+        var _this = this;
+        if (data === void 0) {
+            data = {};
+        }
+        var startVal;
+        if ([typings_ts_1.Formulas.Operation.DIVISION, typings_ts_1.Formulas.Operation.MULTIPLICATION, typings_ts_1.Formulas.Operation.ROOT, typings_ts_1.Formulas.Operation.POWER].includes(exprs.operation)) {
+            startVal = 1;
+        } else if ([typings_ts_1.Formulas.Operation.ADDITION, typings_ts_1.Formulas.Operation.SUBTRACTION].includes(exprs.operation)) {
+            startVal = 0;
+        } else {
+            throw new Error("[1] Invalid Operation \"" + exprs.operation + "\"");
+        }
+        return exprs.operands.reduce(function (tot, val) {
+            var numericVal;
+            if (val.type === "exprs") {
+                numericVal = _this.evaluateFormula(val, data);
+            } else if (val.type === 'value') {
+                numericVal = Number(val.value);
+            } else if (val.type === 'ref-value') {
+                numericVal = _this.evaluateRef(val, data);
+            }
+            switch (exprs.operation) {
+                case typings_ts_1.Formulas.Operation.ADDITION:
+                    return tot + numericVal;
+                case typings_ts_1.Formulas.Operation.SUBTRACTION:
+                    return tot - numericVal;
+                case typings_ts_1.Formulas.Operation.MULTIPLICATION:
+                    return tot * numericVal;
+                case typings_ts_1.Formulas.Operation.DIVISION:
+                    return tot / numericVal;
+                case typings_ts_1.Formulas.Operation.POWER:
+                    return Math.pow(tot, numericVal);
+                case typings_ts_1.Formulas.Operation.ROOT:
+                    return Math.pow(tot, 1 / numericVal);
+                default:
+                    throw new Error("[2] Invalid Operation \"" + exprs.operation + "\"");
+            }
+        }, startVal);
+    };
+    Evaluator.prototype.validate = function (data) {
+        return this.__validate(data, this.tree);
+    };
+    Evaluator.prototype.__validate = function (data, tree, namespace) {
+        var _this = this;
+        if (namespace === void 0) {
+            namespace = "$root";
+        }
+        var returnErrors = Object.keys(tree.attributes).map(function (key) {
+            var attr = tree.attributes[key];
+            if (key in data) {
+                switch (attr.type) {
+                    case "number":
+                        if (typeof data[key] !== "number") {
+                            return "- \"" + namespace + "." + key + "\" should be a number!";
+                        }
+                        if (data[key] > attr.max || data[key] < attr.min) {
+                            return "- \"" + namespace + "." + key + "\" should be in [" + attr.min + "," + attr.max + "]!";
+                        }
+                        break;
+                    case "enum":
+                        if (!(data[key] in attr.enum)) {
+                            return "- \"" + namespace + "." + key + "\" should be one of [" + Object.keys(attr.enum).join(",") + "]!";
+                        }
+                        break;
+                    case "text":
+                        break;
+                    case "computed-number":
+                        break;
+                    case "category":
+                        return _this.__validate(data[key], attr, namespace + "." + key);
+                    default:
+                        return "- \"" + namespace + "." + key + "\" has an invalid type!";
+                }
+            } else {
+                if (attr.type !== "computed-number") {
+                    return "- Missing \"" + namespace + "." + key + "\"";
+                }
+            }
+            return null;
+        }).reduce(function (errs, err) {
+            return err !== null ? errs + "\n" + (" " + err) : errs;
+        }, "\n");
+        return Object.keys(data).reduce(function (errs, key) {
+            if (!(key in tree.attributes)) {
+                return errs + ("\n - Invalid \"" + namespace + "." + key + "\"");
+            }
+            return errs;
+        }, returnErrors);
+    };
+    return Evaluator;
+}();
+exports.default = Evaluator;
+},{"./typings.ts":"attr-parser/typings.ts"}],"attr-parser/Expression.ts":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var typings_ts_1 = require("./typings.ts");
+var Expression = /** @class */function () {
+    function Expression(operation, operands, parent) {
+        if (operation === void 0) {
+            operation = null;
+        }
+        if (operands === void 0) {
+            operands = [];
+        }
+        var _this = this;
+        this.operation = operation;
+        this.operands = operands;
+        this.parent = parent;
+        this.type = "exprs";
+        this.toJSON = function () {
+            return {
+                operation: _this.operation,
+                operands: _this.operands.map(function (operand) {
+                    if (operand instanceof Expression) {
+                        return operand.toJSON();
+                    }
+                    return operand;
+                }),
+                type: _this.type
+            };
+        };
+        this.toString = function () {
+            return "{" + _this.operation + "; " + _this.operands.map(function (v) {
+                if (v.type === "value") return v.value;
+                if (v.type === "ref-value") return v.value;
+                if (v instanceof Expression) return v.toString();
+                if (v.type === "exprs") return v.operands;
+            }).join(",") + "}";
+        };
+    }
+    Expression.prototype.makeChild = function (operation) {
+        var child = new Expression(operation, [], this);
+        this.operands.push(child);
+        return child;
+    };
+    Expression.prototype.pushNum = function (value) {
+        this.operands.push({
+            type: "value",
+            value: value
+        });
+    };
+    Expression.prototype.pushRef = function (value) {
+        this.operands.push({
+            type: "ref-value",
+            value: value
+        });
+    };
+    Expression.prototype.getParentThroughOperation = function (operation) {
+        if (this.operation === null) {
+            this.operation = operation;
+            return this;
+        }
+        if (this.operation !== operation) {
+            if (typings_ts_1.OPERATION_PRIORITY[this.operation] <= typings_ts_1.OPERATION_PRIORITY[operation]) {
+                var child = this.makeChild(operation);
+                child.operands = this.operands.splice(this.operands.length - 2, 1);
+                return child;
+            } else {
+                if (this.parent) {
+                    return this.parent.getParentThroughOperation(operation);
+                } else {
+                    var newChildWrapper = new Expression(this.operation, this.operands);
+                    this.operands = [newChildWrapper];
+                    this.operation = operation;
+                    return this;
+                }
+            }
+        } else {
+            return this;
+        }
+    };
+    return Expression;
+}();
+exports.default = Expression;
+},{"./typings.ts":"attr-parser/typings.ts"}],"attr-parser/util.ts":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var typings_ts_1 = require("./typings.ts");
+function isOperation(s) {
+    return Object.values(typings_ts_1.Formulas.Operation).includes(s);
+}
+exports.isOperation = isOperation;
+function isFunction(s) {
+    return Object.values(typings_ts_1.Formulas.Functions).includes(s);
+}
+exports.isFunction = isFunction;
+function isOpenBrace(s) {
+    return ["(", "[", "{"].includes(s);
+}
+exports.isOpenBrace = isOpenBrace;
+function isCloseBrace(s) {
+    return [")", "]", "}"].includes(s);
+}
+exports.isCloseBrace = isCloseBrace;
+function isBrace(s) {
+    return isOpenBrace(s) || isCloseBrace(s);
+}
+exports.isBrace = isBrace;
+},{"./typings.ts":"attr-parser/typings.ts"}],"attr-parser/convertor.ts":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var typings_ts_1 = require("./typings.ts");
+var Referenciables_ts_1 = require("./Referenciables.ts");
+var evaluators_ts_1 = require("./evaluators.ts");
+var Expression_ts_1 = require("./Expression.ts");
+var util_ts_1 = require("./util.ts");
+function stringifyFormula(formula, withBracket) {
+    var str = formula.operands.reduce(function (s, operand, idx) {
+        if (idx > 0) {
+            if (util_ts_1.isFunction(formula.operation)) {
+                if (idx < formula.operation.length - 1) {
+                    s += ',';
+                }
+            } else {
+                s += formula.operation;
+            }
+        }
+        switch (operand.type) {
+            case "exprs":
+                return s + stringifyFormula(operand, true);
+            case "value":
+                return s + operand.value;
+            case "ref-value":
+                return s + operand.value;
+            default:
+                return s;
+        }
+    }, "");
+    if (util_ts_1.isFunction(formula.operation)) {
+        str = formula.operation + "(" + str + ")";
+    }
+    if (withBracket) {
+        str = "(" + str + ")";
+    }
+    return str;
+}
+exports.stringifyFormula = stringifyFormula;
+function getAllReferanciables(tree) {
+    return new Referenciables_ts_1.default(tree);
+}
+exports.getAllReferanciables = getAllReferanciables;
+function convertASTtoTokens(formula, refs) {
+    var tokens = [];
+    if (util_ts_1.isFunction(formula.operation)) {
+        tokens.push({
+            type: "func",
+            value: formula.operation
+        });
+    }
+    formula.operands.forEach(function (operand, idx) {
+        switch (operand.type) {
+            case "exprs":
+                tokens = tokens.concat([{ value: "(" }].concat(convertASTtoTokens(operand, refs), [{ value: ")" }]));
+                break;
+            case "value":
+                tokens.push({
+                    value: String(operand.value)
+                });
+                break;
+            case "ref-value":
+                tokens.push({
+                    type: "ref",
+                    ref: operand.value,
+                    value: refs.getRef(operand.value, true).name
+                });
+                break;
+            default:
+                console.warn("Invalid type for operand", operand);
+        }
+        if (idx < formula.operands.length - 1) {
+            if (util_ts_1.isFunction(formula.operation)) {
+                tokens.push({ value: " " });
+            } else {
+                tokens.push({ value: formula.operation });
+            }
+        }
+    });
+    return tokens;
+}
+exports.convertASTtoTokens = convertASTtoTokens;
+function convertTokensToAST(tokens) {
+    var tree = new Expression_ts_1.default();
+    var currentExprs = tree;
+    var braces = [];
+    for (var _i = 0, tokens_1 = tokens; _i < tokens_1.length; _i++) {
+        var token = tokens_1[_i];
+        if (token.value.trim() === "") {} else if ("type" in token) {
+            switch (token.type) {
+                case "ref":
+                    currentExprs.pushRef(token.ref);
+                    break;
+                case "func":
+                    if (token.value !== "") {
+                        braces.push(")");
+                        currentExprs = currentExprs.makeChild(token.value);
+                    } else {
+                        console.warn("Empty func is recieved...", token);
+                    }
+            }
+        } else if (token.value in typings_ts_1.BRACES) {
+            var openBrace = token.value;
+            braces.push(typings_ts_1.BRACES[openBrace]);
+            currentExprs = currentExprs.makeChild(null);
+        } else if (braces.indexOf(token.value) > -1) {
+            if (braces[braces.length - 1] === token.value && currentExprs.parent) {
+                braces.splice(braces.length - 1, 1);
+                currentExprs = currentExprs.parent;
+            } else {
+                throw new Error("Invalid syntax");
+            }
+        } else if (!isNaN(Number(token.value))) {
+            currentExprs.pushNum(Number(token.value));
+        } else if (token.value in typings_ts_1.OPERATION_PRIORITY) {
+            var operation = token.value;
+            currentExprs = currentExprs.getParentThroughOperation(operation);
+        } else {
+            console.warn("Ignoring...", token);
+        }
+    }
+    if (tree.operation === null) {
+        if (tree.operands.length > 1) {
+            tree.operation = evaluators_ts_1.OPERATIONS.ADDITION;
+        } else {
+            console.error(tree);
+            throw new Error("Missing operation...");
+        }
+    }
+    return tree.toJSON();
+}
+exports.convertTokensToAST = convertTokensToAST;
+},{"./typings.ts":"attr-parser/typings.ts","./Referenciables.ts":"attr-parser/Referenciables.ts","./evaluators.ts":"attr-parser/evaluators.ts","./Expression.ts":"attr-parser/Expression.ts","./util.ts":"attr-parser/util.ts"}],"components/common/FormulaEditor.tsx":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = require("tslib");
 var React = require("react");
+var typings_ts_1 = require("../../attr-parser/typings.ts");
+var core_1 = require("@material-ui/core");
+var Notifier_tsx_1 = require("../layouts/Notifier.tsx");
+var convertor_ts_1 = require("../../attr-parser/convertor.ts");
+var util_ts_1 = require("../../attr-parser/util.ts");
 ;
 ;
+var functionalOperations = [typings_ts_1.Formulas.Functions.MAX, typings_ts_1.Formulas.Functions.MIN];
 var FormulaEditor = /** @class */function (_super) {
     tslib_1.__extends(FormulaEditor, _super);
     function FormulaEditor() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this.reset = function () {
+            _this.setState({
+                tokens: [],
+                posStart: { token: -1, tokenPos: 0 },
+                posEnd: { token: -1, tokenPos: 0 },
+                refBuilder: undefined
+            });
+        };
+        _this.createResetRefBuilderState = function (tokens) {
+            if (_this.state.refBuilder) {
+                tokens.splice(_this.state.refBuilder.tokenIdx, 1);
+                return {
+                    tokens: tokens,
+                    refBuilder: undefined
+                };
+            }
+            return { tokens: tokens };
+        };
+        _this.updateRefs = function (text, type, selectedIdx) {
+            if (selectedIdx === void 0) {
+                selectedIdx = 0;
+            }
+            var regexp = new RegExp("(.*)(" + text + ")(.*)", "i");
+            var _a = _this.state,
+                posStart = _a.posStart,
+                tokens = _a.tokens;
+            var items;
+            var token;
+            var tokenIdx;
+            if (!_this.state.refBuilder || text !== _this.state.refBuilder.text) {
+                if (type === "ref") {
+                    token = { type: type, value: "", ref: "" };
+                    items = _this.props.refs.items.filter(function (item) {
+                        return item.name.match(regexp);
+                    }).map(function (item) {
+                        var m = item.name.match(regexp);
+                        var _a = m.slice(1),
+                            pre = _a[0],
+                            mid = _a[1],
+                            post = _a[2];
+                        return tslib_1.__assign({}, item, { html: React.createElement("span", null, pre, React.createElement("b", null, mid), post) });
+                    });
+                } else if (type === "func") {
+                    token = { type: type, value: "" };
+                    items = functionalOperations.filter(function (op) {
+                        return op.match(regexp);
+                    }).map(function (op) {
+                        var m = op.match(regexp);
+                        var _a = m.slice(1),
+                            pre = _a[0],
+                            mid = _a[1],
+                            post = _a[2];
+                        return {
+                            name: op,
+                            key: op,
+                            html: React.createElement("span", null, pre, React.createElement("b", null, mid), post)
+                        };
+                    });
+                }
+            } else {
+                items = _this.state.refBuilder.items;
+            }
+            if (items.length === 0) {
+                Notifier_tsx_1.default.notify("No such references...");
+            }
+            if (_this.state.refBuilder) {
+                tokenIdx = _this.state.refBuilder.tokenIdx;
+                tokens[tokenIdx].value = text;
+            } else {
+                tokens.splice(posStart.token + 1, 0, token);
+                tokenIdx = posStart.token + 1;
+                posStart.tokenPos = 1;
+            }
+            _this.setState({
+                tokens: tokens,
+                refBuilder: {
+                    text: text, items: items,
+                    selectedIdx: selectedIdx,
+                    tokenIdx: tokenIdx,
+                    type: type
+                },
+                posStart: posStart, posEnd: posStart
+            });
+        };
+        _this.onSave = function () {
+            if (_this.props.onSave) {
+                _this.props.onSave(convertor_ts_1.convertTokensToAST(_this.state.tokens));
+            }
+        };
         _this.onKeyUp = function (e) {
             if ([116].includes(e.keyCode)) {
                 return;
             }
-            console.log(e.key, ["Backspace", "Del"].includes(e.key));
             e.preventDefault();
             var _a = _this.state,
                 tokens = _a.tokens,
                 posStart = _a.posStart,
                 posEnd = _a.posEnd;
-            if (e.key.length === 1) {
-                tokens.splice(posStart.token + 1, 0, {
-                    value: e.key === " " ? "\xA0" : e.key
-                });
-                _this.setState({
-                    tokens: tokens,
-                    posStart: {
-                        token: posStart.token + 1,
-                        tokenPos: 0
-                    },
-                    posEnd: {
-                        token: posStart.token + 1,
-                        tokenPos: 0
+            if (e.key === "@") {
+                _this.updateRefs("", "ref");
+            } else if (e.ctrlKey && e.key.toLowerCase() === "a") {
+                _this.setState(tslib_1.__assign({}, _this.createResetRefBuilderState(tokens), { posStart: { token: 0, tokenPos: 0 }, posEnd: { token: tokens.length - 1, tokenPos: 1 } }));
+            } else if (e.ctrlKey && e.key === "Enter") {
+                _this.onSave();
+            } else if (e.key.length === 1) {
+                if (_this.state.refBuilder) {
+                    if (e.key.match(/[\w|\d]/i)) {
+                        _this.updateRefs(_this.state.refBuilder.text + e.key, _this.state.refBuilder.type);
+                    } else {
+                        Notifier_tsx_1.default.notify("Functions/References can only be numbers or letters.");
                     }
-                });
-            } else if (["Backspace", "Delete"].includes(e.key)) {
-                if (tokens.length === 1) {
-                    _this.setState({
-                        tokens: [],
-                        posStart: { token: -1, tokenPos: 0 },
-                        posEnd: { token: -1, tokenPos: 1 }
-                    });
-                } else if (tokens.length > 1) {
-                    console.log(posStart, posEnd);
-                    if (posStart.token < posEnd.token) {
-                        tokens.splice(posStart.token + 1, posEnd.token - posStart.token);
-                        var length = 0;
-                        if (posEnd.token > 0) {
-                            length = tokens[posStart.token].value.length - 1;
+                } else {
+                    if (e.key.match(/[A-Z]/i)) {
+                        return _this.updateRefs(e.key, "func");
+                    }
+                    var update = _this.createResetRefBuilderState(tokens);
+                    var hasDupOp = function hasDupOp(s) {
+                        return ["*", "/"].includes(s);
+                    };
+                    if (hasDupOp(e.key) && hasDupOp(update.tokens[posStart.token].value)) {
+                        update.tokens[posStart.token].value += e.key;
+                        posStart.tokenPos = 1;
+                    } else {
+                        var value = "\xA0";
+                        if (e.key.match(/[0-9|]/)) {
+                            value = e.key;
+                        } else if (util_ts_1.isOperation(e.key) || util_ts_1.isBrace(e.key)) {
+                            value = e.key;
+                        } else {
+                            console.warn("Ignoring", e.key);
                         }
-                        _this.setState({
-                            tokens: tokens,
-                            posStart: { token: posStart.token, tokenPos: length },
-                            posEnd: { token: posStart.token, tokenPos: length }
+                        update.tokens.splice(posStart.token + 1, 0, {
+                            value: value
                         });
+                        posStart.tokenPos = 1;
+                        posStart.token += 1;
+                    }
+                    _this.setState(tslib_1.__assign({}, update, { posStart: posStart, posEnd: posStart }));
+                }
+            } else if (["Backspace", "Delete"].includes(e.key)) {
+                if (_this.state.refBuilder && _this.state.refBuilder.text.length > 1) {
+                    var text = _this.state.refBuilder.text;
+                    _this.updateRefs(text.slice(0, text.length - 1), _this.state.refBuilder.type);
+                } else if (tokens.length === 1 || tokens.length === posEnd.token - posStart.token + 1) {
+                    _this.reset();
+                } else if (tokens.length > 1) {
+                    if (posStart.token < posEnd.token) {
+                        var update = _this.createResetRefBuilderState(tokens);
+                        update.tokens.splice(posStart.token + 1, posEnd.token - posStart.token);
+                        _this.setState(tslib_1.__assign({}, update, { posStart: { token: posStart.token, tokenPos: 1 }, posEnd: { token: posStart.token, tokenPos: 1 } }));
                     } else if (posStart.token === posEnd.token) {
-                        tokens.splice(posStart.token, 1);
+                        var update = _this.createResetRefBuilderState(tokens);
+                        update.tokens.splice(posStart.token, 1);
                         var token = Math.max(0, posStart.token - 1);
-                        var pos = { token: token, tokenPos: token === 0 ? -1 : 0 };
-                        _this.setState({
-                            tokens: tokens,
-                            posStart: pos,
-                            posEnd: pos
-                        });
+                        var pos = { token: token, tokenPos: posStart.token === 0 ? 0 : 1 };
+                        _this.setState(tslib_1.__assign({}, update, { posStart: pos, posEnd: pos }));
                     }
                 }
             } else if (e.key === "ArrowLeft") {
                 var update = void 0;
-                if (posStart.tokenPos > 0) {
-                    update = tslib_1.__assign({}, posStart, { tokenPos: posStart.tokenPos - 1 });
-                } else if (posStart.token > 0 && posStart.tokenPos === 0) {
-                    var length = tokens[posStart.token - 1].value.length;
-                    update = { token: posStart.token - 1, tokenPos: length - 1 };
-                } else if (posStart.token === 0 && posStart.tokenPos === 0) {
-                    update = tslib_1.__assign({}, posStart, { tokenPos: posStart.tokenPos - 1 });
-                } else if (!e.shiftKey) {
-                    update = posStart;
+                if (posStart.token > 0) {
+                    update = { token: posStart.token - 1, tokenPos: posStart.tokenPos };
+                } else {
+                    update = { token: 0, tokenPos: 0 };
                 }
                 if (update) {
                     if (e.shiftKey) {
-                        _this.setState({ posStart: update });
+                        _this.setState(tslib_1.__assign({}, _this.createResetRefBuilderState(tokens), { posStart: update }));
                     } else {
-                        _this.setState({ posStart: update, posEnd: update });
+                        _this.setState(tslib_1.__assign({}, _this.createResetRefBuilderState(tokens), { posStart: update, posEnd: update }));
                     }
                 }
             } else if (e.key === "ArrowRight") {
                 var update = void 0;
-                var tokenEnd = tokens[posEnd.token];
-                if (tokenEnd.value.length - 1 > posEnd.tokenPos) {
-                    update = { token: posEnd.token, tokenPos: posEnd.tokenPos + 1 };
-                } else if (posEnd.token < tokens.length - 1) {
-                    update = { token: posEnd.token + 1, tokenPos: 0 };
-                } else if (!e.shiftKey) {
-                    update = posEnd;
+                if (posEnd.token < tokens.length - 1) {
+                    update = { token: posEnd.token + 1, tokenPos: posEnd.tokenPos };
+                } else if (posEnd.token === tokens.length - 1) {
+                    update = tslib_1.__assign({}, posEnd, { tokenPos: 1 });
                 }
                 if (update) {
                     if (e.shiftKey) {
-                        _this.setState({ posEnd: update });
+                        _this.setState(tslib_1.__assign({}, _this.createResetRefBuilderState(tokens), { posEnd: update }));
                     } else {
-                        _this.setState({ posStart: update, posEnd: update });
+                        _this.setState(tslib_1.__assign({}, _this.createResetRefBuilderState(tokens), { posStart: update, posEnd: update }));
                     }
+                }
+            } else if (_this.state.refBuilder) {
+                var _b = _this.state.refBuilder,
+                    text = _b.text,
+                    items = _b.items,
+                    selectedIdx = _b.selectedIdx,
+                    tokenIdx = _b.tokenIdx;
+                if (e.key === "ArrowDown") {
+                    if (selectedIdx < items.length - 1) {
+                        _this.updateRefs(text, _this.state.refBuilder.type, selectedIdx + 1);
+                    }
+                } else if (e.key === "ArrowUp") {
+                    if (selectedIdx > 0) {
+                        _this.updateRefs(text, _this.state.refBuilder.type, selectedIdx - 1);
+                    }
+                } else if (e.key === "Enter") {
+                    if (items.length === 0) {
+                        tokens.splice(tokenIdx, 1);
+                        return _this.setState({
+                            tokens: tokens, refBuilder: undefined
+                        });
+                    }
+                    var selected = items[selectedIdx];
+                    var tokenSel = tokens[tokenIdx];
+                    if (!("type" in tokenSel)) {
+                        throw new Error("Invalid Selected Token " + tokenSel);
+                    }
+                    if (tokenSel.type === "func") {
+                        tokenSel.value = selected.name;
+                        posStart.token++;
+                    } else if (tokenSel.type === "ref") {
+                        tokenSel.value = selected.name;
+                        tokenSel.ref = selected.key;
+                        posStart.token = tokenIdx;
+                    }
+                    posStart.tokenPos = 1;
+                    _this.setState({
+                        tokens: tokens,
+                        refBuilder: undefined,
+                        posStart: posStart, posEnd: posStart
+                    });
                 }
             }
         };
-        _this.onRef = function (elm) {
+        _this.onElement = function (elm) {
             var _a = _this.state,
                 posStart = _a.posStart,
                 posEnd = _a.posEnd;
@@ -98583,18 +99195,38 @@ var FormulaEditor = /** @class */function (_super) {
             var sel = window.getSelection();
             sel.removeAllRanges();
             if (posStart.token > -1) {
-                range.setStart(elm.childNodes[posStart.token], posStart.tokenPos + 1);
-                range.setEnd(elm.childNodes[posEnd.token], posEnd.tokenPos + 1);
-                sel.addRange(range);
+                try {
+                    range.setStart(elm.childNodes[posStart.token], posStart.tokenPos);
+                    range.setEnd(elm.childNodes[posEnd.token], posEnd.tokenPos);
+                    sel.addRange(range);
+                } catch (e) {
+                    console.error(e);
+                    console.log(posStart, posEnd);
+                }
             }
         };
         _this.setCurToEnd = function () {
             var tokens = _this.state.tokens;
-            var lastToken = tokens[tokens.length - 1];
             _this.setState({
-                posStart: { token: tokens.length - 1, tokenPos: lastToken.value.length - 1 },
-                posEnd: { token: tokens.length - 1, tokenPos: lastToken.value.length - 1 }
+                posStart: { token: tokens.length - 1, tokenPos: 1 },
+                posEnd: { token: tokens.length - 1, tokenPos: 1 }
             });
+        };
+        _this.renderChildren = function () {
+            return _this.state.tokens.map(function (token, i) {
+                if ("type" in token) {
+                    return React.createElement("span", { key: i, title: token.type }, token.type === "func" ? token.value + "(" : "" + token.value);
+                } else {
+                    return React.createElement("span", { key: i }, token.value);
+                }
+            });
+        };
+        _this.renderAutoComplete = function () {
+            if (_this.state.refBuilder) {
+                return React.createElement(core_1.Paper, { elevation: 10, style: { marginTop: '10px' } }, React.createElement(core_1.MenuList, null, _this.state.refBuilder.items.map(function (item, idx) {
+                    return React.createElement(core_1.MenuItem, { key: item.key, style: { backgroundColor: idx === _this.state.refBuilder.selectedIdx ? "#dedddd" : null } }, item.html, " (", "type" in item ? item.type : "func", ")");
+                })));
+            }
         };
         return _this;
     }
@@ -98603,48 +99235,33 @@ var FormulaEditor = /** @class */function (_super) {
     };
     ;
     FormulaEditor.prototype.componentWillReceiveProps = function (nextProps) {
-        var state = {
-            tokens: [],
-            posStart: {
-                token: -1,
-                tokenPos: 0
-            },
-            posEnd: {
-                token: -1,
-                tokenPos: 0
+        if (!this.state || nextProps.refs !== this.props.refs || nextProps.formula !== this.props.formula) {
+            this.reset();
+            if (nextProps.formula) {
+                this.setState({
+                    tokens: convertor_ts_1.convertASTtoTokens(nextProps.formula, nextProps.refs)
+                });
             }
-        };
-        // if (nextProps.)
-        this.setState(state);
+        }
     };
     FormulaEditor.prototype.render = function () {
         var _this = this;
-        console.log(this.state.posEnd, this.state.posStart);
-        return React.createElement("div", { suppressContentEditableWarning: true, contentEditable: true, style: { border: "1px solid black" }, onKeyDown: this.onKeyUp, ref: function ref(elm) {
-                if (elm) {
-                    _this.onRef(elm);
-                }
+        return React.createElement(core_1.FormControl, null, React.createElement(core_1.Paper, { elevation: 2 }, React.createElement("div", { suppressContentEditableWarning: true, contentEditable: true, onKeyDown: this.onKeyUp, style: {
+                width: "50vh",
+                fontSize: '1rem',
+                padding: '12px 10px 7px'
+            }, ref: function ref(elm) {
+                return elm && _this.onElement(elm);
             }, onClick: function onClick(e) {
-                e.preventDefault();
-                _this.onRef(e.currentTarget);
+                e.preventDefault();console.log(e);_this.onElement(e.currentTarget);
             }, onDoubleClick: function onDoubleClick(e) {
-                e.preventDefault();
-                _this.setCurToEnd();
-            } }, this.state.tokens.map(function (token, i) {
-            return React.createElement("span", { key: i }, token.value);
-        }));
-        /*return <TextField
-            component={ props => <div {...props} contentEditable/> }
-            defaultValue={this.state.text}
-            InputProps={{
-                onKeyUp:
-            }}
-        />*/
+                e.preventDefault();_this.setCurToEnd();
+            }, children: this.renderChildren() })), React.createElement(core_1.Button, { color: "primary", variant: "raised", onClick: this.onSave }, "Save"), this.renderAutoComplete());
     };
     return FormulaEditor;
 }(React.Component);
 exports.default = FormulaEditor;
-},{"tslib":"../node_modules/tslib/tslib.es6.js","react":"../node_modules/react/index.js"}],"components/routes/ExamplePage.tsx":[function(require,module,exports) {
+},{"tslib":"../node_modules/tslib/tslib.es6.js","react":"../node_modules/react/index.js","../../attr-parser/typings.ts":"attr-parser/typings.ts","@material-ui/core":"../node_modules/@material-ui/core/index.es.js","../layouts/Notifier.tsx":"components/layouts/Notifier.tsx","../../attr-parser/convertor.ts":"attr-parser/convertor.ts","../../attr-parser/util.ts":"attr-parser/util.ts"}],"components/routes/ExamplePage.tsx":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -98652,18 +99269,114 @@ var tslib_1 = require("tslib");
 var React = require("react");
 var react_router_1 = require("react-router");
 var FormulaEditor_tsx_1 = require("../common/FormulaEditor.tsx");
+var Referenciables_ts_1 = require("../../attr-parser/Referenciables.ts");
+var evaluators_ts_1 = require("../../attr-parser/evaluators.ts");
+var demo = {
+    name: "$root",
+    type: "category",
+    attributes: {
+        test: {
+            name: "Formula Test",
+            type: "computed-number",
+            formula: {
+                type: "exprs",
+                operation: evaluators_ts_1.OPERATIONS.ADDITION,
+                operands: []
+            }
+        },
+        attr: {
+            name: "Attributes",
+            type: "category",
+            attributes: {
+                exprs: {
+                    name: "Experience",
+                    type: "number",
+                    min: 0, max: Number.MAX_SAFE_INTEGER
+                },
+                lvl: {
+                    name: "Level",
+                    type: "computed-enum",
+                    formula: {
+                        type: "exprs",
+                        operation: evaluators_ts_1.OPERATIONS.ADDITION,
+                        operands: [{ value: "$root.attr.exprs", type: "ref-value" }]
+                    },
+                    enum: {
+                        0: 1,
+                        300: 2,
+                        900: 3,
+                        2700: 4,
+                        6500: 5,
+                        14000: 6,
+                        23000: 7
+                    }
+                },
+                str: {
+                    name: "Strength",
+                    type: "number",
+                    min: 0, max: 10
+                },
+                race: {
+                    name: "Race",
+                    type: "enum",
+                    enum: {
+                        "Human": 0,
+                        "Elf": 1
+                    }
+                },
+                hp: {
+                    name: "Health",
+                    type: "computed-number",
+                    formula: {
+                        type: "exprs",
+                        operation: evaluators_ts_1.OPERATIONS.ADDITION,
+                        operands: [{ type: "value", value: 50 }, {
+                            type: "exprs",
+                            operation: evaluators_ts_1.OPERATIONS.MULTIPLICATION,
+                            operands: [{ type: "value", value: 5 }, { type: "ref-value", value: "$root.attr.str" }]
+                        }, {
+                            type: "exprs",
+                            operation: evaluators_ts_1.OPERATIONS.MULTIPLICATION,
+                            operands: [{ type: "value", value: 5 }, { type: "ref-value", value: "$root.attr.lvl" }]
+                        }, {
+                            type: "exprs",
+                            operation: evaluators_ts_1.OPERATIONS.MULTIPLICATION,
+                            operands: [{ type: "value", value: 2 }, { type: "ref-value", value: "$root.attr.race" }]
+                        }]
+                    }
+                }
+            }
+        }
+    }
+};
 var ExamplePage = /** @class */function (_super) {
     tslib_1.__extends(ExamplePage, _super);
     function ExamplePage() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
     ExamplePage.prototype.render = function () {
-        return React.createElement("div", null, React.createElement(FormulaEditor_tsx_1.default, null));
+        return React.createElement("div", null, React.createElement(FormulaEditor_tsx_1.default, { formula: {
+                type: "exprs",
+                operation: evaluators_ts_1.OPERATIONS.ADDITION,
+                operands: [{ type: "value", value: 50 }, {
+                    type: "exprs",
+                    operation: evaluators_ts_1.OPERATIONS.MULTIPLICATION,
+                    operands: [{ type: "value", value: 5 }, { type: "ref-value", value: "$root.attr.str" }]
+                }, {
+                    type: "exprs",
+                    operation: evaluators_ts_1.OPERATIONS.MULTIPLICATION,
+                    operands: [{ type: "value", value: 5 }, { type: "ref-value", value: "$root.attr.lvl" }]
+                }, {
+                    type: "exprs",
+                    operation: evaluators_ts_1.OPERATIONS.MULTIPLICATION,
+                    operands: [{ type: "value", value: 2 }, { type: "ref-value", value: "$root.attr.race" }]
+                }]
+            }, refs: new Referenciables_ts_1.default(demo) }));
     };
     return ExamplePage;
 }(react_router_1.Route);
 exports.default = ExamplePage;
-},{"tslib":"../node_modules/tslib/tslib.es6.js","react":"../node_modules/react/index.js","react-router":"../node_modules/react-router/es/index.js","../common/FormulaEditor.tsx":"components/common/FormulaEditor.tsx"}],"components/routes/NotFoundPage.tsx":[function(require,module,exports) {
+},{"tslib":"../node_modules/tslib/tslib.es6.js","react":"../node_modules/react/index.js","react-router":"../node_modules/react-router/es/index.js","../common/FormulaEditor.tsx":"components/common/FormulaEditor.tsx","../../attr-parser/Referenciables.ts":"attr-parser/Referenciables.ts","../../attr-parser/evaluators.ts":"attr-parser/evaluators.ts"}],"components/routes/NotFoundPage.tsx":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -99845,6 +100558,28 @@ var _default = (0, _createSvgIcon.default)(_react.default.createElement(_react.d
 })), 'Computer');
 
 exports.default = _default;
+},{"@babel/runtime/helpers/interopRequireDefault":"../node_modules/@babel/runtime/helpers/interopRequireDefault.js","react":"../node_modules/react/index.js","./utils/createSvgIcon":"../node_modules/@material-ui/icons/utils/createSvgIcon.js"}],"../node_modules/@material-ui/icons/Edit.js":[function(require,module,exports) {
+"use strict";
+
+var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _react = _interopRequireDefault(require("react"));
+
+var _createSvgIcon = _interopRequireDefault(require("./utils/createSvgIcon"));
+
+var _default = (0, _createSvgIcon.default)(_react.default.createElement(_react.default.Fragment, null, _react.default.createElement("path", {
+  d: "M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34a.9959.9959 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"
+}), _react.default.createElement("path", {
+  fill: "none",
+  d: "M0 0h24v24H0z"
+})), 'Edit');
+
+exports.default = _default;
 },{"@babel/runtime/helpers/interopRequireDefault":"../node_modules/@babel/runtime/helpers/interopRequireDefault.js","react":"../node_modules/react/index.js","./utils/createSvgIcon":"../node_modules/@material-ui/icons/utils/createSvgIcon.js"}],"../node_modules/@material-ui/icons/Add.js":[function(require,module,exports) {
 "use strict";
 
@@ -99926,51 +100661,7 @@ var default_1 = /** @class */function (_super) {
     return default_1;
 }(React.Component);
 exports.default = default_1;
-},{"tslib":"../node_modules/tslib/tslib.es6.js","react":"../node_modules/react/index.js","@material-ui/core/Chip":"../node_modules/@material-ui/core/Chip/index.js","@material-ui/core":"../node_modules/@material-ui/core/index.es.js"}],"attr-parser/convertor.ts":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-var tslib_1 = require("tslib");
-function stringifyFormula(formula, withBracket) {
-    var str = formula.operands.reduce(function (s, operand, idx) {
-        if (idx > 0) {
-            s += formula.operation;
-        }
-        switch (operand.type) {
-            case "exprs":
-                return s + stringifyFormula(operand, true);
-            case "value":
-                return s + operand.value;
-            case "ref-value":
-                return s + operand.value;
-            default:
-                return s;
-        }
-    }, "");
-    if (withBracket) {
-        return "(" + str + ")";
-    } else {
-        return str;
-    }
-}
-exports.stringifyFormula = stringifyFormula;
-function getAllReferanciables(tree, rootKey) {
-    if (rootKey === void 0) {
-        rootKey = "$root";
-    }
-    var ret = {};
-    Object.keys(tree.attributes).forEach(function (key) {
-        var attr = tree.attributes[key];
-        if (["number", "computed-number", "enum", "computed-enum"].includes(attr.type)) {
-            ret[rootKey + "." + key] = attr;
-        } else if (attr.type === "category") {
-            ret = tslib_1.__assign({}, ret, getAllReferanciables(attr, rootKey + "." + key));
-        }
-    });
-    return ret;
-}
-exports.getAllReferanciables = getAllReferanciables;
-},{"tslib":"../node_modules/tslib/tslib.es6.js"}],"components/common/Formula.tsx":[function(require,module,exports) {
+},{"tslib":"../node_modules/tslib/tslib.es6.js","react":"../node_modules/react/index.js","@material-ui/core/Chip":"../node_modules/@material-ui/core/Chip/index.js","@material-ui/core":"../node_modules/@material-ui/core/index.es.js"}],"components/common/Formula.tsx":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -100070,169 +100761,7 @@ var Value = /** @class */function (_super) {
     };
     return Value;
 }(React.Component);
-},{"tslib":"../node_modules/tslib/tslib.es6.js","react":"../node_modules/react/index.js","../../attr-parser/convertor.ts":"attr-parser/convertor.ts"}],"attr-parser/typings.ts":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-var Formulas;
-(function (Formulas) {
-    var Operation;
-    (function (Operation) {
-        Operation["ADDITION"] = "+";
-        Operation["SUBTRACTION"] = "-";
-        Operation["MULTIPLICATION"] = "*";
-        Operation["DIVISION"] = "/";
-        Operation["POWER"] = "**";
-        Operation["ROOT"] = "//";
-        Operation["MAX"] = "max";
-        Operation["MIN"] = "min";
-    })(Operation = Formulas.Operation || (Formulas.Operation = {}));
-})(Formulas = exports.Formulas || (exports.Formulas = {}));
-},{}],"attr-parser/evaluators.ts":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-var typings_ts_1 = require("./typings.ts");
-exports.OPERATIONS = typings_ts_1.Formulas.Operation;
-var Evaluator = /** @class */function () {
-    function Evaluator(tree) {
-        this.tree = tree;
-    }
-    Evaluator.prototype.evaluateRef = function (ref, data) {
-        var keys = ref.value.split('.');
-        var def = this.tree;
-        var val = data;
-        for (var _i = 0, keys_1 = keys; _i < keys_1.length; _i++) {
-            var key = keys_1[_i];
-            switch (def.type) {
-                case "category":
-                    def = def.attributes[key];
-                    val = val[key];
-                    break;
-                default:
-                    throw Error("[1] Invalid Value-reference");
-            }
-        }
-        switch (def.type) {
-            case "computed-number":
-                return this.evaluateFormula(def.formula, data);
-            case "computed-enum":
-                var evalVal = this.evaluateFormula(def.formula, data);
-                var nums = Object.keys(def.enum).map(Number).sort(function (a, b) {
-                    return a - b;
-                });
-                for (var _a = 0, nums_1 = nums; _a < nums_1.length; _a++) {
-                    var num = nums_1[_a];
-                    if (evalVal <= num) {
-                        return def.enum[num];
-                    }
-                }
-                throw Error("[2] Invalid Enum-Value");
-            case "enum":
-                if (val in def.enum) {
-                    return def.enum[val];
-                }
-                throw Error("[2] Invalid Enum-Value");
-            case "number":
-                return val;
-            default:
-                throw Error("[2] Invalid Value-reference");
-        }
-    };
-    Evaluator.prototype.evaluateFormula = function (exprs, data) {
-        var _this = this;
-        if (data === void 0) {
-            data = {};
-        }
-        var startVal;
-        if ([typings_ts_1.Formulas.Operation.DIVISION, typings_ts_1.Formulas.Operation.MULTIPLICATION, typings_ts_1.Formulas.Operation.ROOT, typings_ts_1.Formulas.Operation.POWER].includes(exprs.operation)) {
-            startVal = 1;
-        } else if ([typings_ts_1.Formulas.Operation.ADDITION, typings_ts_1.Formulas.Operation.SUBTRACTION].includes(exprs.operation)) {
-            startVal = 0;
-        } else {
-            throw new Error("[1] Invalid Operation \"" + exprs.operation + "\"");
-        }
-        return exprs.operands.reduce(function (tot, val) {
-            var numericVal;
-            if (val.type === "exprs") {
-                numericVal = _this.evaluateFormula(val, data);
-            } else if (val.type === 'value') {
-                numericVal = Number(val.value);
-            } else if (val.type === 'ref-value') {
-                numericVal = _this.evaluateRef(val, data);
-            }
-            switch (exprs.operation) {
-                case typings_ts_1.Formulas.Operation.ADDITION:
-                    return tot + numericVal;
-                case typings_ts_1.Formulas.Operation.SUBTRACTION:
-                    return tot - numericVal;
-                case typings_ts_1.Formulas.Operation.MULTIPLICATION:
-                    return tot * numericVal;
-                case typings_ts_1.Formulas.Operation.DIVISION:
-                    return tot / numericVal;
-                case typings_ts_1.Formulas.Operation.POWER:
-                    return Math.pow(tot, numericVal);
-                case typings_ts_1.Formulas.Operation.ROOT:
-                    return Math.pow(tot, 1 / numericVal);
-                default:
-                    throw new Error("[2] Invalid Operation \"" + exprs.operation + "\"");
-            }
-        }, startVal);
-    };
-    Evaluator.prototype.validate = function (data) {
-        return this.__validate(data, this.tree);
-    };
-    Evaluator.prototype.__validate = function (data, tree, namespace) {
-        var _this = this;
-        if (namespace === void 0) {
-            namespace = "$root";
-        }
-        var returnErrors = Object.keys(tree.attributes).map(function (key) {
-            var attr = tree.attributes[key];
-            if (key in data) {
-                switch (attr.type) {
-                    case "number":
-                        if (typeof data[key] !== "number") {
-                            return "- \"" + namespace + "." + key + "\" should be a number!";
-                        }
-                        if (data[key] > attr.max || data[key] < attr.min) {
-                            return "- \"" + namespace + "." + key + "\" should be in [" + attr.min + "," + attr.max + "]!";
-                        }
-                        break;
-                    case "enum":
-                        if (!(data[key] in attr.enum)) {
-                            return "- \"" + namespace + "." + key + "\" should be one of [" + Object.keys(attr.enum).join(",") + "]!";
-                        }
-                        break;
-                    case "text":
-                        break;
-                    case "computed-number":
-                        break;
-                    case "category":
-                        return _this.__validate(data[key], attr, namespace + "." + key);
-                    default:
-                        return "- \"" + namespace + "." + key + "\" has an invalid type!";
-                }
-            } else {
-                if (attr.type !== "computed-number") {
-                    return "- Missing \"" + namespace + "." + key + "\"";
-                }
-            }
-            return null;
-        }).reduce(function (errs, err) {
-            return err !== null ? errs + "\n" + (" " + err) : errs;
-        }, "\n");
-        return Object.keys(data).reduce(function (errs, key) {
-            if (!(key in tree.attributes)) {
-                return errs + ("\n - Invalid \"" + namespace + "." + key + "\"");
-            }
-            return errs;
-        }, returnErrors);
-    };
-    return Evaluator;
-}();
-exports.default = Evaluator;
-},{"./typings.ts":"attr-parser/typings.ts"}],"components/common/CharacterSheetEditor.tsx":[function(require,module,exports) {
+},{"tslib":"../node_modules/tslib/tslib.es6.js","react":"../node_modules/react/index.js","../../attr-parser/convertor.ts":"attr-parser/convertor.ts"}],"components/common/CharacterSheetEditor.tsx":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -100246,12 +100775,13 @@ var ExpandMore_1 = require("@material-ui/icons/ExpandMore");
 var ConfirmationNumber_1 = require("@material-ui/icons/ConfirmationNumber");
 var Menu_1 = require("@material-ui/icons/Menu");
 var Computer_1 = require("@material-ui/icons/Computer");
+var Edit_1 = require("@material-ui/icons/Edit");
 var Add_1 = require("@material-ui/icons/Add");
 var EditableChip_tsx_1 = require("./EditableChip.tsx");
-var Formula_tsx_1 = require("./Formula.tsx");
 var evaluators_ts_1 = require("../../attr-parser/evaluators.ts");
 var convertor_ts_1 = require("../../attr-parser/convertor.ts");
 var FormulaEditor_tsx_1 = require("./FormulaEditor.tsx");
+var Formula_tsx_1 = require("./Formula.tsx");
 var CharacterSheetEditor = /** @class */function (_super) {
     tslib_1.__extends(CharacterSheetEditor, _super);
     function CharacterSheetEditor() {
@@ -100283,9 +100813,7 @@ var CharacterSheetEditor = /** @class */function (_super) {
                         value: attr
                     }).newDocument
                 });
-            }, getRef: function getRef(path) {
-                return refs[path];
-            } }));
+            }, refs: refs }));
     };
     return CharacterSheetEditor;
 }(React.Component);
@@ -100293,15 +100821,15 @@ exports.default = CharacterSheetEditor;
 function AttributeItem(props) {
     switch (props.attr.type) {
         case "category":
-            return React.createElement(CategoryAttributeItem, { id: props.id, attr: props.attr, onSave: props.onSave, getRef: props.getRef });
+            return React.createElement(CategoryAttributeItem, { id: props.id, attr: props.attr, onSave: props.onSave, refs: props.refs });
         case "number":
-            return React.createElement(NumberAttributeItem, { id: props.id, attr: props.attr, onSave: props.onSave, getRef: props.getRef });
+            return React.createElement(NumberAttributeItem, { id: props.id, attr: props.attr, onSave: props.onSave, refs: props.refs });
         case "enum":
-            return React.createElement(EnumAttributeItem, { id: props.id, attr: props.attr, onSave: props.onSave, getRef: props.getRef });
+            return React.createElement(EnumAttributeItem, { id: props.id, attr: props.attr, onSave: props.onSave, refs: props.refs });
         case "computed-enum":
-            return React.createElement(ComputedEnumAttributeItem, { id: props.id, attr: props.attr, onSave: props.onSave, getRef: props.getRef });
+            return React.createElement(ComputedEnumAttributeItem, { id: props.id, attr: props.attr, onSave: props.onSave, refs: props.refs });
         case "computed-number":
-            return React.createElement(ComputedNumberAttributeItem, { id: props.id, attr: props.attr, onSave: props.onSave, getRef: props.getRef });
+            return React.createElement(ComputedNumberAttributeItem, { id: props.id, attr: props.attr, onSave: props.onSave, refs: props.refs });
         default:
             return React.createElement(core_1.ListItem, { id: props.id }, React.createElement(core_1.ListItemText, { inset: true, primary: props.attr.name, secondary: props.attr.type }));
     }
@@ -100356,7 +100884,7 @@ var CategoryAttributeItem = /** @class */function (_super) {
             id = _b.id,
             attr = _b.attr,
             onSave = _b.onSave,
-            getRef = _b.getRef,
+            refs = _b.refs,
             _c = _a.state,
             isOpen = _c.isOpen,
             currentNew = _c.currentNew,
@@ -100379,7 +100907,7 @@ var CategoryAttributeItem = /** @class */function (_super) {
             } }), React.createElement(core_1.IconButton, { disabled: currentNew === "", type: "submit" }, React.createElement(Add_1.default, null)), React.createElement(core_1.IconButton, { onClick: function onClick(_) {
                 return _this.setState({ isOpen: !isOpen });
             } }, isOpen ? React.createElement(ExpandLess_1.default, null) : React.createElement(ExpandMore_1.default, null))))), React.createElement(core_1.Collapse, { key: id + "_sublist", in: isOpen, style: { marginLeft: "2%" } }, React.createElement(core_1.Divider, null), React.createElement(core_1.List, { component: "div", disablePadding: true }, Object.keys(attr.attributes).map(function (subid) {
-            return React.createElement(AttributeItem, { key: subid, id: id + "/attributes/" + subid, attr: attr.attributes[subid], onSave: onSave, getRef: getRef });
+            return React.createElement(AttributeItem, { key: subid, id: id + "/attributes/" + subid, attr: attr.attributes[subid], onSave: onSave, refs: refs });
         })))];
     };
     return CategoryAttributeItem;
@@ -100422,7 +100950,7 @@ var ComputedNumberAttributeItem = /** @class */function (_super) {
     tslib_1.__extends(ComputedNumberAttributeItem, _super);
     function ComputedNumberAttributeItem() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
-        _this.state = { formula: _this.props.attr.formula };
+        _this.state = { formula: _this.props.attr.formula, enableEdit: true };
         _this.onSave = function () {
             _this.props.onSave(_this.props.id, tslib_1.__assign({}, _this.props.attr, { formula: _this.state.formula }));
         };
@@ -100437,15 +100965,24 @@ var ComputedNumberAttributeItem = /** @class */function (_super) {
         this.setState({ formula: nextProps.attr.formula });
     };
     ComputedNumberAttributeItem.prototype.render = function () {
+        var _this = this;
         var _a = this,
             _b = _a.props,
             id = _b.id,
             attr = _b.attr,
-            getRef = _b.getRef,
-            formula = _a.state.formula,
+            refs = _b.refs,
+            _c = _a.state,
+            formula = _c.formula,
+            enableEdit = _c.enableEdit,
             onSave = _a.onSave,
             onEnter = _a.onEnter;
-        return React.createElement(core_1.ListItem, { key: id + "_item" }, React.createElement(core_1.ListItemIcon, null, React.createElement(Computer_1.default, null)), React.createElement(core_1.ListItemText, { inset: true, primary: attr.name }), React.createElement(FormulaEditor_tsx_1.default, null), React.createElement(Formula_tsx_1.default, { expression: formula, getRef: getRef }), React.createElement(core_1.Button, { onClick: onSave }, "Save"));
+        return React.createElement(core_1.ListItem, { key: id + "_item" }, React.createElement(core_1.ListItemIcon, null, React.createElement(Computer_1.default, null)), React.createElement(core_1.ListItemText, { inset: true, primary: attr.name }), React.createElement(Formula_tsx_1.Expression, { expression: formula, getRef: function getRef(s) {
+                return refs.getRef(s);
+            } }), React.createElement(core_1.Button, { onClick: function onClick() {
+                return _this.setState({ enableEdit: true });
+            } }, React.createElement(Edit_1.default, null), " Edit"), React.createElement(core_1.Dialog, { onClose: function onClose() {
+                return _this.setState({ enableEdit: false });
+            }, open: enableEdit }, React.createElement(core_1.DialogTitle, { title: "Edit " + id }, "Edit ", attr.name, " Formula"), React.createElement(core_1.DialogContent, null, React.createElement(core_1.Grid, { container: true }, React.createElement(FormulaEditor_tsx_1.default, { refs: refs, formula: formula })))));
     };
     return ComputedNumberAttributeItem;
 }(React.Component);
@@ -100517,8 +101054,8 @@ var ComputedEnumAttributeItem = /** @class */function (_super) {
             id = _a.id,
             attr = _a.attr,
             _onSave = _a.onSave,
-            getRef = _a.getRef;
-        return React.createElement(core_1.ListItem, { key: id + "_item" }, React.createElement(core_1.ListItemIcon, null, React.createElement(Computer_1.default, null)), React.createElement(core_1.ListItemText, { inset: true, primary: attr.name }), React.createElement(Formula_tsx_1.default, { expression: attr.formula, getRef: getRef }), Object.keys(attr.enum).map(function (name) {
+            refs = _a.refs;
+        return React.createElement(core_1.ListItem, { key: id + "_item" }, React.createElement(core_1.ListItemIcon, null, React.createElement(Computer_1.default, null)), React.createElement(core_1.ListItemText, { inset: true, primary: attr.name }), Object.keys(attr.enum).map(function (name) {
             return React.createElement(EditableChip_tsx_1.default, { key: name, defaultValue: name + " => " + attr.enum[Number(name)], onSave: function onSave(s) {
                     var _a;
                     var _b = s.split("=>"),
@@ -100536,7 +101073,7 @@ var ComputedEnumAttributeItem = /** @class */function (_super) {
     };
     return ComputedEnumAttributeItem;
 }(React.Component);
-},{"tslib":"../node_modules/tslib/tslib.es6.js","react":"../node_modules/react/index.js","@material-ui/core":"../node_modules/@material-ui/core/index.es.js","fast-json-patch":"../node_modules/fast-json-patch/lib/duplex.js","@material-ui/icons/Category":"../node_modules/@material-ui/icons/Category.js","@material-ui/icons/ExpandLess":"../node_modules/@material-ui/icons/ExpandLess.js","@material-ui/icons/ExpandMore":"../node_modules/@material-ui/icons/ExpandMore.js","@material-ui/icons/ConfirmationNumber":"../node_modules/@material-ui/icons/ConfirmationNumber.js","@material-ui/icons/Menu":"../node_modules/@material-ui/icons/Menu.js","@material-ui/icons/Computer":"../node_modules/@material-ui/icons/Computer.js","@material-ui/icons/Add":"../node_modules/@material-ui/icons/Add.js","./EditableChip.tsx":"components/common/EditableChip.tsx","./Formula.tsx":"components/common/Formula.tsx","../../attr-parser/evaluators.ts":"attr-parser/evaluators.ts","../../attr-parser/convertor.ts":"attr-parser/convertor.ts","./FormulaEditor.tsx":"components/common/FormulaEditor.tsx"}],"components/routes/CharacterSheetEditorPage.tsx":[function(require,module,exports) {
+},{"tslib":"../node_modules/tslib/tslib.es6.js","react":"../node_modules/react/index.js","@material-ui/core":"../node_modules/@material-ui/core/index.es.js","fast-json-patch":"../node_modules/fast-json-patch/lib/duplex.js","@material-ui/icons/Category":"../node_modules/@material-ui/icons/Category.js","@material-ui/icons/ExpandLess":"../node_modules/@material-ui/icons/ExpandLess.js","@material-ui/icons/ExpandMore":"../node_modules/@material-ui/icons/ExpandMore.js","@material-ui/icons/ConfirmationNumber":"../node_modules/@material-ui/icons/ConfirmationNumber.js","@material-ui/icons/Menu":"../node_modules/@material-ui/icons/Menu.js","@material-ui/icons/Computer":"../node_modules/@material-ui/icons/Computer.js","@material-ui/icons/Edit":"../node_modules/@material-ui/icons/Edit.js","@material-ui/icons/Add":"../node_modules/@material-ui/icons/Add.js","./EditableChip.tsx":"components/common/EditableChip.tsx","../../attr-parser/evaluators.ts":"attr-parser/evaluators.ts","../../attr-parser/convertor.ts":"attr-parser/convertor.ts","./FormulaEditor.tsx":"components/common/FormulaEditor.tsx","./Formula.tsx":"components/common/Formula.tsx"}],"components/routes/CharacterSheetEditorPage.tsx":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -100722,7 +101259,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = '' || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + '34095' + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + '43707' + '/');
   ws.onmessage = function (event) {
     var data = JSON.parse(event.data);
 
