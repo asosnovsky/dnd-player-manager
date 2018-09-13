@@ -6,6 +6,7 @@ import EnumIcon from '@material-ui/icons/Menu';
 import { Attributes, Formulas } from '@/attr-parser/typings';
 import EditableChip from '@/components/common/EditableChip';
 import { AttributeProps } from '@/components/common/CharacterSheetEditor/AttributeItem/typings';
+import BaseAttributeItem from '@/components/common/CharacterSheetEditor/AttributeItem/Base';
 
 export default class EnumAttributeItem extends React.Component<AttributeProps<Attributes.EnumAttribute>, { newVal: string } > {
     state = { newVal: "" };
@@ -48,27 +49,24 @@ export default class EnumAttributeItem extends React.Component<AttributeProps<At
         })
     }
     render() {
-        const { props: { id, attr }, state: { newVal } } = this;
-        return [
-            <ListItem key={id + "_item"}>
-                <ListItemIcon><EnumIcon/></ListItemIcon>
-                <ListItemText inset primary={attr.name}/>
+        const { props, state: { newVal } } = this;
+        return <BaseAttributeItem {...props} icon={<EnumIcon/>} 
+            content={<ListItemText>
                 <TextField placeholder="{Name} => {Number}" value={newVal} onChange={ e => this.setState({ newVal: e.currentTarget.value }) } onKeyUp={ e => {
                     if (e.key === "Enter") {
                         this.updateOrCreate(newVal);
                         this.setState({ newVal: "" });
                     }
                 } }/>
-            </ListItem>,
-            <Collapse key={id + "_enum_vals"} in={Object.keys(attr.enum).length > 0} style={{marginLeft: "10%"}}>
-                {Object.keys(attr.enum).map( name => 
+            </ListItemText>} sibling={<Collapse key={props.id + "_enum_vals"} in={Object.keys(props.attr.enum).length > 0} style={{marginLeft: "10%"}}>
+                {Object.keys(props.attr.enum).map( name => 
                     <EditableChip 
                         key={name} 
-                        defaultValue={`${name} => ${attr.enum[name]}`} 
+                        defaultValue={`${name} => ${props.attr.enum[name]}`} 
                         onSave={ s => this.updateOrCreate(s, name) }
                     /> 
                 )}
-            </Collapse>
-        ]
+            </Collapse>} 
+        />
     }
 }

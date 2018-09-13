@@ -5,6 +5,7 @@ import NumberIcon from '@material-ui/icons/ConfirmationNumber';
 
 import { Attributes, Formulas } from '@/attr-parser/typings';
 import { AttributeProps } from '@/components/common/CharacterSheetEditor/AttributeItem/typings';
+import BaseAttributeItem from '@/components/common/CharacterSheetEditor/AttributeItem/Base';
 
 export default class NumberAttributeItem extends React.Component<AttributeProps<Attributes.NumberAttribute>, { min: number; max: number; }> {
     state = { min: this.props.attr.min, max: this.props.attr.max }
@@ -24,13 +25,11 @@ export default class NumberAttributeItem extends React.Component<AttributeProps<
         }
     } 
     render() {
-        const { props: { id, attr }, onSave, onEnter } = this;
-        return <ListItem key={id + "_item"}>
-            <ListItemIcon><NumberIcon/></ListItemIcon>
-            <ListItemText inset primary={attr.name}/>
+        const { props, onSave, onEnter } = this;
+        return <BaseAttributeItem {...props} icon={<NumberIcon/>} content={<ListItemText>
             <TextField type="number" value={this.state.min} onKeyUp={onEnter} onChange={ e => this.setState({ min: Number(e.target.value) })}/>
             <TextField type="number" value={this.state.max} onKeyUp={onEnter} onChange={ e => this.setState({ max: Number(e.target.value) })}/>
             <Button onClick={onSave}>Save</Button>
-        </ListItem>
+        </ListItemText>}/>
     }
 }

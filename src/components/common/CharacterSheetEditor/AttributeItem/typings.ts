@@ -1,4 +1,4 @@
-import { Attributes, Formulas } from '@/attr-parser/typings';
+import { Attributes } from '@/attr-parser/typings';
 import Referenciables from '@/attr-parser/Referenciables';
 
 export interface AttributeProps<Attr> {

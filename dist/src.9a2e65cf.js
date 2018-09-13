@@ -101009,7 +101009,41 @@ var _default = (0, _createSvgIcon.default)(_react.default.createElement(_react.d
 })), 'ConfirmationNumber');
 
 exports.default = _default;
-},{"@babel/runtime/helpers/interopRequireDefault":"../node_modules/@babel/runtime/helpers/interopRequireDefault.js","react":"../node_modules/react/index.js","./utils/createSvgIcon":"../node_modules/@material-ui/icons/utils/createSvgIcon.js"}],"components/common/CharacterSheetEditor/AttributeItem/NumberAttributeItem.tsx":[function(require,module,exports) {
+},{"@babel/runtime/helpers/interopRequireDefault":"../node_modules/@babel/runtime/helpers/interopRequireDefault.js","react":"../node_modules/react/index.js","./utils/createSvgIcon":"../node_modules/@material-ui/icons/utils/createSvgIcon.js"}],"components/common/CharacterSheetEditor/AttributeItem/Base.tsx":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var tslib_1 = require("tslib");
+var React = require("react");
+var core_1 = require("@material-ui/core");
+var EditableText_tsx_1 = require("../../EditableText.tsx");
+;
+var BaseAttributeItem = /** @class */function (_super) {
+    tslib_1.__extends(BaseAttributeItem, _super);
+    function BaseAttributeItem() {
+        return _super !== null && _super.apply(this, arguments) || this;
+    }
+    BaseAttributeItem.prototype.render = function () {
+        var _a = this.props,
+            id = _a.id,
+            attr = _a.attr,
+            content = _a.content,
+            icon = _a.icon,
+            sibling = _a.sibling,
+            _onSave = _a.onSave;
+        var comp = React.createElement(core_1.ListItem, { key: id + "_item" }, React.createElement(core_1.ListItemIcon, null, icon), React.createElement(EditableText_tsx_1.default, { defaultValue: attr.name, onSave: function onSave(name) {
+                _onSave(id, tslib_1.__assign({}, attr, { name: name }));
+            } }), content);
+        if (sibling) {
+            return [comp, sibling];
+        } else {
+            return comp;
+        }
+    };
+    return BaseAttributeItem;
+}(React.Component);
+exports.default = BaseAttributeItem;
+},{"tslib":"../node_modules/tslib/tslib.es6.js","react":"../node_modules/react/index.js","@material-ui/core":"../node_modules/@material-ui/core/index.es.js","../../EditableText.tsx":"components/common/EditableText.tsx"}],"components/common/CharacterSheetEditor/AttributeItem/NumberAttributeItem.tsx":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -101017,6 +101051,7 @@ var tslib_1 = require("tslib");
 var React = require("react");
 var core_1 = require("@material-ui/core");
 var ConfirmationNumber_1 = require("@material-ui/icons/ConfirmationNumber");
+var Base_tsx_1 = require("./Base.tsx");
 var NumberAttributeItem = /** @class */function (_super) {
     tslib_1.__extends(NumberAttributeItem, _super);
     function NumberAttributeItem() {
@@ -101038,21 +101073,19 @@ var NumberAttributeItem = /** @class */function (_super) {
     NumberAttributeItem.prototype.render = function () {
         var _this = this;
         var _a = this,
-            _b = _a.props,
-            id = _b.id,
-            attr = _b.attr,
+            props = _a.props,
             onSave = _a.onSave,
             onEnter = _a.onEnter;
-        return React.createElement(core_1.ListItem, { key: id + "_item" }, React.createElement(core_1.ListItemIcon, null, React.createElement(ConfirmationNumber_1.default, null)), React.createElement(core_1.ListItemText, { inset: true, primary: attr.name }), React.createElement(core_1.TextField, { type: "number", value: this.state.min, onKeyUp: onEnter, onChange: function onChange(e) {
-                return _this.setState({ min: Number(e.target.value) });
-            } }), React.createElement(core_1.TextField, { type: "number", value: this.state.max, onKeyUp: onEnter, onChange: function onChange(e) {
-                return _this.setState({ max: Number(e.target.value) });
-            } }), React.createElement(core_1.Button, { onClick: onSave }, "Save"));
+        return React.createElement(Base_tsx_1.default, tslib_1.__assign({}, props, { icon: React.createElement(ConfirmationNumber_1.default, null), content: React.createElement(core_1.ListItemText, null, React.createElement(core_1.TextField, { type: "number", value: this.state.min, onKeyUp: onEnter, onChange: function onChange(e) {
+                    return _this.setState({ min: Number(e.target.value) });
+                } }), React.createElement(core_1.TextField, { type: "number", value: this.state.max, onKeyUp: onEnter, onChange: function onChange(e) {
+                    return _this.setState({ max: Number(e.target.value) });
+                } }), React.createElement(core_1.Button, { onClick: onSave }, "Save")) }));
     };
     return NumberAttributeItem;
 }(React.Component);
 exports.default = NumberAttributeItem;
-},{"tslib":"../node_modules/tslib/tslib.es6.js","react":"../node_modules/react/index.js","@material-ui/core":"../node_modules/@material-ui/core/index.es.js","@material-ui/icons/ConfirmationNumber":"../node_modules/@material-ui/icons/ConfirmationNumber.js"}],"../node_modules/@material-ui/icons/Menu.js":[function(require,module,exports) {
+},{"tslib":"../node_modules/tslib/tslib.es6.js","react":"../node_modules/react/index.js","@material-ui/core":"../node_modules/@material-ui/core/index.es.js","@material-ui/icons/ConfirmationNumber":"../node_modules/@material-ui/icons/ConfirmationNumber.js","./Base.tsx":"components/common/CharacterSheetEditor/AttributeItem/Base.tsx"}],"../node_modules/@material-ui/icons/Menu.js":[function(require,module,exports) {
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -101142,6 +101175,7 @@ var React = require("react");
 var core_1 = require("@material-ui/core");
 var Menu_1 = require("@material-ui/icons/Menu");
 var EditableChip_tsx_1 = require("../../EditableChip.tsx");
+var Base_tsx_1 = require("./Base.tsx");
 var EnumAttributeItem = /** @class */function (_super) {
     tslib_1.__extends(EnumAttributeItem, _super);
     function EnumAttributeItem() {
@@ -101181,27 +101215,25 @@ var EnumAttributeItem = /** @class */function (_super) {
     EnumAttributeItem.prototype.render = function () {
         var _this = this;
         var _a = this,
-            _b = _a.props,
-            id = _b.id,
-            attr = _b.attr,
+            props = _a.props,
             newVal = _a.state.newVal;
-        return [React.createElement(core_1.ListItem, { key: id + "_item" }, React.createElement(core_1.ListItemIcon, null, React.createElement(Menu_1.default, null)), React.createElement(core_1.ListItemText, { inset: true, primary: attr.name }), React.createElement(core_1.TextField, { placeholder: "{Name} => {Number}", value: newVal, onChange: function onChange(e) {
-                return _this.setState({ newVal: e.currentTarget.value });
-            }, onKeyUp: function onKeyUp(e) {
-                if (e.key === "Enter") {
-                    _this.updateOrCreate(newVal);
-                    _this.setState({ newVal: "" });
-                }
-            } })), React.createElement(core_1.Collapse, { key: id + "_enum_vals", in: Object.keys(attr.enum).length > 0, style: { marginLeft: "10%" } }, Object.keys(attr.enum).map(function (name) {
-            return React.createElement(EditableChip_tsx_1.default, { key: name, defaultValue: name + " => " + attr.enum[name], onSave: function onSave(s) {
-                    return _this.updateOrCreate(s, name);
-                } });
-        }))];
+        return React.createElement(Base_tsx_1.default, tslib_1.__assign({}, props, { icon: React.createElement(Menu_1.default, null), content: React.createElement(core_1.ListItemText, null, React.createElement(core_1.TextField, { placeholder: "{Name} => {Number}", value: newVal, onChange: function onChange(e) {
+                    return _this.setState({ newVal: e.currentTarget.value });
+                }, onKeyUp: function onKeyUp(e) {
+                    if (e.key === "Enter") {
+                        _this.updateOrCreate(newVal);
+                        _this.setState({ newVal: "" });
+                    }
+                } })), sibling: React.createElement(core_1.Collapse, { key: props.id + "_enum_vals", in: Object.keys(props.attr.enum).length > 0, style: { marginLeft: "10%" } }, Object.keys(props.attr.enum).map(function (name) {
+                return React.createElement(EditableChip_tsx_1.default, { key: name, defaultValue: name + " => " + props.attr.enum[name], onSave: function onSave(s) {
+                        return _this.updateOrCreate(s, name);
+                    } });
+            })) }));
     };
     return EnumAttributeItem;
 }(React.Component);
 exports.default = EnumAttributeItem;
-},{"tslib":"../node_modules/tslib/tslib.es6.js","react":"../node_modules/react/index.js","@material-ui/core":"../node_modules/@material-ui/core/index.es.js","@material-ui/icons/Menu":"../node_modules/@material-ui/icons/Menu.js","../../EditableChip.tsx":"components/common/EditableChip.tsx"}],"../node_modules/@material-ui/icons/Edit.js":[function(require,module,exports) {
+},{"tslib":"../node_modules/tslib/tslib.es6.js","react":"../node_modules/react/index.js","@material-ui/core":"../node_modules/@material-ui/core/index.es.js","@material-ui/icons/Menu":"../node_modules/@material-ui/icons/Menu.js","../../EditableChip.tsx":"components/common/EditableChip.tsx","./Base.tsx":"components/common/CharacterSheetEditor/AttributeItem/Base.tsx"}],"../node_modules/@material-ui/icons/Edit.js":[function(require,module,exports) {
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -101346,6 +101378,7 @@ var index_tsx_1 = require("../../FormulaEditor/index.tsx");
 var EditableChip_tsx_1 = require("../../EditableChip.tsx");
 var Formula_tsx_1 = require("../../Formula.tsx");
 var Notifier_tsx_1 = require("../../../layouts/Notifier.tsx");
+var Base_tsx_1 = require("./Base.tsx");
 var ComputedEnumAttributeItem = /** @class */function (_super) {
     tslib_1.__extends(ComputedEnumAttributeItem, _super);
     function ComputedEnumAttributeItem() {
@@ -101395,40 +101428,36 @@ var ComputedEnumAttributeItem = /** @class */function (_super) {
     ComputedEnumAttributeItem.prototype.render = function () {
         var _this = this;
         var _a = this,
-            _b = _a.props,
-            id = _b.id,
-            attr = _b.attr,
-            _onSave = _b.onSave,
-            refs = _b.refs,
-            _c = _a.state,
-            newVal = _c.newVal,
-            enableEdit = _c.enableEdit;
-        return [React.createElement(core_1.ListItem, { key: id + "_item" }, React.createElement(core_1.ListItemIcon, null, React.createElement(Menu_1.default, null)), React.createElement(core_1.ListItemText, { inset: true, primary: attr.name }), React.createElement(core_1.Button, { onClick: function onClick() {
-                return _this.setState({ enableEdit: true });
-            } }, React.createElement(Formula_tsx_1.Expression, { expression: attr.formula, getRef: function getRef(s) {
-                return refs.getRef(s);
-            } }), React.createElement(Edit_1.default, null)), React.createElement(core_1.Dialog, { onClose: function onClose() {
-                return _this.setState({ enableEdit: false });
-            }, open: enableEdit }, React.createElement(core_1.DialogTitle, { title: "Edit " + id }, "Edit ", attr.name, " Formula"), React.createElement(core_1.DialogContent, null, React.createElement(core_1.Grid, { container: true }, React.createElement(index_tsx_1.default, { refs: refs, formula: attr.formula, onSave: function onSave(newFromula) {
-                _onSave(id, tslib_1.__assign({}, attr, { formula: newFromula }));
-                _this.setState({ enableEdit: false });
-            } })))), React.createElement(core_1.TextField, { placeholder: "{Name} => {Number}", value: newVal, onChange: function onChange(e) {
-                return _this.setState({ newVal: e.currentTarget.value });
-            }, onKeyUp: function onKeyUp(e) {
-                if (e.key === "Enter") {
-                    _this.updateOrCreate(newVal);
-                    _this.setState({ newVal: "" });
-                }
-            } })), React.createElement(core_1.Collapse, { key: id + "_enum_vals", in: Object.keys(attr.enum).length > 0, style: { marginLeft: "10%" } }, Object.keys(attr.enum).map(function (name) {
-            return React.createElement(EditableChip_tsx_1.default, { key: name, defaultValue: name + " => " + attr.enum[name], onSave: function onSave(s) {
-                    return _this.updateOrCreate(s, Number(name));
-                } });
-        }))];
+            props = _a.props,
+            _b = _a.state,
+            newVal = _b.newVal,
+            enableEdit = _b.enableEdit;
+        return React.createElement(Base_tsx_1.default, tslib_1.__assign({}, props, { icon: React.createElement(Menu_1.default, null), content: React.createElement(core_1.ListItemText, null, React.createElement(core_1.Button, { onClick: function onClick() {
+                    return _this.setState({ enableEdit: true });
+                } }, React.createElement(Formula_tsx_1.Expression, { expression: props.attr.formula, getRef: function getRef(s) {
+                    return props.refs.getRef(s);
+                } }), React.createElement(Edit_1.default, null)), React.createElement(core_1.Dialog, { onClose: function onClose() {
+                    return _this.setState({ enableEdit: false });
+                }, open: enableEdit }, React.createElement(core_1.DialogTitle, { title: "Edit " + props.id }, "Edit ", props.attr.name, " Formula"), React.createElement(core_1.DialogContent, null, React.createElement(core_1.Grid, { container: true }, React.createElement(index_tsx_1.default, { refs: props.refs, formula: props.attr.formula, onSave: function onSave(newFromula) {
+                    props.onSave(props.id, tslib_1.__assign({}, props.attr, { formula: newFromula }));
+                    _this.setState({ enableEdit: false });
+                } })))), React.createElement(core_1.TextField, { placeholder: "{Name} => {Number}", value: newVal, onChange: function onChange(e) {
+                    return _this.setState({ newVal: e.currentTarget.value });
+                }, onKeyUp: function onKeyUp(e) {
+                    if (e.key === "Enter") {
+                        _this.updateOrCreate(newVal);
+                        _this.setState({ newVal: "" });
+                    }
+                } })), sibling: React.createElement(core_1.Collapse, { key: props.id + "_enum_vals", in: Object.keys(props.attr.enum).length > 0, style: { marginLeft: "10%" } }, Object.keys(props.attr.enum).map(function (name) {
+                return React.createElement(EditableChip_tsx_1.default, { key: name, defaultValue: name + " => " + props.attr.enum[name], onSave: function onSave(s) {
+                        return _this.updateOrCreate(s, Number(name));
+                    } });
+            })) }));
     };
     return ComputedEnumAttributeItem;
 }(React.Component);
 exports.default = ComputedEnumAttributeItem;
-},{"tslib":"../node_modules/tslib/tslib.es6.js","react":"../node_modules/react/index.js","@material-ui/core":"../node_modules/@material-ui/core/index.es.js","@material-ui/icons/Menu":"../node_modules/@material-ui/icons/Menu.js","@material-ui/icons/Edit":"../node_modules/@material-ui/icons/Edit.js","../../FormulaEditor/index.tsx":"components/common/FormulaEditor/index.tsx","../../EditableChip.tsx":"components/common/EditableChip.tsx","../../Formula.tsx":"components/common/Formula.tsx","../../../layouts/Notifier.tsx":"components/layouts/Notifier.tsx"}],"../node_modules/@material-ui/icons/Computer.js":[function(require,module,exports) {
+},{"tslib":"../node_modules/tslib/tslib.es6.js","react":"../node_modules/react/index.js","@material-ui/core":"../node_modules/@material-ui/core/index.es.js","@material-ui/icons/Menu":"../node_modules/@material-ui/icons/Menu.js","@material-ui/icons/Edit":"../node_modules/@material-ui/icons/Edit.js","../../FormulaEditor/index.tsx":"components/common/FormulaEditor/index.tsx","../../EditableChip.tsx":"components/common/EditableChip.tsx","../../Formula.tsx":"components/common/Formula.tsx","../../../layouts/Notifier.tsx":"components/layouts/Notifier.tsx","./Base.tsx":"components/common/CharacterSheetEditor/AttributeItem/Base.tsx"}],"../node_modules/@material-ui/icons/Computer.js":[function(require,module,exports) {
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -101461,6 +101490,7 @@ var Computer_1 = require("@material-ui/icons/Computer");
 var Edit_1 = require("@material-ui/icons/Edit");
 var index_tsx_1 = require("../../FormulaEditor/index.tsx");
 var Formula_tsx_1 = require("../../Formula.tsx");
+var Base_tsx_1 = require("./Base.tsx");
 var ComputedNumberAttributeItem = /** @class */function (_super) {
     tslib_1.__extends(ComputedNumberAttributeItem, _super);
     function ComputedNumberAttributeItem() {
@@ -101471,27 +101501,23 @@ var ComputedNumberAttributeItem = /** @class */function (_super) {
     ComputedNumberAttributeItem.prototype.render = function () {
         var _this = this;
         var _a = this,
-            _b = _a.props,
-            id = _b.id,
-            attr = _b.attr,
-            refs = _b.refs,
-            _onSave = _b.onSave,
+            props = _a.props,
             enableEdit = _a.state.enableEdit;
-        return React.createElement(core_1.ListItem, { key: id + "_item" }, React.createElement(core_1.ListItemIcon, null, React.createElement(Computer_1.default, null)), React.createElement(core_1.ListItemText, { inset: true, primary: attr.name }), React.createElement(core_1.Button, { onClick: function onClick() {
-                return _this.setState({ enableEdit: true });
-            } }, React.createElement(Formula_tsx_1.Expression, { expression: attr.formula, getRef: function getRef(s) {
-                return refs.getRef(s);
-            } }), React.createElement(Edit_1.default, null)), React.createElement(core_1.Dialog, { onClose: function onClose() {
-                return _this.setState({ enableEdit: false });
-            }, open: enableEdit }, React.createElement(core_1.DialogTitle, { title: "Edit " + id }, "Edit ", attr.name, " Formula"), React.createElement(core_1.DialogContent, null, React.createElement(core_1.Grid, { container: true }, React.createElement(index_tsx_1.default, { refs: refs, formula: attr.formula, onSave: function onSave(newFromula) {
-                _onSave(id, tslib_1.__assign({}, attr, { formula: newFromula }));
-                _this.setState({ enableEdit: false });
-            } })))));
+        return React.createElement(Base_tsx_1.default, tslib_1.__assign({}, props, { icon: React.createElement(Computer_1.default, null), content: React.createElement(core_1.ListItemText, null, React.createElement(core_1.Button, { onClick: function onClick() {
+                    return _this.setState({ enableEdit: true });
+                } }, React.createElement(Formula_tsx_1.Expression, { expression: props.attr.formula, getRef: function getRef(s) {
+                    return props.refs.getRef(s);
+                } }), React.createElement(Edit_1.default, null)), React.createElement(core_1.Dialog, { onClose: function onClose() {
+                    return _this.setState({ enableEdit: false });
+                }, open: enableEdit }, React.createElement(core_1.DialogTitle, { title: "Edit " + props.id }, "Edit ", props.attr.name, " Formula"), React.createElement(core_1.DialogContent, null, React.createElement(core_1.Grid, { container: true }, React.createElement(index_tsx_1.default, { refs: props.refs, formula: props.attr.formula, onSave: function onSave(newFromula) {
+                    props.onSave(props.id, tslib_1.__assign({}, props.attr, { formula: newFromula }));
+                    _this.setState({ enableEdit: false });
+                } }))))) }));
     };
     return ComputedNumberAttributeItem;
 }(React.Component);
 exports.default = ComputedNumberAttributeItem;
-},{"tslib":"../node_modules/tslib/tslib.es6.js","react":"../node_modules/react/index.js","@material-ui/core":"../node_modules/@material-ui/core/index.es.js","@material-ui/icons/Computer":"../node_modules/@material-ui/icons/Computer.js","@material-ui/icons/Edit":"../node_modules/@material-ui/icons/Edit.js","../../FormulaEditor/index.tsx":"components/common/FormulaEditor/index.tsx","../../Formula.tsx":"components/common/Formula.tsx"}],"components/common/CharacterSheetEditor/AttributeItem/index.tsx":[function(require,module,exports) {
+},{"tslib":"../node_modules/tslib/tslib.es6.js","react":"../node_modules/react/index.js","@material-ui/core":"../node_modules/@material-ui/core/index.es.js","@material-ui/icons/Computer":"../node_modules/@material-ui/icons/Computer.js","@material-ui/icons/Edit":"../node_modules/@material-ui/icons/Edit.js","../../FormulaEditor/index.tsx":"components/common/FormulaEditor/index.tsx","../../Formula.tsx":"components/common/Formula.tsx","./Base.tsx":"components/common/CharacterSheetEditor/AttributeItem/Base.tsx"}],"components/common/CharacterSheetEditor/AttributeItem/index.tsx":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -101859,7 +101885,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = '' || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + '44015' + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + '40079' + '/');
   ws.onmessage = function (event) {
     var data = JSON.parse(event.data);
 

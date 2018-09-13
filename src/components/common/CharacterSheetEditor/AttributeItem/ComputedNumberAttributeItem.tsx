@@ -8,33 +8,34 @@ import FormulaEditor from '@/components/common/FormulaEditor';
 import { Attributes } from '@/attr-parser/typings';
 import { Expression } from '@/components/common/Formula';
 import { AttributeProps } from '@/components/common/CharacterSheetEditor/AttributeItem/typings';
+import BaseAttributeItem from '@/components/common/CharacterSheetEditor/AttributeItem/Base';
 
 export default class ComputedNumberAttributeItem extends React.Component<AttributeProps<Attributes.ComputedAttribute>, { enableEdit: boolean }> {
     state = { enableEdit: false }
     render() {
-        const { props: { id, attr, refs, onSave }, state: { enableEdit } } = this;
-        return <ListItem key={id + "_item"}>
-            <ListItemIcon><ComputedIcon/></ListItemIcon>
-            <ListItemText inset primary={attr.name}/>
-             
-            <Button onClick={ () => this.setState({ enableEdit: true }) }>
-                <Expression expression={attr.formula} getRef={ s => refs.getRef(s) }/>
-                <EditIcon/>
-            </Button>
-            <Dialog onClose={ () => this.setState({ enableEdit: false })} open={enableEdit}>
-                <DialogTitle title={`Edit ${id}`}>Edit {attr.name} Formula</DialogTitle>
-                <DialogContent>
-                    <Grid container>
-                        <FormulaEditor refs={refs} formula={attr.formula} onSave={ newFromula => {
-                            onSave(id, {
-                                ...attr,
-                                formula: newFromula,
-                            })
-                            this.setState({ enableEdit: false })
-                        } }/>
-                    </Grid>
-                </DialogContent>
-            </Dialog>
-        </ListItem>
+        const { props, state: { enableEdit } } = this;
+        return <BaseAttributeItem {...props}
+            icon={<ComputedIcon/>}
+            content={<ListItemText>
+                <Button onClick={ () => this.setState({ enableEdit: true }) }>
+                    <Expression expression={props.attr.formula} getRef={ s => props.refs.getRef(s) }/>
+                    <EditIcon/>
+                </Button>
+                <Dialog onClose={ () => this.setState({ enableEdit: false })} open={enableEdit}>
+                    <DialogTitle title={`Edit ${props.id}`}>Edit {props.attr.name} Formula</DialogTitle>
+                    <DialogContent>
+                        <Grid container>
+                            <FormulaEditor refs={props.refs} formula={props.attr.formula} onSave={ newFromula => {
+                                props.onSave(props.id, {
+                                    ...props.attr,
+                                    formula: newFromula,
+                                })
+                                this.setState({ enableEdit: false })
+                            } }/>
+                        </Grid>
+                    </DialogContent>
+                </Dialog>
+            </ListItemText>}
+        />
     }
 }

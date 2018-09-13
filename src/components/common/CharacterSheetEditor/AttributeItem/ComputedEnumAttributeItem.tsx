@@ -11,6 +11,7 @@ import EditableChip from '@/components/common/EditableChip';
 import { AttributeProps } from '@/components/common/CharacterSheetEditor/AttributeItem/typings';
 import { Expression } from '@/components/common/Formula';
 import Notifier from '@/components/layouts/Notifier';
+import BaseAttributeItem from '@/components/common/CharacterSheetEditor/AttributeItem/Base';
 
 export default class ComputedEnumAttributeItem extends React.Component<AttributeProps<Attributes.ComputedEnumAttribute>, { newVal: string; enableEdit?: boolean; } > {
     state = { newVal: "", enableEdit: false };
@@ -60,22 +61,20 @@ export default class ComputedEnumAttributeItem extends React.Component<Attribute
         })
     }
     render() {
-        const { props: { id, attr, onSave, refs }, state: { newVal, enableEdit } } = this;
-        return [
-            <ListItem key={id + "_item"}>
-                <ListItemIcon><EnumIcon/></ListItemIcon>
-                <ListItemText inset primary={attr.name}/>
+        const { props, state: { newVal, enableEdit } } = this;
+        return <BaseAttributeItem {...props} icon={<EnumIcon/>}
+            content={<ListItemText>
                 <Button onClick={ () => this.setState({ enableEdit: true }) }>
-                    <Expression expression={attr.formula} getRef={ s => refs.getRef(s) }/>
+                    <Expression expression={props.attr.formula} getRef={ s => props.refs.getRef(s) }/>
                     <EditIcon/>
                 </Button>
                 <Dialog onClose={ () => this.setState({ enableEdit: false })} open={enableEdit}>
-                    <DialogTitle title={`Edit ${id}`}>Edit {attr.name} Formula</DialogTitle>
+                    <DialogTitle title={`Edit ${props.id}`}>Edit {props.attr.name} Formula</DialogTitle>
                     <DialogContent>
                         <Grid container>
-                            <FormulaEditor refs={refs} formula={attr.formula} onSave={ newFromula => {
-                                onSave(id, {
-                                    ...attr,
+                            <FormulaEditor refs={props.refs} formula={props.attr.formula} onSave={ newFromula => {
+                                props.onSave(props.id, {
+                                    ...props.attr,
                                     formula: newFromula,
                                 })
                                 this.setState({ enableEdit: false })
@@ -89,16 +88,16 @@ export default class ComputedEnumAttributeItem extends React.Component<Attribute
                         this.setState({ newVal: "" });
                     }
                 } }/>
-            </ListItem>,
-            <Collapse key={id + "_enum_vals"} in={Object.keys(attr.enum).length > 0} style={{marginLeft: "10%"}}>
-                {Object.keys(attr.enum).map( name => 
+            </ListItemText>}
+            sibling={<Collapse key={props.id + "_enum_vals"} in={Object.keys(props.attr.enum).length > 0} style={{marginLeft: "10%"}}>
+                {Object.keys(props.attr.enum).map( name => 
                     <EditableChip 
                         key={name} 
-                        defaultValue={`${name} => ${attr.enum[name as any]}`} 
+                        defaultValue={`${name} => ${props.attr.enum[name as any]}`} 
                         onSave={ s => this.updateOrCreate(s, Number(name)) }
                     /> 
                 )}
-            </Collapse>
-        ]
+            </Collapse>}
+        />
     }
 }
