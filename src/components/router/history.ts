@@ -8,8 +8,11 @@ export const state = observable({
     currentPage: window.location.pathname,
 })
 
-export function goTo(path: PAGES) {
-    history.push(path);
+export function goTo(path: PAGES, ...params: string[]) {
+    if ( params.length > 0) {
+        return history.push(path + '/' + params.join('/'));
+    }
+    return history.push(path);
 }
 
 export function goHomeOrBack() {

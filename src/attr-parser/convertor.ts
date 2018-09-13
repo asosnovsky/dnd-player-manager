@@ -70,7 +70,7 @@ export function convertASTtoTokens( formula: Formulas.Expression, refs: Referenc
         }
         if ( idx < formula.operands.length - 1 ) {
             if ( isFunction(formula.operation) ) {
-                tokens.push({ value: " " });
+                tokens.push({ value: "," });
             }   else    {
                 tokens.push({ value: formula.operation });
             }
@@ -85,10 +85,12 @@ export function convertTokensToAST(tokens: Tokens.Token[]): Formulas.Expression 
 
     let currentExprs: Expression = tree;
     let braces: CLOSE_BRACE[] = [];
+    let lastWasNum: boolean = false;
 
     for (const token of tokens) {
         if ( token.value.trim() === "" ) {} else
         if ( "type" in token ) {
+            lastWasNum = false;
             switch(token.type) {
                 case "ref":
                     currentExprs.pushRef(token.ref);
@@ -102,10 +104,12 @@ export function convertTokensToAST(tokens: Tokens.Token[]): Formulas.Expression 
                     }
             }
         }   else if ( token.value in BRACES ) {
+            lastWasNum = false;
             const openBrace = token.value as OPEN_BRACE;
             braces.push(BRACES[openBrace]);
             currentExprs = currentExprs.makeChild(null);
         }   else if ( braces.indexOf(token.value as any) > -1) {
+            lastWasNum = false;
             if ( braces[braces.length - 1] === token.value && currentExprs.parent ) {
                 braces.splice(braces.length - 1, 1);
                 currentExprs = currentExprs.parent;
@@ -113,17 +117,31 @@ export function convertTokensToAST(tokens: Tokens.Token[]): Formulas.Expression 
                 throw new Error("Invalid syntax");
             }
         }   else if ( !isNaN(Number(token.value)) ) {
-            currentExprs.pushNum(Number(token.value))
+            if (lastWasNum) {
+                const lastOperand = currentExprs.operands[currentExprs.operands.length - 1];
+                if (lastOperand.type === "value") {
+                    lastOperand.value = Number(`${lastOperand.value}${token.value}`);
+                }   else    {
+                    console.error({lastWasNum, lastOperand})
+                    throw new Error("Invalid Syntax")
+                }
+            }   else    {
+                lastWasNum = true;
+                currentExprs.pushNum(Number(token.value))
+            }
         }   else    if (token.value in OPERATION_PRIORITY) {
+            lastWasNum = false;
             const operation = token.value as Formulas.Operation;
             currentExprs = currentExprs.getParentThroughOperation(operation);
+        }   else if (token.value === ',')    {
+            lastWasNum = false;
         }   else    {
             console.warn(`Ignoring...`, token)
         }
     }
 
     if (tree.operation === null) {
-        if ( tree.operands.length > 1 ) {
+        if ( tree.operands.length === 1 ) {
             tree.operation = OPERATIONS.ADDITION;
         }else{
             console.error(tree);

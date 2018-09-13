@@ -105,31 +105,7 @@ export default class ExamplePage extends Route {
                         type: "exprs",
                         operation: OPERATIONS.ADDITION,
                         operands: [
-                            { type: "value", value: 50 },
-                            {
-                                type: "exprs",
-                                operation: OPERATIONS.MULTIPLICATION,
-                                operands: [
-                                    { type: "value", value: 5 },
-                                    { type: "ref-value", value: "$root.attr.str" },
-                                ]
-                            },
-                            {
-                                type: "exprs",
-                                operation: OPERATIONS.MULTIPLICATION,
-                                operands: [
-                                    { type: "value", value: 5 },
-                                    { type: "ref-value", value: "$root.attr.lvl" },
-                                ]
-                            },
-                            {
-                                type: "exprs",
-                                operation: OPERATIONS.MULTIPLICATION,
-                                operands: [
-                                    { type: "value", value: 2 },
-                                    { type: "ref-value", value: "$root.attr.race" },
-                                ]
-                            }
+                            
                         ]
                     }} refs={new Referenciables(demo)}/>
             {/* <div contentEditable ref={ e => console.log(e) } onKeyDown={e => console.log("k",e.target)}></div> */}

@@ -2,6 +2,7 @@ import * as React from "react";
 import { Formulas, Attributes } from '@/attr-parser/typings';
 import { Typography } from '@material-ui/core';
 import { stringifyFormula } from '@/attr-parser/convertor';
+import { isFunction } from "@/attr-parser/util";
 
 interface IProps { 
     expression: Formulas.Expression; 
@@ -32,6 +33,7 @@ interface IExpressionProps {
 export class Expression extends React.Component<IExpressionProps> {
 
     render() {
+        const isFunc = isFunction(this.props.expression.operation);
         const children = this.props.expression.operands.map( (operand, idx) => {
             let Child:React.ComponentType;
             switch (operand.type) {
@@ -49,15 +51,29 @@ export class Expression extends React.Component<IExpressionProps> {
                 default:
                     Child = () => <i>[[N/A]]</i>
                 }
-            return <span key={idx}>
-                {(idx > 0) && this.props.expression.operation}
-                <Child/>
-            </span>
+            if (idx > 0 && !isFunc) {
+                return <span key={idx}>
+                    {this.props.expression.operation}
+                    <Child/>
+                </span>
+            }   else    if (idx > 0 && isFunc ) {
+                return <span key={idx}>
+                    ,
+                    <Child/>
+                </span>
+            }   else    return <Child/>
         } )
-        if (this.props.withBracket) {
-            return <span>({...children})</span>
+        const Child = () => {
+            if (isFunc) {
+                return <span>{this.props.expression.operation}({...children})</span>
+            }   else    {
+                return <span>{...children}</span>
+            }
+        }
+        if (this.props.withBracket && !isFunc) {
+            return <span>(<Child/>)</span>
         }   else    {
-            return <span>{...children}</span>
+            return <Child/>
         }
     }
 

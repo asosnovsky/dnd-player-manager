@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Router, Switch } from "react-router";
+import { Router, Switch, Route } from "react-router";
 
 import { history } from "./history";
 
@@ -15,7 +15,8 @@ import PlayerPage from "@/components/routes/PlayerPage";
 import { PAGES } from "@/components/router/routes.enums";
 import GameMasterPage from "@/components/routes/GameMasterPage";
 import GameOverviewPage from "@/components/routes/GameOverviewPage";
-import CharacterSheetEditorPage from '@/components/routes/CharacterSheetEditorPage';
+import CharacterSheetListingPage from '@/components/routes/CharacterSheetListingPage';
+import CharacterSheetEditorPage from '@/components/routes/CharacterSheetEditor';
 
 export default class AppRouter extends React.Component {
     public render() {
@@ -31,7 +32,8 @@ export default class AppRouter extends React.Component {
                                 <PlayerPage path={PAGES.PLAYER} exact/>
                                 <GameMasterPage path={PAGES.GAME_MASTER} exact/>
                                 <GameOverviewPage path={PAGES.GAME_OVERVIEW} exact/>
-                                <CharacterSheetEditorPage path={PAGES.CHARACTER_EDITOR} exact/>
+                                <CharacterSheetListingPage path={PAGES.CHARACTER_LSTING} exact/>
+                                <Route path={PAGES.CHARACTER_EDITOR + "/:id"} component={CharacterSheetEditorPage} exact/> 
 
                                 <ExamplePage path={"/example"}/>
                                 <NotFoundPage path="*"/>

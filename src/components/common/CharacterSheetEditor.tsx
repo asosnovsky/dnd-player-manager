@@ -24,6 +24,7 @@ import { Expression } from '@/components/common/Formula';
 
 interface IProps {
     value?: Attributes.Category;
+    onSave?: ( newTree: Attributes.Category ) => void;
 }
 interface IState {
     tree: Attributes.Category;
@@ -51,13 +52,17 @@ export default class CharacterSheetEditor extends React.Component<IProps, IState
         const refs = getAllReferanciables(this.state.tree);
         return <Paper>
             <CategoryAttributeItem id="" attr={this.state.tree} onSave={ (id, attr) => {
+                const newTree = applyOperation(this.state.tree, {
+                    op: "replace",
+                    path: id,
+                    value: attr,
+                }).newDocument;
                 this.setState({
-                    tree: applyOperation(this.state.tree, {
-                        op: "replace",
-                        path: id,
-                        value: attr,
-                    }).newDocument
+                    tree: newTree,
                 })                
+                if (this.props.onSave) {
+                    this.props.onSave(newTree);
+                }
             } } refs={refs}/>
         </Paper>
     }
@@ -222,34 +227,29 @@ class NumberAttributeItem extends React.Component<AttributeProps<Attributes.Numb
     }
 }
 
-class ComputedNumberAttributeItem extends React.Component<AttributeProps<Attributes.ComputedAttribute>, { formula: Formulas.Expression, enableEdit: boolean }> {
-    state = { formula: this.props.attr.formula, enableEdit: true }
-    componentWillReceiveProps(nextProps: AttributeProps<Attributes.ComputedAttribute>) {
-        this.setState({ formula: nextProps.attr.formula })
-    }
-    onSave = () => {
-        this.props.onSave(this.props.id, {
-            ...this.props.attr,
-            formula: this.state.formula,
-        })
-    }
-    onEnter = (e: React.KeyboardEvent<HTMLDivElement>) => {
-        if (e.key === "Enter") {
-            this.onSave();
-        }
-    } 
+class ComputedNumberAttributeItem extends React.Component<AttributeProps<Attributes.ComputedAttribute>, { enableEdit: boolean }> {
+    state = { enableEdit: false }
     render() {
-        const { props: { id, attr, refs }, state: { formula, enableEdit }, onSave, onEnter } = this;
+        const { props: { id, attr, refs, onSave }, state: { enableEdit } } = this;
         return <ListItem key={id + "_item"}>
             <ListItemIcon><ComputedIcon/></ListItemIcon>
             <ListItemText inset primary={attr.name}/>
-            <Expression expression={formula} getRef={ s => refs.getRef(s) }/> 
-            <Button onClick={ () => this.setState({ enableEdit: true }) }><EditIcon/> Edit</Button>
+             
+            <Button onClick={ () => this.setState({ enableEdit: true }) }>
+                <Expression expression={attr.formula} getRef={ s => refs.getRef(s) }/>
+                <EditIcon/>
+            </Button>
             <Dialog onClose={ () => this.setState({ enableEdit: false })} open={enableEdit}>
                 <DialogTitle title={`Edit ${id}`}>Edit {attr.name} Formula</DialogTitle>
                 <DialogContent>
                     <Grid container>
-                        <FormulaEditor refs={refs} formula={formula}/>
+                        <FormulaEditor refs={refs} formula={attr.formula} onSave={ newFromula => {
+                            onSave(id, {
+                                ...attr,
+                                formula: newFromula,
+                            })
+                            this.setState({ enableEdit: false })
+                        } }/>
                     </Grid>
                 </DialogContent>
             </Dialog>

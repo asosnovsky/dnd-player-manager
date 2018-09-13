@@ -1,6 +1,14 @@
 {
   "rules": {
-    ".read": false,
-    ".write": false
+    "games": {
+      ".read": true,
+      ".write": true
+    },
+    "characterSheets": {
+      "$sheetId": {
+        ".read": true,
+        ".write": "root.child('characterSheets').child($sheetId).child('owner').val() == auth.uid"
+      }
+    }
   }
 }

@@ -167,7 +167,7 @@ describe("AST Design", () => {
             { value: "+" },
             { type: "func", value: FUNCTIONS.MAX },
             { value: "2" },
-            { value: "" },
+            { value: "," },
             { value: "3" },
             { value: ")" },
         ]))).equals("1+(max(2,3))")
@@ -179,9 +179,24 @@ describe("AST Design", () => {
             { value: "**" },
             { type: "func", value: FUNCTIONS.MIN },
             { type: "ref", value: "Level", ref: "$root.Level" },
-            { value: "" },
+            { value: "," },
             { value: "3" },
             { value: ")" },
         ]))).equals("1+(3**(min($root.Level,3)))")
+    })
+    it("Multichar-nums", () => {
+        expect(stringifyFormula(convertTokensToAST([
+            { value: "1" },
+            { value: "0" },
+            { value: "0" },
+            { value: "+" },
+            { type: "func", value: FUNCTIONS.MAX },
+            { type: "ref", value: "Level", ref: "$root.Level" },
+            { value: "," },
+            { value: "2" },
+            { value: "" },
+            { value: "3" },
+            { value: ")" },
+        ]))).equals("100+(max($root.Level,23))")
     })
 })

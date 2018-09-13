@@ -26,7 +26,7 @@ export default class DBObject<Data extends DBObjectData> {
 
     save() {
         const data = this.toJson();
-        this.ref.update(data);
+        return this.ref.update(data);
     }
 
     get<Key extends keyof Data>(key: Key): Data[Key] {
