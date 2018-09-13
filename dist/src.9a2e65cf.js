@@ -101201,29 +101201,7 @@ var EnumAttributeItem = /** @class */function (_super) {
     return EnumAttributeItem;
 }(React.Component);
 exports.default = EnumAttributeItem;
-},{"tslib":"../node_modules/tslib/tslib.es6.js","react":"../node_modules/react/index.js","@material-ui/core":"../node_modules/@material-ui/core/index.es.js","@material-ui/icons/Menu":"../node_modules/@material-ui/icons/Menu.js","../../EditableChip.tsx":"components/common/EditableChip.tsx"}],"../node_modules/@material-ui/icons/Computer.js":[function(require,module,exports) {
-"use strict";
-
-var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = void 0;
-
-var _react = _interopRequireDefault(require("react"));
-
-var _createSvgIcon = _interopRequireDefault(require("./utils/createSvgIcon"));
-
-var _default = (0, _createSvgIcon.default)(_react.default.createElement(_react.default.Fragment, null, _react.default.createElement("path", {
-  fill: "none",
-  d: "M0 0h24v24H0z"
-}), _react.default.createElement("path", {
-  d: "M20 18c1.1 0 1.99-.9 1.99-2L22 6c0-1.1-.9-2-2-2H4c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2H0v2h24v-2h-4zM4 6h16v10H4V6z"
-})), 'Computer');
-
-exports.default = _default;
-},{"@babel/runtime/helpers/interopRequireDefault":"../node_modules/@babel/runtime/helpers/interopRequireDefault.js","react":"../node_modules/react/index.js","./utils/createSvgIcon":"../node_modules/@material-ui/icons/utils/createSvgIcon.js"}],"../node_modules/@material-ui/icons/Edit.js":[function(require,module,exports) {
+},{"tslib":"../node_modules/tslib/tslib.es6.js","react":"../node_modules/react/index.js","@material-ui/core":"../node_modules/@material-ui/core/index.es.js","@material-ui/icons/Menu":"../node_modules/@material-ui/icons/Menu.js","../../EditableChip.tsx":"components/common/EditableChip.tsx"}],"../node_modules/@material-ui/icons/Edit.js":[function(require,module,exports) {
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -101362,16 +101340,56 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = require("tslib");
 var React = require("react");
 var core_1 = require("@material-ui/core");
-var Computer_1 = require("@material-ui/icons/Computer");
+var Menu_1 = require("@material-ui/icons/Menu");
 var Edit_1 = require("@material-ui/icons/Edit");
-var EditableChip_tsx_1 = require("../../EditableChip.tsx");
 var index_tsx_1 = require("../../FormulaEditor/index.tsx");
+var EditableChip_tsx_1 = require("../../EditableChip.tsx");
 var Formula_tsx_1 = require("../../Formula.tsx");
+var Notifier_tsx_1 = require("../../../layouts/Notifier.tsx");
 var ComputedEnumAttributeItem = /** @class */function (_super) {
     tslib_1.__extends(ComputedEnumAttributeItem, _super);
     function ComputedEnumAttributeItem() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
-        _this.state = { enableEdit: false };
+        _this.state = { newVal: "", enableEdit: false };
+        _this.updateOrCreate = function (s, oldName) {
+            var _a;
+            var _b = _this.props,
+                id = _b.id,
+                attr = _b.attr,
+                onSave = _b.onSave;
+            var enums = tslib_1.__assign({}, attr.enum);
+            if (oldName) {
+                delete enums[oldName];
+            }
+            if (s.trim() === "") {
+                return;
+            }
+            var sSplitted = s.split("=>");
+            if (sSplitted.length !== 2) {
+                Notifier_tsx_1.default.notify("Invalid Syntax!");
+                return;
+            }
+            var newName = sSplitted[0],
+                val = sSplitted[1];
+            var numVal = Number(val);
+            var numNewName = Number(newName.trim());
+            if (isNaN(numNewName)) {
+                Notifier_tsx_1.default.notify("Computed enums can only map number ranges!");
+                return;
+            }
+            if (isNaN(numVal)) {
+                Notifier_tsx_1.default.notify("Invalid mapping to. Must be numeric!");
+                return;
+            }
+            var mapeds = Object.keys(enums).map(Number);
+            var similarMapIdx = mapeds.map(function (k) {
+                return enums[k];
+            }).indexOf(numVal);
+            if (similarMapIdx > -1) {
+                delete enums[mapeds[similarMapIdx]];
+            }
+            return onSave(id, tslib_1.__assign({}, attr, { enum: tslib_1.__assign({}, enums, (_a = {}, _a[numNewName] = numVal, _a)) }));
+        };
         return _this;
     }
     ComputedEnumAttributeItem.prototype.render = function () {
@@ -101382,8 +101400,10 @@ var ComputedEnumAttributeItem = /** @class */function (_super) {
             attr = _b.attr,
             _onSave = _b.onSave,
             refs = _b.refs,
-            enableEdit = _a.state.enableEdit;
-        return React.createElement(core_1.ListItem, { key: id + "_item" }, React.createElement(core_1.ListItemIcon, null, React.createElement(Computer_1.default, null)), React.createElement(core_1.ListItemText, { inset: true, primary: attr.name }), React.createElement(core_1.Button, { onClick: function onClick() {
+            _c = _a.state,
+            newVal = _c.newVal,
+            enableEdit = _c.enableEdit;
+        return [React.createElement(core_1.ListItem, { key: id + "_item" }, React.createElement(core_1.ListItemIcon, null, React.createElement(Menu_1.default, null)), React.createElement(core_1.ListItemText, { inset: true, primary: attr.name }), React.createElement(core_1.Button, { onClick: function onClick() {
                 return _this.setState({ enableEdit: true });
             } }, React.createElement(Formula_tsx_1.Expression, { expression: attr.formula, getRef: function getRef(s) {
                 return refs.getRef(s);
@@ -101392,26 +101412,45 @@ var ComputedEnumAttributeItem = /** @class */function (_super) {
             }, open: enableEdit }, React.createElement(core_1.DialogTitle, { title: "Edit " + id }, "Edit ", attr.name, " Formula"), React.createElement(core_1.DialogContent, null, React.createElement(core_1.Grid, { container: true }, React.createElement(index_tsx_1.default, { refs: refs, formula: attr.formula, onSave: function onSave(newFromula) {
                 _onSave(id, tslib_1.__assign({}, attr, { formula: newFromula }));
                 _this.setState({ enableEdit: false });
-            } })))), Object.keys(attr.enum).map(function (name) {
-            return React.createElement(EditableChip_tsx_1.default, { key: name, defaultValue: name + " => " + attr.enum[Number(name)], onSave: function onSave(s) {
-                    var _a;
-                    var _b = s.split("=>"),
-                        newName = _b[0],
-                        val = _b[1];
-                    var numVal = Number(val);
-                    if (isNaN(numVal)) {
-                        return _onSave(id, tslib_1.__assign({}, attr));
-                    }
-                    var enums = tslib_1.__assign({}, attr.enum);
-                    delete enums[Number(name)];
-                    return _onSave(id, tslib_1.__assign({}, attr, { enum: tslib_1.__assign({}, enums, (_a = {}, _a[newName.trim()] = numVal, _a)) }));
+            } })))), React.createElement(core_1.TextField, { placeholder: "{Name} => {Number}", value: newVal, onChange: function onChange(e) {
+                return _this.setState({ newVal: e.currentTarget.value });
+            }, onKeyUp: function onKeyUp(e) {
+                if (e.key === "Enter") {
+                    _this.updateOrCreate(newVal);
+                    _this.setState({ newVal: "" });
+                }
+            } })), React.createElement(core_1.Collapse, { key: id + "_enum_vals", in: Object.keys(attr.enum).length > 0, style: { marginLeft: "10%" } }, Object.keys(attr.enum).map(function (name) {
+            return React.createElement(EditableChip_tsx_1.default, { key: name, defaultValue: name + " => " + attr.enum[name], onSave: function onSave(s) {
+                    return _this.updateOrCreate(s, Number(name));
                 } });
-        }));
+        }))];
     };
     return ComputedEnumAttributeItem;
 }(React.Component);
 exports.default = ComputedEnumAttributeItem;
-},{"tslib":"../node_modules/tslib/tslib.es6.js","react":"../node_modules/react/index.js","@material-ui/core":"../node_modules/@material-ui/core/index.es.js","@material-ui/icons/Computer":"../node_modules/@material-ui/icons/Computer.js","@material-ui/icons/Edit":"../node_modules/@material-ui/icons/Edit.js","../../EditableChip.tsx":"components/common/EditableChip.tsx","../../FormulaEditor/index.tsx":"components/common/FormulaEditor/index.tsx","../../Formula.tsx":"components/common/Formula.tsx"}],"components/common/CharacterSheetEditor/AttributeItem/ComputedNumberAttributeItem.tsx":[function(require,module,exports) {
+},{"tslib":"../node_modules/tslib/tslib.es6.js","react":"../node_modules/react/index.js","@material-ui/core":"../node_modules/@material-ui/core/index.es.js","@material-ui/icons/Menu":"../node_modules/@material-ui/icons/Menu.js","@material-ui/icons/Edit":"../node_modules/@material-ui/icons/Edit.js","../../FormulaEditor/index.tsx":"components/common/FormulaEditor/index.tsx","../../EditableChip.tsx":"components/common/EditableChip.tsx","../../Formula.tsx":"components/common/Formula.tsx","../../../layouts/Notifier.tsx":"components/layouts/Notifier.tsx"}],"../node_modules/@material-ui/icons/Computer.js":[function(require,module,exports) {
+"use strict";
+
+var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _react = _interopRequireDefault(require("react"));
+
+var _createSvgIcon = _interopRequireDefault(require("./utils/createSvgIcon"));
+
+var _default = (0, _createSvgIcon.default)(_react.default.createElement(_react.default.Fragment, null, _react.default.createElement("path", {
+  fill: "none",
+  d: "M0 0h24v24H0z"
+}), _react.default.createElement("path", {
+  d: "M20 18c1.1 0 1.99-.9 1.99-2L22 6c0-1.1-.9-2-2-2H4c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2H0v2h24v-2h-4zM4 6h16v10H4V6z"
+})), 'Computer');
+
+exports.default = _default;
+},{"@babel/runtime/helpers/interopRequireDefault":"../node_modules/@babel/runtime/helpers/interopRequireDefault.js","react":"../node_modules/react/index.js","./utils/createSvgIcon":"../node_modules/@material-ui/icons/utils/createSvgIcon.js"}],"components/common/CharacterSheetEditor/AttributeItem/ComputedNumberAttributeItem.tsx":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });

@@ -4,8 +4,8 @@ import { Grid, ListItem, ListItemText, ListItemIcon, Button, Dialog, DialogConte
 import ComputedIcon from '@material-ui/icons/Computer';
 import EditIcon from '@material-ui/icons/Edit';
 
-import { Attributes, Formulas } from '@/attr-parser/typings';
 import FormulaEditor from '@/components/common/FormulaEditor';
+import { Attributes } from '@/attr-parser/typings';
 import { Expression } from '@/components/common/Formula';
 import { AttributeProps } from '@/components/common/CharacterSheetEditor/AttributeItem/typings';
 
