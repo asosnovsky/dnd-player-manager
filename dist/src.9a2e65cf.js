@@ -68866,6 +68866,28 @@ var _default = (0, _createSvgIcon.default)(_react.default.createElement(_react.d
 })), 'CreateNewFolder');
 
 exports.default = _default;
+},{"@babel/runtime/helpers/interopRequireDefault":"../node_modules/@babel/runtime/helpers/interopRequireDefault.js","react":"../node_modules/react/index.js","./utils/createSvgIcon":"../node_modules/@material-ui/icons/utils/createSvgIcon.js"}],"../node_modules/@material-ui/icons/People.js":[function(require,module,exports) {
+"use strict";
+
+var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _react = _interopRequireDefault(require("react"));
+
+var _createSvgIcon = _interopRequireDefault(require("./utils/createSvgIcon"));
+
+var _default = (0, _createSvgIcon.default)(_react.default.createElement(_react.default.Fragment, null, _react.default.createElement("path", {
+  fill: "none",
+  d: "M0 0h24v24H0z"
+}), _react.default.createElement("path", {
+  d: "M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"
+})), 'People');
+
+exports.default = _default;
 },{"@babel/runtime/helpers/interopRequireDefault":"../node_modules/@babel/runtime/helpers/interopRequireDefault.js","react":"../node_modules/react/index.js","./utils/createSvgIcon":"../node_modules/@material-ui/icons/utils/createSvgIcon.js"}],"components/layouts/SideBar.tsx":[function(require,module,exports) {
 "use strict";
 
@@ -68881,6 +68903,7 @@ var ArrowBack_1 = require("@material-ui/icons/ArrowBack");
 var Person_1 = require("@material-ui/icons/Person");
 var Home_1 = require("@material-ui/icons/Home");
 var CreateNewFolder_1 = require("@material-ui/icons/CreateNewFolder");
+var People_1 = require("@material-ui/icons/People");
 var history_ts_1 = require("../router/history.ts");
 exports.state = mobx_1.observable({ isOpen: false });
 var default_1 = /** @class */function (_super) {
@@ -68905,13 +68928,13 @@ var default_1 = /** @class */function (_super) {
     default_1.prototype.render = function () {
         return React.createElement(Drawer_1.default, { open: exports.state.isOpen, onClose: function onClose(_) {
                 return exports.state.isOpen = false;
-            } }, React.createElement(List_1.default, null, window.location.pathname !== history_ts_1.PAGES.HOME && React.createElement(core_1.ListItem, null, React.createElement(core_1.IconButton, { onClick: this.goTo(history_ts_1.PAGES.HOME, true) }, React.createElement(ArrowBack_1.default, null))), React.createElement(core_1.ListItem, null, React.createElement(core_1.IconButton, { onClick: this.goTo(history_ts_1.PAGES.HOME) }, React.createElement(Home_1.default, null))), React.createElement(core_1.ListItem, null, React.createElement(core_1.IconButton, { onClick: this.goTo(history_ts_1.PAGES.PLAYER) }, React.createElement(Person_1.default, null))), React.createElement(core_1.ListItem, null, React.createElement(core_1.IconButton, { onClick: this.goTo(history_ts_1.PAGES.GAME_MASTER) }, React.createElement(CreateNewFolder_1.default, null)))));
+            } }, React.createElement(List_1.default, null, window.location.pathname !== history_ts_1.PAGES.HOME && React.createElement(core_1.ListItem, null, React.createElement(core_1.IconButton, { onClick: this.goTo(history_ts_1.PAGES.HOME, true) }, React.createElement(ArrowBack_1.default, null))), React.createElement(core_1.ListItem, null, React.createElement(core_1.IconButton, { onClick: this.goTo(history_ts_1.PAGES.HOME) }, React.createElement(Home_1.default, null))), React.createElement(core_1.ListItem, null, React.createElement(core_1.IconButton, { onClick: this.goTo(history_ts_1.PAGES.PLAYER) }, React.createElement(Person_1.default, null))), React.createElement(core_1.ListItem, null, React.createElement(core_1.IconButton, { onClick: this.goTo(history_ts_1.PAGES.GAME_MASTER) }, React.createElement(CreateNewFolder_1.default, null))), React.createElement(core_1.ListItem, null, React.createElement(core_1.IconButton, { onClick: this.goTo(history_ts_1.PAGES.CHARACTER_LSTING) }, React.createElement(People_1.default, null)))));
     };
     default_1 = tslib_1.__decorate([mobx_react_1.observer], default_1);
     return default_1;
 }(React.Component);
 exports.default = default_1;
-},{"tslib":"../node_modules/tslib/tslib.es6.js","react":"../node_modules/react/index.js","mobx":"../node_modules/mobx/lib/mobx.module.js","mobx-react":"../node_modules/mobx-react/index.module.js","@material-ui/core/Drawer":"../node_modules/@material-ui/core/Drawer/index.js","@material-ui/core/List":"../node_modules/@material-ui/core/List/index.js","@material-ui/core":"../node_modules/@material-ui/core/index.es.js","@material-ui/icons/ArrowBack":"../node_modules/@material-ui/icons/ArrowBack.js","@material-ui/icons/Person":"../node_modules/@material-ui/icons/Person.js","@material-ui/icons/Home":"../node_modules/@material-ui/icons/Home.js","@material-ui/icons/CreateNewFolder":"../node_modules/@material-ui/icons/CreateNewFolder.js","../router/history.ts":"components/router/history.ts"}],"../node_modules/whatwg-fetch/fetch.js":[function(require,module,exports) {
+},{"tslib":"../node_modules/tslib/tslib.es6.js","react":"../node_modules/react/index.js","mobx":"../node_modules/mobx/lib/mobx.module.js","mobx-react":"../node_modules/mobx-react/index.module.js","@material-ui/core/Drawer":"../node_modules/@material-ui/core/Drawer/index.js","@material-ui/core/List":"../node_modules/@material-ui/core/List/index.js","@material-ui/core":"../node_modules/@material-ui/core/index.es.js","@material-ui/icons/ArrowBack":"../node_modules/@material-ui/icons/ArrowBack.js","@material-ui/icons/Person":"../node_modules/@material-ui/icons/Person.js","@material-ui/icons/Home":"../node_modules/@material-ui/icons/Home.js","@material-ui/icons/CreateNewFolder":"../node_modules/@material-ui/icons/CreateNewFolder.js","@material-ui/icons/People":"../node_modules/@material-ui/icons/People.js","../router/history.ts":"components/router/history.ts"}],"../node_modules/whatwg-fetch/fetch.js":[function(require,module,exports) {
 (function(self) {
   'use strict';
 
@@ -98416,6 +98439,8 @@ var default_1 = /** @class */function (_super) {
                     return "GM Mode";
                 case history_ts_1.PAGES.GAME_OVERVIEW:
                     return "Game Mode";
+                case history_ts_1.PAGES.CHARACTER_LSTING:
+                    return "Character Sheets";
                 default:
                     return history_ts_1.state.currentPage;
             }
@@ -99739,10 +99764,12 @@ var CharacterSheet = /** @class */function (_super) {
             CharacterSheet.lastStart = null;
         }
         ref.limitToFirst(11).once('value', function (snap) {
-            var val = snap.val();
-            CharacterSheet.listings = Object.keys(val).map(function (k) {
-                return tslib_1.__assign({ id: k }, val[k]);
-            });
+            if (snap.exists()) {
+                var val_1 = snap.val();
+                CharacterSheet.listings = Object.keys(val_1).map(function (k) {
+                    return tslib_1.__assign({ id: k }, val_1[k]);
+                });
+            }
         });
     };
     CharacterSheet.loadFromId = function (id) {
@@ -99830,10 +99857,10 @@ var CharacterSheetListing = /** @class */function (_super) {
     }
     CharacterSheetListing.prototype.render = function () {
         var _this = this;
-        return React.createElement(core_1.Grid, { item: true }, React.createElement(core_1.Table, null, React.createElement(core_1.TableBody, null, this.props.listings.map(function (listing, idx) {
-            return React.createElement(core_1.TableRow, { key: idx }, React.createElement(core_1.TableCell, null, listing.name), React.createElement(core_1.TableCell, null, listing.description), React.createElement(core_1.TableCell, null, React.createElement(core_1.Button, { onClick: function onClick() {
+        return React.createElement(core_1.Grid, { item: true }, React.createElement(core_1.Table, null, React.createElement(core_1.TableHead, null, React.createElement(core_1.TableRow, null, React.createElement(core_1.TableCell, { padding: "dense" }, "Owner"), React.createElement(core_1.TableCell, null, "Sheet Name"), React.createElement(core_1.TableCell, null, "Sheet Description"))), React.createElement(core_1.TableBody, null, this.props.listings.map(function (listing, idx) {
+            return React.createElement(core_1.TableRow, { hover: true, key: idx, onClick: function onClick() {
                     _this.props.onLoad(listing);
-                } }, "Load")));
+                } }, React.createElement(core_1.TableCell, { padding: "dense" }, listing.owner), React.createElement(core_1.TableCell, null, listing.name), React.createElement(core_1.TableCell, null, listing.description));
         })), React.createElement(core_1.TableFooter, null, React.createElement(core_1.TableRow, null, React.createElement(core_1.TablePagination, { colSpan: 3, count: this.props.listings.length, rowsPerPage: 10, rowsPerPageOptions: [10], page: 0, onChangePage: function onChangePage(_, page) {
                 _this.props.onChangePage(page > 0 ? "next" : "prev");
             }, ActionsComponent: function ActionsComponent(props) {
@@ -99924,7 +99951,7 @@ exports.genDefaultTree = function () {
                         formula: {
                             type: "exprs",
                             operation: evaluators_ts_1.OPERATIONS.ADDITION,
-                            operands: [{ value: "$root.attr.exprs", type: "ref-value" }]
+                            operands: [{ value: "$root.about.exp", type: "ref-value" }]
                         },
                         enum: {
                             0: 1,
@@ -100938,6 +100965,28 @@ var _default = (0, _createSvgIcon.default)(_react.default.createElement(_react.d
 })), 'ExpandMore');
 
 exports.default = _default;
+},{"@babel/runtime/helpers/interopRequireDefault":"../node_modules/@babel/runtime/helpers/interopRequireDefault.js","react":"../node_modules/react/index.js","./utils/createSvgIcon":"../node_modules/@material-ui/icons/utils/createSvgIcon.js"}],"../node_modules/@material-ui/icons/Add.js":[function(require,module,exports) {
+"use strict";
+
+var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _react = _interopRequireDefault(require("react"));
+
+var _createSvgIcon = _interopRequireDefault(require("./utils/createSvgIcon"));
+
+var _default = (0, _createSvgIcon.default)(_react.default.createElement(_react.default.Fragment, null, _react.default.createElement("path", {
+  d: "M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"
+}), _react.default.createElement("path", {
+  fill: "none",
+  d: "M0 0h24v24H0z"
+})), 'Add');
+
+exports.default = _default;
 },{"@babel/runtime/helpers/interopRequireDefault":"../node_modules/@babel/runtime/helpers/interopRequireDefault.js","react":"../node_modules/react/index.js","./utils/createSvgIcon":"../node_modules/@material-ui/icons/utils/createSvgIcon.js"}],"../node_modules/@material-ui/icons/ConfirmationNumber.js":[function(require,module,exports) {
 "use strict";
 
@@ -100960,7 +101009,50 @@ var _default = (0, _createSvgIcon.default)(_react.default.createElement(_react.d
 })), 'ConfirmationNumber');
 
 exports.default = _default;
-},{"@babel/runtime/helpers/interopRequireDefault":"../node_modules/@babel/runtime/helpers/interopRequireDefault.js","react":"../node_modules/react/index.js","./utils/createSvgIcon":"../node_modules/@material-ui/icons/utils/createSvgIcon.js"}],"../node_modules/@material-ui/icons/Menu.js":[function(require,module,exports) {
+},{"@babel/runtime/helpers/interopRequireDefault":"../node_modules/@babel/runtime/helpers/interopRequireDefault.js","react":"../node_modules/react/index.js","./utils/createSvgIcon":"../node_modules/@material-ui/icons/utils/createSvgIcon.js"}],"components/common/CharacterSheetEditor/AttributeItem/NumberAttributeItem.tsx":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var tslib_1 = require("tslib");
+var React = require("react");
+var core_1 = require("@material-ui/core");
+var ConfirmationNumber_1 = require("@material-ui/icons/ConfirmationNumber");
+var NumberAttributeItem = /** @class */function (_super) {
+    tslib_1.__extends(NumberAttributeItem, _super);
+    function NumberAttributeItem() {
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this.state = { min: _this.props.attr.min, max: _this.props.attr.max };
+        _this.onSave = function () {
+            _this.props.onSave(_this.props.id, tslib_1.__assign({}, _this.props.attr, { min: Math.min(_this.state.max, _this.state.min), max: Math.max(_this.state.max, _this.state.min) }));
+        };
+        _this.onEnter = function (e) {
+            if (e.key === "Enter") {
+                _this.onSave();
+            }
+        };
+        return _this;
+    }
+    NumberAttributeItem.prototype.componentWillReceiveProps = function (nextProps) {
+        this.setState({ min: nextProps.attr.min, max: nextProps.attr.max });
+    };
+    NumberAttributeItem.prototype.render = function () {
+        var _this = this;
+        var _a = this,
+            _b = _a.props,
+            id = _b.id,
+            attr = _b.attr,
+            onSave = _a.onSave,
+            onEnter = _a.onEnter;
+        return React.createElement(core_1.ListItem, { key: id + "_item" }, React.createElement(core_1.ListItemIcon, null, React.createElement(ConfirmationNumber_1.default, null)), React.createElement(core_1.ListItemText, { inset: true, primary: attr.name }), React.createElement(core_1.TextField, { type: "number", value: this.state.min, onKeyUp: onEnter, onChange: function onChange(e) {
+                return _this.setState({ min: Number(e.target.value) });
+            } }), React.createElement(core_1.TextField, { type: "number", value: this.state.max, onKeyUp: onEnter, onChange: function onChange(e) {
+                return _this.setState({ max: Number(e.target.value) });
+            } }), React.createElement(core_1.Button, { onClick: onSave }, "Save"));
+    };
+    return NumberAttributeItem;
+}(React.Component);
+exports.default = NumberAttributeItem;
+},{"tslib":"../node_modules/tslib/tslib.es6.js","react":"../node_modules/react/index.js","@material-ui/core":"../node_modules/@material-ui/core/index.es.js","@material-ui/icons/ConfirmationNumber":"../node_modules/@material-ui/icons/ConfirmationNumber.js"}],"../node_modules/@material-ui/icons/Menu.js":[function(require,module,exports) {
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -100980,72 +101072,6 @@ var _default = (0, _createSvgIcon.default)(_react.default.createElement(_react.d
 }), _react.default.createElement("path", {
   d: "M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"
 })), 'Menu');
-
-exports.default = _default;
-},{"@babel/runtime/helpers/interopRequireDefault":"../node_modules/@babel/runtime/helpers/interopRequireDefault.js","react":"../node_modules/react/index.js","./utils/createSvgIcon":"../node_modules/@material-ui/icons/utils/createSvgIcon.js"}],"../node_modules/@material-ui/icons/Computer.js":[function(require,module,exports) {
-"use strict";
-
-var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = void 0;
-
-var _react = _interopRequireDefault(require("react"));
-
-var _createSvgIcon = _interopRequireDefault(require("./utils/createSvgIcon"));
-
-var _default = (0, _createSvgIcon.default)(_react.default.createElement(_react.default.Fragment, null, _react.default.createElement("path", {
-  fill: "none",
-  d: "M0 0h24v24H0z"
-}), _react.default.createElement("path", {
-  d: "M20 18c1.1 0 1.99-.9 1.99-2L22 6c0-1.1-.9-2-2-2H4c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2H0v2h24v-2h-4zM4 6h16v10H4V6z"
-})), 'Computer');
-
-exports.default = _default;
-},{"@babel/runtime/helpers/interopRequireDefault":"../node_modules/@babel/runtime/helpers/interopRequireDefault.js","react":"../node_modules/react/index.js","./utils/createSvgIcon":"../node_modules/@material-ui/icons/utils/createSvgIcon.js"}],"../node_modules/@material-ui/icons/Edit.js":[function(require,module,exports) {
-"use strict";
-
-var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = void 0;
-
-var _react = _interopRequireDefault(require("react"));
-
-var _createSvgIcon = _interopRequireDefault(require("./utils/createSvgIcon"));
-
-var _default = (0, _createSvgIcon.default)(_react.default.createElement(_react.default.Fragment, null, _react.default.createElement("path", {
-  d: "M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34a.9959.9959 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"
-}), _react.default.createElement("path", {
-  fill: "none",
-  d: "M0 0h24v24H0z"
-})), 'Edit');
-
-exports.default = _default;
-},{"@babel/runtime/helpers/interopRequireDefault":"../node_modules/@babel/runtime/helpers/interopRequireDefault.js","react":"../node_modules/react/index.js","./utils/createSvgIcon":"../node_modules/@material-ui/icons/utils/createSvgIcon.js"}],"../node_modules/@material-ui/icons/Add.js":[function(require,module,exports) {
-"use strict";
-
-var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = void 0;
-
-var _react = _interopRequireDefault(require("react"));
-
-var _createSvgIcon = _interopRequireDefault(require("./utils/createSvgIcon"));
-
-var _default = (0, _createSvgIcon.default)(_react.default.createElement(_react.default.Fragment, null, _react.default.createElement("path", {
-  d: "M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"
-}), _react.default.createElement("path", {
-  fill: "none",
-  d: "M0 0h24v24H0z"
-})), 'Add');
 
 exports.default = _default;
 },{"@babel/runtime/helpers/interopRequireDefault":"../node_modules/@babel/runtime/helpers/interopRequireDefault.js","react":"../node_modules/react/index.js","./utils/createSvgIcon":"../node_modules/@material-ui/icons/utils/createSvgIcon.js"}],"components/common/EditableChip.tsx":[function(require,module,exports) {
@@ -101107,7 +101133,119 @@ var default_1 = /** @class */function (_super) {
     return default_1;
 }(React.Component);
 exports.default = default_1;
-},{"tslib":"../node_modules/tslib/tslib.es6.js","react":"../node_modules/react/index.js","@material-ui/core/Chip":"../node_modules/@material-ui/core/Chip/index.js","@material-ui/core":"../node_modules/@material-ui/core/index.es.js"}],"components/common/Formula.tsx":[function(require,module,exports) {
+},{"tslib":"../node_modules/tslib/tslib.es6.js","react":"../node_modules/react/index.js","@material-ui/core/Chip":"../node_modules/@material-ui/core/Chip/index.js","@material-ui/core":"../node_modules/@material-ui/core/index.es.js"}],"components/common/CharacterSheetEditor/AttributeItem/EnumAttributeItem.tsx":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var tslib_1 = require("tslib");
+var React = require("react");
+var core_1 = require("@material-ui/core");
+var Menu_1 = require("@material-ui/icons/Menu");
+var EditableChip_tsx_1 = require("../../EditableChip.tsx");
+var EnumAttributeItem = /** @class */function (_super) {
+    tslib_1.__extends(EnumAttributeItem, _super);
+    function EnumAttributeItem() {
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this.state = { newVal: "" };
+        _this.updateOrCreate = function (s, oldName) {
+            var _a;
+            var _b = _this.props,
+                id = _b.id,
+                attr = _b.attr,
+                onSave = _b.onSave;
+            var enums = tslib_1.__assign({}, attr.enum);
+            if (oldName) {
+                delete enums[oldName];
+            }
+            if (s.trim() === "") {
+                return onSave(id, tslib_1.__assign({}, attr, { enum: enums }));
+            }
+            var _c = s.split("=>"),
+                newName = _c[0],
+                val = _c[1];
+            var numVal = Number(val);
+            if (isNaN(numVal)) {
+                return onSave(id, tslib_1.__assign({}, attr));
+            }
+            var mapeds = Object.keys(enums);
+            var similarMapIdx = mapeds.map(function (k) {
+                return enums[k];
+            }).indexOf(numVal);
+            if (similarMapIdx > -1) {
+                delete enums[mapeds[similarMapIdx]];
+            }
+            return onSave(id, tslib_1.__assign({}, attr, { enum: tslib_1.__assign({}, enums, (_a = {}, _a[newName.trim()] = numVal, _a)) }));
+        };
+        return _this;
+    }
+    EnumAttributeItem.prototype.render = function () {
+        var _this = this;
+        var _a = this,
+            _b = _a.props,
+            id = _b.id,
+            attr = _b.attr,
+            newVal = _a.state.newVal;
+        return [React.createElement(core_1.ListItem, { key: id + "_item" }, React.createElement(core_1.ListItemIcon, null, React.createElement(Menu_1.default, null)), React.createElement(core_1.ListItemText, { inset: true, primary: attr.name }), React.createElement(core_1.TextField, { placeholder: "{Name} => {Number}", value: newVal, onChange: function onChange(e) {
+                return _this.setState({ newVal: e.currentTarget.value });
+            }, onKeyUp: function onKeyUp(e) {
+                if (e.key === "Enter") {
+                    _this.updateOrCreate(newVal);
+                    _this.setState({ newVal: "" });
+                }
+            } })), React.createElement(core_1.Collapse, { key: id + "_enum_vals", in: Object.keys(attr.enum).length > 0, style: { marginLeft: "10%" } }, Object.keys(attr.enum).map(function (name) {
+            return React.createElement(EditableChip_tsx_1.default, { key: name, defaultValue: name + " => " + attr.enum[name], onSave: function onSave(s) {
+                    return _this.updateOrCreate(s, name);
+                } });
+        }))];
+    };
+    return EnumAttributeItem;
+}(React.Component);
+exports.default = EnumAttributeItem;
+},{"tslib":"../node_modules/tslib/tslib.es6.js","react":"../node_modules/react/index.js","@material-ui/core":"../node_modules/@material-ui/core/index.es.js","@material-ui/icons/Menu":"../node_modules/@material-ui/icons/Menu.js","../../EditableChip.tsx":"components/common/EditableChip.tsx"}],"../node_modules/@material-ui/icons/Computer.js":[function(require,module,exports) {
+"use strict";
+
+var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _react = _interopRequireDefault(require("react"));
+
+var _createSvgIcon = _interopRequireDefault(require("./utils/createSvgIcon"));
+
+var _default = (0, _createSvgIcon.default)(_react.default.createElement(_react.default.Fragment, null, _react.default.createElement("path", {
+  fill: "none",
+  d: "M0 0h24v24H0z"
+}), _react.default.createElement("path", {
+  d: "M20 18c1.1 0 1.99-.9 1.99-2L22 6c0-1.1-.9-2-2-2H4c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2H0v2h24v-2h-4zM4 6h16v10H4V6z"
+})), 'Computer');
+
+exports.default = _default;
+},{"@babel/runtime/helpers/interopRequireDefault":"../node_modules/@babel/runtime/helpers/interopRequireDefault.js","react":"../node_modules/react/index.js","./utils/createSvgIcon":"../node_modules/@material-ui/icons/utils/createSvgIcon.js"}],"../node_modules/@material-ui/icons/Edit.js":[function(require,module,exports) {
+"use strict";
+
+var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _react = _interopRequireDefault(require("react"));
+
+var _createSvgIcon = _interopRequireDefault(require("./utils/createSvgIcon"));
+
+var _default = (0, _createSvgIcon.default)(_react.default.createElement(_react.default.Fragment, null, _react.default.createElement("path", {
+  d: "M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34a.9959.9959 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"
+}), _react.default.createElement("path", {
+  fill: "none",
+  d: "M0 0h24v24H0z"
+})), 'Edit');
+
+exports.default = _default;
+},{"@babel/runtime/helpers/interopRequireDefault":"../node_modules/@babel/runtime/helpers/interopRequireDefault.js","react":"../node_modules/react/index.js","./utils/createSvgIcon":"../node_modules/@material-ui/icons/utils/createSvgIcon.js"}],"components/common/Formula.tsx":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -101135,9 +101273,6 @@ var FormulaEditor = /** @class */function (_super) {
         configurable: true
     });
     FormulaEditor.prototype.render = function () {
-        // return <Typography>
-        //     {this.text}
-        // </Typography>
         return React.createElement(Expression, { expression: this.props.expression, getRef: this.props.getRef });
     };
     return FormulaEditor;
@@ -101178,7 +101313,7 @@ var Expression = /** @class */function (_super) {
                 return React.createElement("span", { key: idx }, _this.props.expression.operation, React.createElement(Child, null));
             } else if (idx > 0 && isFunc) {
                 return React.createElement("span", { key: idx }, ",", React.createElement(Child, null));
-            } else return React.createElement(Child, null);
+            } else return React.createElement(Child, { key: idx });
         });
         var Child = function Child() {
             if (isFunc) {
@@ -101220,79 +101355,131 @@ var Value = /** @class */function (_super) {
     };
     return Value;
 }(React.Component);
-},{"tslib":"../node_modules/tslib/tslib.es6.js","react":"../node_modules/react/index.js","../../attr-parser/convertor.ts":"attr-parser/convertor.ts","../../attr-parser/util.ts":"attr-parser/util.ts"}],"components/common/CharacterSheetEditor.tsx":[function(require,module,exports) {
+},{"tslib":"../node_modules/tslib/tslib.es6.js","react":"../node_modules/react/index.js","../../attr-parser/convertor.ts":"attr-parser/convertor.ts","../../attr-parser/util.ts":"attr-parser/util.ts"}],"components/common/CharacterSheetEditor/AttributeItem/ComputedEnumAttributeItem.tsx":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = require("tslib");
 var React = require("react");
 var core_1 = require("@material-ui/core");
-var fast_json_patch_1 = require("fast-json-patch");
+var Computer_1 = require("@material-ui/icons/Computer");
+var Edit_1 = require("@material-ui/icons/Edit");
+var EditableChip_tsx_1 = require("../../EditableChip.tsx");
+var index_tsx_1 = require("../../FormulaEditor/index.tsx");
+var Formula_tsx_1 = require("../../Formula.tsx");
+var ComputedEnumAttributeItem = /** @class */function (_super) {
+    tslib_1.__extends(ComputedEnumAttributeItem, _super);
+    function ComputedEnumAttributeItem() {
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this.state = { enableEdit: false };
+        return _this;
+    }
+    ComputedEnumAttributeItem.prototype.render = function () {
+        var _this = this;
+        var _a = this,
+            _b = _a.props,
+            id = _b.id,
+            attr = _b.attr,
+            _onSave = _b.onSave,
+            refs = _b.refs,
+            enableEdit = _a.state.enableEdit;
+        return React.createElement(core_1.ListItem, { key: id + "_item" }, React.createElement(core_1.ListItemIcon, null, React.createElement(Computer_1.default, null)), React.createElement(core_1.ListItemText, { inset: true, primary: attr.name }), React.createElement(core_1.Button, { onClick: function onClick() {
+                return _this.setState({ enableEdit: true });
+            } }, React.createElement(Formula_tsx_1.Expression, { expression: attr.formula, getRef: function getRef(s) {
+                return refs.getRef(s);
+            } }), React.createElement(Edit_1.default, null)), React.createElement(core_1.Dialog, { onClose: function onClose() {
+                return _this.setState({ enableEdit: false });
+            }, open: enableEdit }, React.createElement(core_1.DialogTitle, { title: "Edit " + id }, "Edit ", attr.name, " Formula"), React.createElement(core_1.DialogContent, null, React.createElement(core_1.Grid, { container: true }, React.createElement(index_tsx_1.default, { refs: refs, formula: attr.formula, onSave: function onSave(newFromula) {
+                _onSave(id, tslib_1.__assign({}, attr, { formula: newFromula }));
+                _this.setState({ enableEdit: false });
+            } })))), Object.keys(attr.enum).map(function (name) {
+            return React.createElement(EditableChip_tsx_1.default, { key: name, defaultValue: name + " => " + attr.enum[Number(name)], onSave: function onSave(s) {
+                    var _a;
+                    var _b = s.split("=>"),
+                        newName = _b[0],
+                        val = _b[1];
+                    var numVal = Number(val);
+                    if (isNaN(numVal)) {
+                        return _onSave(id, tslib_1.__assign({}, attr));
+                    }
+                    var enums = tslib_1.__assign({}, attr.enum);
+                    delete enums[Number(name)];
+                    return _onSave(id, tslib_1.__assign({}, attr, { enum: tslib_1.__assign({}, enums, (_a = {}, _a[newName.trim()] = numVal, _a)) }));
+                } });
+        }));
+    };
+    return ComputedEnumAttributeItem;
+}(React.Component);
+exports.default = ComputedEnumAttributeItem;
+},{"tslib":"../node_modules/tslib/tslib.es6.js","react":"../node_modules/react/index.js","@material-ui/core":"../node_modules/@material-ui/core/index.es.js","@material-ui/icons/Computer":"../node_modules/@material-ui/icons/Computer.js","@material-ui/icons/Edit":"../node_modules/@material-ui/icons/Edit.js","../../EditableChip.tsx":"components/common/EditableChip.tsx","../../FormulaEditor/index.tsx":"components/common/FormulaEditor/index.tsx","../../Formula.tsx":"components/common/Formula.tsx"}],"components/common/CharacterSheetEditor/AttributeItem/ComputedNumberAttributeItem.tsx":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var tslib_1 = require("tslib");
+var React = require("react");
+var core_1 = require("@material-ui/core");
+var Computer_1 = require("@material-ui/icons/Computer");
+var Edit_1 = require("@material-ui/icons/Edit");
+var index_tsx_1 = require("../../FormulaEditor/index.tsx");
+var Formula_tsx_1 = require("../../Formula.tsx");
+var ComputedNumberAttributeItem = /** @class */function (_super) {
+    tslib_1.__extends(ComputedNumberAttributeItem, _super);
+    function ComputedNumberAttributeItem() {
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this.state = { enableEdit: false };
+        return _this;
+    }
+    ComputedNumberAttributeItem.prototype.render = function () {
+        var _this = this;
+        var _a = this,
+            _b = _a.props,
+            id = _b.id,
+            attr = _b.attr,
+            refs = _b.refs,
+            _onSave = _b.onSave,
+            enableEdit = _a.state.enableEdit;
+        return React.createElement(core_1.ListItem, { key: id + "_item" }, React.createElement(core_1.ListItemIcon, null, React.createElement(Computer_1.default, null)), React.createElement(core_1.ListItemText, { inset: true, primary: attr.name }), React.createElement(core_1.Button, { onClick: function onClick() {
+                return _this.setState({ enableEdit: true });
+            } }, React.createElement(Formula_tsx_1.Expression, { expression: attr.formula, getRef: function getRef(s) {
+                return refs.getRef(s);
+            } }), React.createElement(Edit_1.default, null)), React.createElement(core_1.Dialog, { onClose: function onClose() {
+                return _this.setState({ enableEdit: false });
+            }, open: enableEdit }, React.createElement(core_1.DialogTitle, { title: "Edit " + id }, "Edit ", attr.name, " Formula"), React.createElement(core_1.DialogContent, null, React.createElement(core_1.Grid, { container: true }, React.createElement(index_tsx_1.default, { refs: refs, formula: attr.formula, onSave: function onSave(newFromula) {
+                _onSave(id, tslib_1.__assign({}, attr, { formula: newFromula }));
+                _this.setState({ enableEdit: false });
+            } })))));
+    };
+    return ComputedNumberAttributeItem;
+}(React.Component);
+exports.default = ComputedNumberAttributeItem;
+},{"tslib":"../node_modules/tslib/tslib.es6.js","react":"../node_modules/react/index.js","@material-ui/core":"../node_modules/@material-ui/core/index.es.js","@material-ui/icons/Computer":"../node_modules/@material-ui/icons/Computer.js","@material-ui/icons/Edit":"../node_modules/@material-ui/icons/Edit.js","../../FormulaEditor/index.tsx":"components/common/FormulaEditor/index.tsx","../../Formula.tsx":"components/common/Formula.tsx"}],"components/common/CharacterSheetEditor/AttributeItem/index.tsx":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var tslib_1 = require("tslib");
+var React = require("react");
+var core_1 = require("@material-ui/core");
 var Category_1 = require("@material-ui/icons/Category");
 var ExpandLess_1 = require("@material-ui/icons/ExpandLess");
 var ExpandMore_1 = require("@material-ui/icons/ExpandMore");
-var ConfirmationNumber_1 = require("@material-ui/icons/ConfirmationNumber");
-var Menu_1 = require("@material-ui/icons/Menu");
-var Computer_1 = require("@material-ui/icons/Computer");
-var Edit_1 = require("@material-ui/icons/Edit");
 var Add_1 = require("@material-ui/icons/Add");
-var EditableChip_tsx_1 = require("./EditableChip.tsx");
-var evaluators_ts_1 = require("../../attr-parser/evaluators.ts");
-var convertor_ts_1 = require("../../attr-parser/convertor.ts");
-var index_tsx_1 = require("./FormulaEditor/index.tsx");
-var Formula_tsx_1 = require("./Formula.tsx");
-var CharacterSheetEditor = /** @class */function (_super) {
-    tslib_1.__extends(CharacterSheetEditor, _super);
-    function CharacterSheetEditor() {
-        var _this = _super !== null && _super.apply(this, arguments) || this;
-        _this.state = { tree: _this.props.value || {
-                name: "$root",
-                type: "category",
-                attributes: {}
-            } };
-        return _this;
-    }
-    CharacterSheetEditor.prototype.componentWillReceiveProps = function (nextProps) {
-        this.setState({
-            tree: this.props.value || {
-                name: "$root",
-                type: "category",
-                attributes: {}
-            }
-        });
-    };
-    CharacterSheetEditor.prototype.render = function () {
-        var _this = this;
-        var refs = convertor_ts_1.getAllReferanciables(this.state.tree);
-        return React.createElement(core_1.Paper, null, React.createElement(CategoryAttributeItem, { id: "", attr: this.state.tree, onSave: function onSave(id, attr) {
-                var newTree = fast_json_patch_1.applyOperation(_this.state.tree, {
-                    op: "replace",
-                    path: id,
-                    value: attr
-                }).newDocument;
-                _this.setState({
-                    tree: newTree
-                });
-                if (_this.props.onSave) {
-                    _this.props.onSave(newTree);
-                }
-            }, refs: refs }));
-    };
-    return CharacterSheetEditor;
-}(React.Component);
-exports.default = CharacterSheetEditor;
+var evaluators_ts_1 = require("../../../../attr-parser/evaluators.ts");
+var NumberAttributeItem_tsx_1 = require("./NumberAttributeItem.tsx");
+var EnumAttributeItem_tsx_1 = require("./EnumAttributeItem.tsx");
+var ComputedEnumAttributeItem_tsx_1 = require("./ComputedEnumAttributeItem.tsx");
+var ComputedNumberAttributeItem_tsx_1 = require("./ComputedNumberAttributeItem.tsx");
 function AttributeItem(props) {
     switch (props.attr.type) {
         case "category":
             return React.createElement(CategoryAttributeItem, { id: props.id, attr: props.attr, onSave: props.onSave, refs: props.refs });
         case "number":
-            return React.createElement(NumberAttributeItem, { id: props.id, attr: props.attr, onSave: props.onSave, refs: props.refs });
+            return React.createElement(NumberAttributeItem_tsx_1.default, { id: props.id, attr: props.attr, onSave: props.onSave, refs: props.refs });
         case "enum":
-            return React.createElement(EnumAttributeItem, { id: props.id, attr: props.attr, onSave: props.onSave, refs: props.refs });
+            return React.createElement(EnumAttributeItem_tsx_1.default, { id: props.id, attr: props.attr, onSave: props.onSave, refs: props.refs });
         case "computed-enum":
-            return React.createElement(ComputedEnumAttributeItem, { id: props.id, attr: props.attr, onSave: props.onSave, refs: props.refs });
+            return React.createElement(ComputedEnumAttributeItem_tsx_1.default, { id: props.id, attr: props.attr, onSave: props.onSave, refs: props.refs });
         case "computed-number":
-            return React.createElement(ComputedNumberAttributeItem, { id: props.id, attr: props.attr, onSave: props.onSave, refs: props.refs });
+            return React.createElement(ComputedNumberAttributeItem_tsx_1.default, { id: props.id, attr: props.attr, onSave: props.onSave, refs: props.refs });
         default:
             return React.createElement(core_1.ListItem, { id: props.id }, React.createElement(core_1.ListItemText, { inset: true, primary: props.attr.name, secondary: props.attr.type }));
     }
@@ -101301,7 +101488,7 @@ var CategoryAttributeItem = /** @class */function (_super) {
     tslib_1.__extends(CategoryAttributeItem, _super);
     function CategoryAttributeItem() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
-        _this.state = { isOpen: false, currentNew: "", currentNewValue: "" };
+        _this.state = { isOpen: true, currentNew: "", currentNewValue: "" };
         _this.menuOpts = [{ key: "text", name: "Text" }, { key: "number", name: "Number" }, { key: "enum", name: "Mapping" }, { key: "computed-number", name: "Computed Number" }, { key: "computed-enum", name: "Computed Mapping" }, { key: "category", name: "Category" }];
         return _this;
     }
@@ -101375,164 +101562,65 @@ var CategoryAttributeItem = /** @class */function (_super) {
     };
     return CategoryAttributeItem;
 }(React.Component);
-var NumberAttributeItem = /** @class */function (_super) {
-    tslib_1.__extends(NumberAttributeItem, _super);
-    function NumberAttributeItem() {
-        var _this = _super !== null && _super.apply(this, arguments) || this;
-        _this.state = { min: _this.props.attr.min, max: _this.props.attr.max };
-        _this.onSave = function () {
-            _this.props.onSave(_this.props.id, tslib_1.__assign({}, _this.props.attr, { min: Math.min(_this.state.max, _this.state.min), max: Math.max(_this.state.max, _this.state.min) }));
-        };
-        _this.onEnter = function (e) {
-            if (e.key === "Enter") {
-                _this.onSave();
-            }
-        };
-        return _this;
-    }
-    NumberAttributeItem.prototype.componentWillReceiveProps = function (nextProps) {
-        this.setState({ min: nextProps.attr.min, max: nextProps.attr.max });
-    };
-    NumberAttributeItem.prototype.render = function () {
-        var _this = this;
-        var _a = this,
-            _b = _a.props,
-            id = _b.id,
-            attr = _b.attr,
-            onSave = _a.onSave,
-            onEnter = _a.onEnter;
-        return React.createElement(core_1.ListItem, { key: id + "_item" }, React.createElement(core_1.ListItemIcon, null, React.createElement(ConfirmationNumber_1.default, null)), React.createElement(core_1.ListItemText, { inset: true, primary: attr.name }), React.createElement(core_1.TextField, { type: "number", value: this.state.min, onKeyUp: onEnter, onChange: function onChange(e) {
-                return _this.setState({ min: Number(e.target.value) });
-            } }), React.createElement(core_1.TextField, { type: "number", value: this.state.max, onKeyUp: onEnter, onChange: function onChange(e) {
-                return _this.setState({ max: Number(e.target.value) });
-            } }), React.createElement(core_1.Button, { onClick: onSave }, "Save"));
-    };
-    return NumberAttributeItem;
-}(React.Component);
-var ComputedNumberAttributeItem = /** @class */function (_super) {
-    tslib_1.__extends(ComputedNumberAttributeItem, _super);
-    function ComputedNumberAttributeItem() {
-        var _this = _super !== null && _super.apply(this, arguments) || this;
-        _this.state = { enableEdit: false };
-        return _this;
-    }
-    ComputedNumberAttributeItem.prototype.render = function () {
-        var _this = this;
-        var _a = this,
-            _b = _a.props,
-            id = _b.id,
-            attr = _b.attr,
-            refs = _b.refs,
-            _onSave = _b.onSave,
-            enableEdit = _a.state.enableEdit;
-        return React.createElement(core_1.ListItem, { key: id + "_item" }, React.createElement(core_1.ListItemIcon, null, React.createElement(Computer_1.default, null)), React.createElement(core_1.ListItemText, { inset: true, primary: attr.name }), React.createElement(core_1.Button, { onClick: function onClick() {
-                return _this.setState({ enableEdit: true });
-            } }, React.createElement(Formula_tsx_1.Expression, { expression: attr.formula, getRef: function getRef(s) {
-                return refs.getRef(s);
-            } }), React.createElement(Edit_1.default, null)), React.createElement(core_1.Dialog, { onClose: function onClose() {
-                return _this.setState({ enableEdit: false });
-            }, open: enableEdit }, React.createElement(core_1.DialogTitle, { title: "Edit " + id }, "Edit ", attr.name, " Formula"), React.createElement(core_1.DialogContent, null, React.createElement(core_1.Grid, { container: true }, React.createElement(index_tsx_1.default, { refs: refs, formula: attr.formula, onSave: function onSave(newFromula) {
-                _onSave(id, tslib_1.__assign({}, attr, { formula: newFromula }));
-                _this.setState({ enableEdit: false });
-            } })))));
-    };
-    return ComputedNumberAttributeItem;
-}(React.Component);
-var EnumAttributeItem = /** @class */function (_super) {
-    tslib_1.__extends(EnumAttributeItem, _super);
-    function EnumAttributeItem() {
-        var _this = _super !== null && _super.apply(this, arguments) || this;
-        _this.state = { newVal: "" };
-        _this.updateOrCreate = function (s, oldName) {
-            var _a;
-            var _b = _this.props,
-                id = _b.id,
-                attr = _b.attr,
-                onSave = _b.onSave;
-            var enums = tslib_1.__assign({}, attr.enum);
-            if (oldName) {
-                delete enums[oldName];
-            }
-            if (s.trim() === "") {
-                return onSave(id, tslib_1.__assign({}, attr, { enum: enums }));
-            }
-            var _c = s.split("=>"),
-                newName = _c[0],
-                val = _c[1];
-            var numVal = Number(val);
-            if (isNaN(numVal)) {
-                return onSave(id, tslib_1.__assign({}, attr));
-            }
-            var mapeds = Object.keys(enums);
-            var similarMapIdx = mapeds.map(function (k) {
-                return enums[k];
-            }).indexOf(numVal);
-            if (similarMapIdx > -1) {
-                delete enums[mapeds[similarMapIdx]];
-            }
-            return onSave(id, tslib_1.__assign({}, attr, { enum: tslib_1.__assign({}, enums, (_a = {}, _a[newName.trim()] = numVal, _a)) }));
-        };
-        return _this;
-    }
-    EnumAttributeItem.prototype.render = function () {
-        var _this = this;
-        var _a = this,
-            _b = _a.props,
-            id = _b.id,
-            attr = _b.attr,
-            newVal = _a.state.newVal;
-        return [React.createElement(core_1.ListItem, { key: id + "_item" }, React.createElement(core_1.ListItemIcon, null, React.createElement(Menu_1.default, null)), React.createElement(core_1.ListItemText, { inset: true, primary: attr.name }), React.createElement(core_1.TextField, { placeholder: "{Name} => {Number}", value: newVal, onChange: function onChange(e) {
-                return _this.setState({ newVal: e.currentTarget.value });
-            }, onKeyUp: function onKeyUp(e) {
-                if (e.key === "Enter") {
-                    _this.updateOrCreate(newVal);
-                    _this.setState({ newVal: "" });
-                }
-            } })), React.createElement(core_1.Collapse, { key: id + "_enum_vals", in: Object.keys(attr.enum).length > 0, style: { marginLeft: "10%" } }, Object.keys(attr.enum).map(function (name) {
-            return React.createElement(EditableChip_tsx_1.default, { key: name, defaultValue: name + " => " + attr.enum[name], onSave: function onSave(s) {
-                    return _this.updateOrCreate(s, name);
-                } });
-        }))];
-    };
-    return EnumAttributeItem;
-}(React.Component);
-var ComputedEnumAttributeItem = /** @class */function (_super) {
-    tslib_1.__extends(ComputedEnumAttributeItem, _super);
-    function ComputedEnumAttributeItem() {
-        return _super !== null && _super.apply(this, arguments) || this;
-    }
-    ComputedEnumAttributeItem.prototype.render = function () {
-        var _a = this.props,
-            id = _a.id,
-            attr = _a.attr,
-            _onSave2 = _a.onSave,
-            refs = _a.refs;
-        return React.createElement(core_1.ListItem, { key: id + "_item" }, React.createElement(core_1.ListItemIcon, null, React.createElement(Computer_1.default, null)), React.createElement(core_1.ListItemText, { inset: true, primary: attr.name }), Object.keys(attr.enum).map(function (name) {
-            return React.createElement(EditableChip_tsx_1.default, { key: name, defaultValue: name + " => " + attr.enum[Number(name)], onSave: function onSave(s) {
-                    var _a;
-                    var _b = s.split("=>"),
-                        newName = _b[0],
-                        val = _b[1];
-                    var numVal = Number(val);
-                    if (isNaN(numVal)) {
-                        return _onSave2(id, tslib_1.__assign({}, attr));
-                    }
-                    var enums = tslib_1.__assign({}, attr.enum);
-                    delete enums[Number(name)];
-                    return _onSave2(id, tslib_1.__assign({}, attr, { enum: tslib_1.__assign({}, enums, (_a = {}, _a[newName.trim()] = numVal, _a)) }));
-                } });
-        }));
-    };
-    return ComputedEnumAttributeItem;
-}(React.Component);
-},{"tslib":"../node_modules/tslib/tslib.es6.js","react":"../node_modules/react/index.js","@material-ui/core":"../node_modules/@material-ui/core/index.es.js","fast-json-patch":"../node_modules/fast-json-patch/lib/duplex.js","@material-ui/icons/Category":"../node_modules/@material-ui/icons/Category.js","@material-ui/icons/ExpandLess":"../node_modules/@material-ui/icons/ExpandLess.js","@material-ui/icons/ExpandMore":"../node_modules/@material-ui/icons/ExpandMore.js","@material-ui/icons/ConfirmationNumber":"../node_modules/@material-ui/icons/ConfirmationNumber.js","@material-ui/icons/Menu":"../node_modules/@material-ui/icons/Menu.js","@material-ui/icons/Computer":"../node_modules/@material-ui/icons/Computer.js","@material-ui/icons/Edit":"../node_modules/@material-ui/icons/Edit.js","@material-ui/icons/Add":"../node_modules/@material-ui/icons/Add.js","./EditableChip.tsx":"components/common/EditableChip.tsx","../../attr-parser/evaluators.ts":"attr-parser/evaluators.ts","../../attr-parser/convertor.ts":"attr-parser/convertor.ts","./FormulaEditor/index.tsx":"components/common/FormulaEditor/index.tsx","./Formula.tsx":"components/common/Formula.tsx"}],"components/containers/CharacterSheetEditor.tsx":[function(require,module,exports) {
+exports.default = CategoryAttributeItem;
+},{"tslib":"../node_modules/tslib/tslib.es6.js","react":"../node_modules/react/index.js","@material-ui/core":"../node_modules/@material-ui/core/index.es.js","@material-ui/icons/Category":"../node_modules/@material-ui/icons/Category.js","@material-ui/icons/ExpandLess":"../node_modules/@material-ui/icons/ExpandLess.js","@material-ui/icons/ExpandMore":"../node_modules/@material-ui/icons/ExpandMore.js","@material-ui/icons/Add":"../node_modules/@material-ui/icons/Add.js","../../../../attr-parser/evaluators.ts":"attr-parser/evaluators.ts","./NumberAttributeItem.tsx":"components/common/CharacterSheetEditor/AttributeItem/NumberAttributeItem.tsx","./EnumAttributeItem.tsx":"components/common/CharacterSheetEditor/AttributeItem/EnumAttributeItem.tsx","./ComputedEnumAttributeItem.tsx":"components/common/CharacterSheetEditor/AttributeItem/ComputedEnumAttributeItem.tsx","./ComputedNumberAttributeItem.tsx":"components/common/CharacterSheetEditor/AttributeItem/ComputedNumberAttributeItem.tsx"}],"components/common/CharacterSheetEditor/index.tsx":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = require("tslib");
 var React = require("react");
 var core_1 = require("@material-ui/core");
-var CharacterSheetEditor_tsx_1 = require("../common/CharacterSheetEditor.tsx");
+var fast_json_patch_1 = require("fast-json-patch");
+var convertor_ts_1 = require("../../../attr-parser/convertor.ts");
+var index_tsx_1 = require("./AttributeItem/index.tsx");
+var CharacterSheetEditor = /** @class */function (_super) {
+    tslib_1.__extends(CharacterSheetEditor, _super);
+    function CharacterSheetEditor() {
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this.state = { tree: _this.props.value || {
+                name: "$root",
+                type: "category",
+                attributes: {}
+            } };
+        return _this;
+    }
+    CharacterSheetEditor.prototype.componentWillReceiveProps = function (nextProps) {
+        this.setState({
+            tree: this.props.value || {
+                name: "$root",
+                type: "category",
+                attributes: {}
+            }
+        });
+    };
+    CharacterSheetEditor.prototype.render = function () {
+        var _this = this;
+        var refs = convertor_ts_1.getAllReferanciables(this.state.tree);
+        return React.createElement(core_1.Paper, null, React.createElement(index_tsx_1.default, { id: "", attr: this.state.tree, onSave: function onSave(id, attr) {
+                var newTree = fast_json_patch_1.applyOperation(_this.state.tree, {
+                    op: "replace",
+                    path: id,
+                    value: attr
+                }).newDocument;
+                _this.setState({
+                    tree: newTree
+                });
+                if (_this.props.onSave) {
+                    _this.props.onSave(newTree);
+                }
+            }, refs: refs }));
+    };
+    return CharacterSheetEditor;
+}(React.Component);
+exports.default = CharacterSheetEditor;
+},{"tslib":"../node_modules/tslib/tslib.es6.js","react":"../node_modules/react/index.js","@material-ui/core":"../node_modules/@material-ui/core/index.es.js","fast-json-patch":"../node_modules/fast-json-patch/lib/duplex.js","../../../attr-parser/convertor.ts":"attr-parser/convertor.ts","./AttributeItem/index.tsx":"components/common/CharacterSheetEditor/AttributeItem/index.tsx"}],"components/containers/CharacterSheetEditor.tsx":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var tslib_1 = require("tslib");
+var React = require("react");
+var core_1 = require("@material-ui/core");
+var index_tsx_1 = require("../common/CharacterSheetEditor/index.tsx");
 var Notifier_tsx_1 = require("../layouts/Notifier.tsx");
 var CharacterSheetEditorContainer = /** @class */function (_super) {
     tslib_1.__extends(CharacterSheetEditorContainer, _super);
@@ -101588,7 +101676,7 @@ var CharacterSheetEditorContainer = /** @class */function (_super) {
                 if (e.ctrlKey && e.shiftKey && e.key === "Enter") {
                     _this.onSave();
                 }
-            }, multiline: true }), React.createElement(core_1.Button, { onClick: this.onSave, variant: "contained", color: "primary" }, "Save to Server")), React.createElement(core_1.Grid, { container: true, justify: "center", direction: "column" }, React.createElement(CharacterSheetEditor_tsx_1.default, { value: this.props.sheet.tree, onSave: function onSave(newTree) {
+            }, multiline: true }), React.createElement(core_1.Button, { onClick: this.onSave, variant: "contained", color: "primary" }, "Save to Server")), React.createElement(core_1.Grid, { container: true, justify: "center", direction: "column" }, React.createElement(index_tsx_1.default, { value: this.props.sheet.tree, onSave: function onSave(newTree) {
                 _this.props.sheet.update({
                     tree: newTree
                 });
@@ -101597,7 +101685,7 @@ var CharacterSheetEditorContainer = /** @class */function (_super) {
     return CharacterSheetEditorContainer;
 }(React.Component);
 exports.default = CharacterSheetEditorContainer;
-},{"tslib":"../node_modules/tslib/tslib.es6.js","react":"../node_modules/react/index.js","@material-ui/core":"../node_modules/@material-ui/core/index.es.js","../common/CharacterSheetEditor.tsx":"components/common/CharacterSheetEditor.tsx","../layouts/Notifier.tsx":"components/layouts/Notifier.tsx"}],"components/routes/CharacterSheetEditor.tsx":[function(require,module,exports) {
+},{"tslib":"../node_modules/tslib/tslib.es6.js","react":"../node_modules/react/index.js","@material-ui/core":"../node_modules/@material-ui/core/index.es.js","../common/CharacterSheetEditor/index.tsx":"components/common/CharacterSheetEditor/index.tsx","../layouts/Notifier.tsx":"components/layouts/Notifier.tsx"}],"components/routes/CharacterSheetEditor.tsx":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -101732,7 +101820,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = '' || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + '44649' + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + '44015' + '/');
   ws.onmessage = function (event) {
     var data = JSON.parse(event.data);
 

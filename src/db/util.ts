@@ -37,7 +37,7 @@ export const genDefaultTree = () : Attributes.Category => ({
                     formula: {
                         type: "exprs",
                         operation: OPERATIONS.ADDITION,
-                        operands: [{ value: "$root.attr.exprs", type: "ref-value" }]
+                        operands: [{ value: "$root.about.exp", type: "ref-value" }]
                     },
                     enum: {
                         0: 1,

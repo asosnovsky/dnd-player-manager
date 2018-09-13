@@ -44,11 +44,13 @@ export class CharacterSheet extends DBObject<ICharacterSheet> {
             CharacterSheet.lastStart = null;
         }
         ref.limitToFirst(11).once('value', snap => {
-            const val = snap.val();
-            CharacterSheet.listings = Object.keys( val ).map( k => ({
-                id: k,
-                ...val[k],
-            }) )
+            if ( snap.exists() ) {
+                const val = snap.val();
+                CharacterSheet.listings = Object.keys( val ).map( k => ({
+                    id: k,
+                    ...val[k],
+                }) )
+            }
         })
     }
     static async loadFromId( id: string ): Promise<CharacterSheet> {

@@ -1,6 +1,5 @@
 import * as React from "react";
 import { Formulas, Attributes } from '@/attr-parser/typings';
-import { Typography } from '@material-ui/core';
 import { stringifyFormula } from '@/attr-parser/convertor';
 import { isFunction } from "@/attr-parser/util";
 
@@ -18,9 +17,6 @@ export default class FormulaEditor extends React.Component<IProps, IState> {
         return stringifyFormula(this.state.expression);
     }
     render() {
-        // return <Typography>
-        //     {this.text}
-        // </Typography>
         return <Expression expression={this.props.expression} getRef={this.props.getRef}/>
     }
 }
@@ -61,7 +57,7 @@ export class Expression extends React.Component<IExpressionProps> {
                     ,
                     <Child/>
                 </span>
-            }   else    return <Child/>
+            }   else    return <Child key={idx}/>
         } )
         const Child = () => {
             if (isFunc) {

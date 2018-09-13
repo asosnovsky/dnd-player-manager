@@ -9,6 +9,7 @@ import ArrowBack from "@material-ui/icons/ArrowBack";
 import Person from "@material-ui/icons/Person";
 import Home from "@material-ui/icons/Home";
 import CreateNewFolder from "@material-ui/icons/CreateNewFolder";
+import CharacterSheetIcon from "@material-ui/icons/People";
 import {goHomeOrBack, history, PAGES, goTo} from "@/components/router/history";
 
 export const state = observable({isOpen: false});
@@ -46,6 +47,11 @@ export default class extends React.Component {
                 <ListItem>
                     <IconButton onClick={this.goTo(PAGES.GAME_MASTER)}>
                         <CreateNewFolder/>
+                    </IconButton>
+                </ListItem>
+                <ListItem>
+                    <IconButton onClick={this.goTo(PAGES.CHARACTER_LSTING)}>
+                        <CharacterSheetIcon/>
                     </IconButton>
                 </ListItem>
             </List>

@@ -27,6 +27,7 @@ export default class extends React.Component<{},IState> {
             case PAGES.PLAYER: return "Player Mode"
             case PAGES.GAME_MASTER: return "GM Mode"
             case PAGES.GAME_OVERVIEW: return `Game Mode`
+            case PAGES.CHARACTER_LSTING: return `Character Sheets`
             default:
                 return state.currentPage;
         }
