@@ -148,7 +148,7 @@ export default class CategoryAttributeItem extends React.Component<AttributeProp
             sibling={<Collapse key={id + "_sublist"} in={isOpen} style={{ marginLeft: "2%" }}>
                 <Divider/>
                 <List component="div" disablePadding>
-                    {!!attr.points && <AttributeItem key="points" id={id + "/points"} attr={attr.points} onSave={onSave} refs={refs.getFilteredCopy("$root" + id)} />}
+                    {!!attr.points && <AttributeItem key="points" id={id + "/points"} attr={attr.points} onSave={onSave} refs={refs.getFilteredByIdCopy("$root" + id)} />}
                     {Object.keys(attr.attributes).map( subid => 
                         <AttributeItem key={subid} id={id+"/attributes/"+subid} attr={attr.attributes[subid]} onSave={onSave} refs={refs}/>
                     )}

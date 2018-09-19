@@ -54,7 +54,7 @@ export default class Referenciables {
         return null;
     }
 
-    getFilteredCopy(id: string) {
+    getFilteredByIdCopy(id: string) {
         const newRefs: IReturnGetAllReferanciables["referenciables"] = {};
         const newListing = this.listing.filter( listItem => {
             console.log({

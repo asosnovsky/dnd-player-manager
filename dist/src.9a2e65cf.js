@@ -98593,7 +98593,7 @@ var Referenciables = /** @class */function () {
         }
         return null;
     };
-    Referenciables.prototype.getFilteredCopy = function (id) {
+    Referenciables.prototype.getFilteredByIdCopy = function (id) {
         var _this = this;
         var newRefs = {};
         var newListing = this.listing.filter(function (listItem) {
@@ -101708,7 +101708,7 @@ var CategoryAttributeItem = /** @class */function (_super) {
                     });
                 } }), React.createElement(core_1.IconButton, { disabled: currentNew === "", type: "submit" }, React.createElement(Add_1.default, null)), React.createElement(core_1.IconButton, { onClick: function onClick(_) {
                     return _this.setState({ isOpen: !isOpen });
-                } }, isOpen ? React.createElement(ExpandLess_1.default, null) : React.createElement(ExpandMore_1.default, null)))), sibling: React.createElement(core_1.Collapse, { key: id + "_sublist", in: isOpen, style: { marginLeft: "2%" } }, React.createElement(core_1.Divider, null), React.createElement(core_1.List, { component: "div", disablePadding: true }, !!attr.points && React.createElement(AttributeItem, { key: "points", id: id + "/points", attr: attr.points, onSave: onSave, refs: refs.getFilteredCopy("$root" + id) }), Object.keys(attr.attributes).map(function (subid) {
+                } }, isOpen ? React.createElement(ExpandLess_1.default, null) : React.createElement(ExpandMore_1.default, null)))), sibling: React.createElement(core_1.Collapse, { key: id + "_sublist", in: isOpen, style: { marginLeft: "2%" } }, React.createElement(core_1.Divider, null), React.createElement(core_1.List, { component: "div", disablePadding: true }, !!attr.points && React.createElement(AttributeItem, { key: "points", id: id + "/points", attr: attr.points, onSave: onSave, refs: refs.getFilteredByIdCopy("$root" + id) }), Object.keys(attr.attributes).map(function (subid) {
                 return React.createElement(AttributeItem, { key: subid, id: id + "/attributes/" + subid, attr: attr.attributes[subid], onSave: onSave, refs: refs });
             }))) }));
     };
