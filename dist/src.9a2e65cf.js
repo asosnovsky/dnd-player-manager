@@ -98545,27 +98545,42 @@ exports.BRACES = {
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = require("tslib");
 var Referenciables = /** @class */function () {
-    function Referenciables(tree) {
-        this.tree = tree;
-        this.iters = [];
-        this.referenciables = this.getAllReferanciables(this.tree, this.iters);
+    function Referenciables(referenciables, listing) {
+        if (listing === void 0) {
+            listing = [];
+        }
+        this.referenciables = referenciables;
+        this.listing = listing;
     }
-    Referenciables.prototype.getAllReferanciables = function (tree, listing, rootKey) {
+    Referenciables.fromTree = function (tree) {
+        var _a = Referenciables.getAllReferanciables(tree),
+            listing = _a.listing,
+            referenciables = _a.referenciables;
+        return new Referenciables(referenciables, listing);
+    };
+    Referenciables.getAllReferanciables = function (tree, inListing, rootKey) {
         var _this = this;
+        if (inListing === void 0) {
+            inListing = [];
+        }
         if (rootKey === void 0) {
             rootKey = "$root";
         }
-        var ret = {};
+        var referenciables = {};
+        var listing = inListing.slice();
         Object.keys(tree.attributes).forEach(function (key) {
             var attr = tree.attributes[key];
+            var childKey = rootKey + "/attributes/" + key;
             if (["number", "computed-number", "enum", "computed-enum"].includes(attr.type)) {
-                ret[rootKey + "." + key] = tslib_1.__assign({}, attr, { key: rootKey + "." + key });
-                listing.push(ret[rootKey + "." + key]);
+                referenciables[childKey] = tslib_1.__assign({}, attr, { key: childKey });
+                listing.push(referenciables[childKey]);
             } else if (attr.type === "category") {
-                ret = tslib_1.__assign({}, ret, _this.getAllReferanciables(attr, listing, rootKey + "." + key));
+                var resp = _this.getAllReferanciables(attr, listing, childKey);
+                listing = resp.listing;
+                referenciables = tslib_1.__assign({}, referenciables, resp.referenciables);
             }
         });
-        return ret;
+        return { referenciables: referenciables, listing: listing };
     };
     Referenciables.prototype.getRef = function (key, error) {
         if (error === void 0) {
@@ -98578,9 +98593,26 @@ var Referenciables = /** @class */function () {
         }
         return null;
     };
+    Referenciables.prototype.getFilteredCopy = function (id) {
+        var _this = this;
+        var newRefs = {};
+        var newListing = this.listing.filter(function (listItem) {
+            console.log({
+                cond: listItem.key.indexOf(id) === -1,
+                key: listItem.key,
+                id: id
+            });
+            if (listItem.key.indexOf(id) === -1) {
+                newRefs[listItem.key] = _this.referenciables[listItem.key];
+                return true;
+            }
+            return false;
+        });
+        return new Referenciables(newRefs, newListing);
+    };
     Object.defineProperty(Referenciables.prototype, "items", {
         get: function get() {
-            return this.iters;
+            return this.listing;
         },
         enumerable: true,
         configurable: true
@@ -98882,7 +98914,7 @@ function stringifyFormula(formula, withBracket) {
 }
 exports.stringifyFormula = stringifyFormula;
 function getAllReferanciables(tree) {
-    return new Referenciables_ts_1.default(tree);
+    return Referenciables_ts_1.default.fromTree(tree);
 }
 exports.getAllReferanciables = getAllReferanciables;
 function convertASTtoTokens(formula, refs) {
@@ -99463,7 +99495,7 @@ var ExamplePage = /** @class */function (_super) {
                 type: "exprs",
                 operation: evaluators_ts_1.OPERATIONS.ADDITION,
                 operands: []
-            }, refs: new Referenciables_ts_1.default(demo) }));
+            }, refs: Referenciables_ts_1.default.fromTree(demo) }));
     };
     return ExamplePage;
 }(react_router_1.Route);
@@ -99951,7 +99983,7 @@ exports.genDefaultTree = function () {
                         formula: {
                             type: "exprs",
                             operation: evaluators_ts_1.OPERATIONS.ADDITION,
-                            operands: [{ value: "$root.about.exp", type: "ref-value" }]
+                            operands: [{ value: "$root/attributes/about/attributes/exp", type: "ref-value" }]
                         },
                         enum: {
                             0: 1,
@@ -101676,7 +101708,7 @@ var CategoryAttributeItem = /** @class */function (_super) {
                     });
                 } }), React.createElement(core_1.IconButton, { disabled: currentNew === "", type: "submit" }, React.createElement(Add_1.default, null)), React.createElement(core_1.IconButton, { onClick: function onClick(_) {
                     return _this.setState({ isOpen: !isOpen });
-                } }, isOpen ? React.createElement(ExpandLess_1.default, null) : React.createElement(ExpandMore_1.default, null)))), sibling: React.createElement(core_1.Collapse, { key: id + "_sublist", in: isOpen, style: { marginLeft: "2%" } }, React.createElement(core_1.Divider, null), React.createElement(core_1.List, { component: "div", disablePadding: true }, !!attr.points && React.createElement(AttributeItem, { key: "points", id: id + "/points", attr: attr.points, onSave: onSave, refs: refs }), Object.keys(attr.attributes).map(function (subid) {
+                } }, isOpen ? React.createElement(ExpandLess_1.default, null) : React.createElement(ExpandMore_1.default, null)))), sibling: React.createElement(core_1.Collapse, { key: id + "_sublist", in: isOpen, style: { marginLeft: "2%" } }, React.createElement(core_1.Divider, null), React.createElement(core_1.List, { component: "div", disablePadding: true }, !!attr.points && React.createElement(AttributeItem, { key: "points", id: id + "/points", attr: attr.points, onSave: onSave, refs: refs.getFilteredCopy("$root" + id) }), Object.keys(attr.attributes).map(function (subid) {
                 return React.createElement(AttributeItem, { key: subid, id: id + "/attributes/" + subid, attr: attr.attributes[subid], onSave: onSave, refs: refs });
             }))) }));
     };

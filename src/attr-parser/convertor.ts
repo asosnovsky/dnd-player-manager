@@ -33,7 +33,7 @@ export function stringifyFormula(formula: Formulas.Expression, withBracket?:bool
 }
 
 export function getAllReferanciables(tree: Attributes.Category) {
-    return new Referenciables(tree);
+    return Referenciables.fromTree(tree);
 }
 
 export function convertASTtoTokens( formula: Formulas.Expression, refs: Referenciables ) : Tokens.Token[] {

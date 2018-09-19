@@ -107,7 +107,7 @@ export default class ExamplePage extends Route {
                         operands: [
                             
                         ]
-                    }} refs={new Referenciables(demo)}/>
+                    }} refs={Referenciables.fromTree(demo)}/>
             {/* <div contentEditable ref={ e => console.log(e) } onKeyDown={e => console.log("k",e.target)}></div> */}
         </div>
     }
