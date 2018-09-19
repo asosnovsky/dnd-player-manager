@@ -10,6 +10,6 @@ export interface AttributeProps<Attr> {
 
 export interface ICategoryAttributeItemState {
     isOpen: boolean;
-    currentNew: Attributes.Attribute["type"] | "";
+    currentNew: Attributes.Attribute["type"] | "" | "points";
     currentNewValue: string;
 }

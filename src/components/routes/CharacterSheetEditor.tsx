@@ -3,6 +3,7 @@ import { RouteComponentProps } from "react-router";
 import { Grid, LinearProgress } from '@material-ui/core';
 import CharacterSheetEditorContainer from '@/components/containers/CharacterSheetEditor';
 import { CharacterSheet } from '@/states/CharacterSheets';
+import { genDefaultTree } from '@/db/util';
 
 export interface IProps extends RouteComponentProps<{ id: string }> {
 
@@ -18,9 +19,21 @@ export default class CharacterSheetEditorPage extends React.Component<IProps, IS
     }
     async componentWillReceiveProps(nextProps: IProps) {
         this.setState({ sheet: undefined })
-        this.setState({
-            sheet: await CharacterSheet.loadFromId(nextProps.match.params.id),
-        });
+        const { params: { id } } = nextProps.match;
+        if ( id.toLocaleLowerCase() === "test" ) {
+            this.setState({
+                sheet: new CharacterSheet({
+                    name: "Test",
+                    description: "Sample Tree",
+                    tree: genDefaultTree(),
+                    owner: null,
+                })
+            })
+        }   else     {
+            this.setState({
+                sheet: await CharacterSheet.loadFromId(nextProps.match.params.id),
+            });
+        }
     }
 
     render() {

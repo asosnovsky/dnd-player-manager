@@ -99917,7 +99917,7 @@ var evaluators_ts_1 = require("../attr-parser/evaluators.ts");
 exports.genDefaultTree = function () {
     return {
         type: "category",
-        name: "$root",
+        name: "Character Sheet",
         attributes: {
             about: {
                 type: "category",
@@ -101009,6 +101009,28 @@ var _default = (0, _createSvgIcon.default)(_react.default.createElement(_react.d
 })), 'ConfirmationNumber');
 
 exports.default = _default;
+},{"@babel/runtime/helpers/interopRequireDefault":"../node_modules/@babel/runtime/helpers/interopRequireDefault.js","react":"../node_modules/react/index.js","./utils/createSvgIcon":"../node_modules/@material-ui/icons/utils/createSvgIcon.js"}],"../node_modules/@material-ui/icons/Clear.js":[function(require,module,exports) {
+"use strict";
+
+var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _react = _interopRequireDefault(require("react"));
+
+var _createSvgIcon = _interopRequireDefault(require("./utils/createSvgIcon"));
+
+var _default = (0, _createSvgIcon.default)(_react.default.createElement(_react.default.Fragment, null, _react.default.createElement("path", {
+  d: "M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"
+}), _react.default.createElement("path", {
+  fill: "none",
+  d: "M0 0h24v24H0z"
+})), 'Clear');
+
+exports.default = _default;
 },{"@babel/runtime/helpers/interopRequireDefault":"../node_modules/@babel/runtime/helpers/interopRequireDefault.js","react":"../node_modules/react/index.js","./utils/createSvgIcon":"../node_modules/@material-ui/icons/utils/createSvgIcon.js"}],"components/common/CharacterSheetEditor/AttributeItem/Base.tsx":[function(require,module,exports) {
 "use strict";
 
@@ -101016,6 +101038,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = require("tslib");
 var React = require("react");
 var core_1 = require("@material-ui/core");
+var Clear_1 = require("@material-ui/icons/Clear");
 var EditableText_tsx_1 = require("../../EditableText.tsx");
 ;
 var BaseAttributeItem = /** @class */function (_super) {
@@ -101030,10 +101053,20 @@ var BaseAttributeItem = /** @class */function (_super) {
             content = _a.content,
             icon = _a.icon,
             sibling = _a.sibling,
-            _onSave = _a.onSave;
-        var comp = React.createElement(core_1.ListItem, { key: id + "_item" }, React.createElement(core_1.ListItemIcon, null, icon), React.createElement(EditableText_tsx_1.default, { defaultValue: attr.name, onSave: function onSave(name) {
-                _onSave(id, tslib_1.__assign({}, attr, { name: name }));
-            } }), content);
+            _onSave = _a.onSave,
+            isRoot = _a.isRoot;
+        var comp;
+        if (isRoot) {
+            comp = React.createElement(core_1.ListItem, { key: id + "_item" }, React.createElement(EditableText_tsx_1.default, { defaultValue: attr.name, onSave: function onSave(name) {
+                    _onSave(id, tslib_1.__assign({}, attr, { name: name }));
+                } }), content);
+        } else {
+            comp = React.createElement(core_1.ListItem, { key: id + "_item" }, React.createElement(core_1.ListItemIcon, null, React.createElement(core_1.IconButton, { style: { color: "red" }, onClick: function onClick() {
+                    _onSave(id, undefined);
+                } }, React.createElement(Clear_1.default, null))), React.createElement(core_1.ListItemIcon, null, icon), React.createElement(EditableText_tsx_1.default, { defaultValue: attr.name, onSave: function onSave(name) {
+                    _onSave(id, tslib_1.__assign({}, attr, { name: name }));
+                } }), content);
+        }
         if (sibling) {
             return [comp, sibling];
         } else {
@@ -101043,7 +101076,7 @@ var BaseAttributeItem = /** @class */function (_super) {
     return BaseAttributeItem;
 }(React.Component);
 exports.default = BaseAttributeItem;
-},{"tslib":"../node_modules/tslib/tslib.es6.js","react":"../node_modules/react/index.js","@material-ui/core":"../node_modules/@material-ui/core/index.es.js","../../EditableText.tsx":"components/common/EditableText.tsx"}],"components/common/CharacterSheetEditor/AttributeItem/NumberAttributeItem.tsx":[function(require,module,exports) {
+},{"tslib":"../node_modules/tslib/tslib.es6.js","react":"../node_modules/react/index.js","@material-ui/core":"../node_modules/@material-ui/core/index.es.js","@material-ui/icons/Clear":"../node_modules/@material-ui/icons/Clear.js","../../EditableText.tsx":"components/common/EditableText.tsx"}],"components/common/CharacterSheetEditor/AttributeItem/NumberAttributeItem.tsx":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -101432,11 +101465,11 @@ var ComputedEnumAttributeItem = /** @class */function (_super) {
             _b = _a.state,
             newVal = _b.newVal,
             enableEdit = _b.enableEdit;
-        return React.createElement(Base_tsx_1.default, tslib_1.__assign({}, props, { icon: React.createElement(Menu_1.default, null), content: React.createElement(core_1.ListItemText, null, React.createElement(core_1.Button, { onClick: function onClick() {
+        return React.createElement(Base_tsx_1.default, tslib_1.__assign({}, props, { icon: React.createElement(Menu_1.default, null), content: React.createElement(core_1.ListItemText, null, props.attr.formula.operands.length > 0 && React.createElement("span", { style: { marginRight: "2px" } }, "="), React.createElement(core_1.Button, { onClick: function onClick() {
                     return _this.setState({ enableEdit: true });
                 } }, React.createElement(Formula_tsx_1.Expression, { expression: props.attr.formula, getRef: function getRef(s) {
                     return props.refs.getRef(s);
-                } }), React.createElement(Edit_1.default, null)), React.createElement(core_1.Dialog, { onClose: function onClose() {
+                } }), props.attr.formula.operands.length === 0 && React.createElement("span", null, "@ Create Formula"), React.createElement(Edit_1.default, null)), React.createElement(core_1.Dialog, { onClose: function onClose() {
                     return _this.setState({ enableEdit: false });
                 }, open: enableEdit }, React.createElement(core_1.DialogTitle, { title: "Edit " + props.id }, "Edit ", props.attr.name, " Formula"), React.createElement(core_1.DialogContent, null, React.createElement(core_1.Grid, { container: true }, React.createElement(index_tsx_1.default, { refs: props.refs, formula: props.attr.formula, onSave: function onSave(newFromula) {
                     props.onSave(props.id, tslib_1.__assign({}, props.attr, { formula: newFromula }));
@@ -101503,11 +101536,11 @@ var ComputedNumberAttributeItem = /** @class */function (_super) {
         var _a = this,
             props = _a.props,
             enableEdit = _a.state.enableEdit;
-        return React.createElement(Base_tsx_1.default, tslib_1.__assign({}, props, { icon: React.createElement(Computer_1.default, null), content: React.createElement(core_1.ListItemText, null, React.createElement(core_1.Button, { onClick: function onClick() {
+        return React.createElement(Base_tsx_1.default, tslib_1.__assign({}, props, { icon: React.createElement(Computer_1.default, null), content: React.createElement(core_1.ListItemText, null, props.attr.formula.operands.length > 0 && React.createElement("span", { style: { marginRight: "2px" } }, "="), React.createElement(core_1.Button, { onClick: function onClick() {
                     return _this.setState({ enableEdit: true });
                 } }, React.createElement(Formula_tsx_1.Expression, { expression: props.attr.formula, getRef: function getRef(s) {
                     return props.refs.getRef(s);
-                } }), React.createElement(Edit_1.default, null)), React.createElement(core_1.Dialog, { onClose: function onClose() {
+                } }), props.attr.formula.operands.length === 0 && React.createElement("span", null, "@ Create Formula"), React.createElement(Edit_1.default, null)), React.createElement(core_1.Dialog, { onClose: function onClose() {
                     return _this.setState({ enableEdit: false });
                 }, open: enableEdit }, React.createElement(core_1.DialogTitle, { title: "Edit " + props.id }, "Edit ", props.attr.name, " Formula"), React.createElement(core_1.DialogContent, null, React.createElement(core_1.Grid, { container: true }, React.createElement(index_tsx_1.default, { refs: props.refs, formula: props.attr.formula, onSave: function onSave(newFromula) {
                     props.onSave(props.id, tslib_1.__assign({}, props.attr, { formula: newFromula }));
@@ -101533,6 +101566,7 @@ var NumberAttributeItem_tsx_1 = require("./NumberAttributeItem.tsx");
 var EnumAttributeItem_tsx_1 = require("./EnumAttributeItem.tsx");
 var ComputedEnumAttributeItem_tsx_1 = require("./ComputedEnumAttributeItem.tsx");
 var ComputedNumberAttributeItem_tsx_1 = require("./ComputedNumberAttributeItem.tsx");
+var Base_tsx_1 = require("./Base.tsx");
 function AttributeItem(props) {
     switch (props.attr.type) {
         case "category":
@@ -101595,40 +101629,61 @@ var CategoryAttributeItem = /** @class */function (_super) {
     CategoryAttributeItem.prototype.render = function () {
         var _this = this;
         var _a = this,
-            _b = _a.props,
-            id = _b.id,
-            attr = _b.attr,
-            onSave = _b.onSave,
-            refs = _b.refs,
-            _c = _a.state,
-            isOpen = _c.isOpen,
-            currentNew = _c.currentNew,
-            currentNewValue = _c.currentNewValue,
+            props = _a.props,
+            _b = _a.state,
+            isOpen = _b.isOpen,
+            currentNew = _b.currentNew,
+            currentNewValue = _b.currentNewValue,
             menuOpts = _a.menuOpts;
-        return [React.createElement(core_1.ListItem, { key: id + "_item" }, React.createElement(core_1.ListItemIcon, null, React.createElement(Category_1.default, null)), React.createElement(core_1.ListItemText, { inset: true, primary: attr.name }), React.createElement(core_1.ListItemSecondaryAction, null, React.createElement("form", { onSubmit: function onSubmit(e) {
-                e.preventDefault();
-                _this.setState({ isOpen: true });
-                onSave(id, tslib_1.__assign({}, attr, { attributes: tslib_1.__assign({}, attr.attributes, _this.genNewAttrs()) }));
-            } }, React.createElement(core_1.FormControl, null, React.createElement(core_1.NativeSelect, { value: currentNew, onChange: function onChange(e) {
-                return _this.setState({ currentNew: e.currentTarget.value });
-            } }, React.createElement("option", { value: "" }, "None"), menuOpts.map(function (_a) {
-            var key = _a.key,
-                name = _a.name;
-            return React.createElement("option", { key: key, value: key }, name);
-        })), React.createElement("span", null, " ")), React.createElement(core_1.TextField, { label: "Name", disabled: currentNew === "", value: currentNewValue, onChange: function onChange(e) {
-                return _this.setState({
-                    currentNewValue: e.currentTarget.value
-                });
-            } }), React.createElement(core_1.IconButton, { disabled: currentNew === "", type: "submit" }, React.createElement(Add_1.default, null)), React.createElement(core_1.IconButton, { onClick: function onClick(_) {
-                return _this.setState({ isOpen: !isOpen });
-            } }, isOpen ? React.createElement(ExpandLess_1.default, null) : React.createElement(ExpandMore_1.default, null))))), React.createElement(core_1.Collapse, { key: id + "_sublist", in: isOpen, style: { marginLeft: "2%" } }, React.createElement(core_1.Divider, null), React.createElement(core_1.List, { component: "div", disablePadding: true }, Object.keys(attr.attributes).map(function (subid) {
-            return React.createElement(AttributeItem, { key: subid, id: id + "/attributes/" + subid, attr: attr.attributes[subid], onSave: onSave, refs: refs });
-        })))];
+        var id = props.id,
+            attr = props.attr,
+            onSave = props.onSave,
+            refs = props.refs;
+        return React.createElement(Base_tsx_1.default, tslib_1.__assign({}, props, { isRoot: id.trim() === "", icon: React.createElement(Category_1.default, null), content: React.createElement(core_1.ListItemSecondaryAction, null, React.createElement("form", { onSubmit: function onSubmit(e) {
+                    e.preventDefault();
+                    if (currentNew === "points" && !attr.points) {
+                        _this.setState({ isOpen: true });
+                        onSave(id, tslib_1.__assign({}, attr, { points: {
+                                name: currentNewValue.trim(),
+                                type: "computed-number",
+                                formula: {
+                                    type: "exprs",
+                                    operation: evaluators_ts_1.OPERATIONS.ADDITION,
+                                    operands: []
+                                }
+                            } }));
+                    } else if (currentNew !== "") {
+                        _this.setState({ isOpen: true });
+                        onSave(id, tslib_1.__assign({}, attr, { attributes: tslib_1.__assign({}, attr.attributes, _this.genNewAttrs()) }));
+                    }
+                } }, React.createElement(core_1.FormControl, null, React.createElement(core_1.InputLabel, { htmlFor: id + "_new_maker" }, "Create New"), React.createElement(core_1.NativeSelect, { id: id + "_new_maker", value: currentNew, onChange: function onChange(e) {
+                    var newCurrentNew = e.currentTarget.value;
+                    if (newCurrentNew === "points") {
+                        _this.setState({
+                            currentNew: newCurrentNew,
+                            currentNewValue: attr.name + "'s Points"
+                        });
+                    } else {
+                        _this.setState({ currentNew: newCurrentNew });
+                    }
+                } }, React.createElement("option", { value: "" }), !attr.points && React.createElement("option", { value: "points" }, "Points"), menuOpts.map(function (_a) {
+                var key = _a.key,
+                    name = _a.name;
+                return React.createElement("option", { key: key, value: key }, name);
+            }))), React.createElement(core_1.TextField, { label: "Name", disabled: currentNew === "", value: currentNewValue, onChange: function onChange(e) {
+                    return _this.setState({
+                        currentNewValue: e.currentTarget.value
+                    });
+                } }), React.createElement(core_1.IconButton, { disabled: currentNew === "", type: "submit" }, React.createElement(Add_1.default, null)), React.createElement(core_1.IconButton, { onClick: function onClick(_) {
+                    return _this.setState({ isOpen: !isOpen });
+                } }, isOpen ? React.createElement(ExpandLess_1.default, null) : React.createElement(ExpandMore_1.default, null)))), sibling: React.createElement(core_1.Collapse, { key: id + "_sublist", in: isOpen, style: { marginLeft: "2%" } }, React.createElement(core_1.Divider, null), React.createElement(core_1.List, { component: "div", disablePadding: true }, !!attr.points && React.createElement(AttributeItem, { key: "points", id: id + "/points", attr: attr.points, onSave: onSave, refs: refs }), Object.keys(attr.attributes).map(function (subid) {
+                return React.createElement(AttributeItem, { key: subid, id: id + "/attributes/" + subid, attr: attr.attributes[subid], onSave: onSave, refs: refs });
+            }))) }));
     };
     return CategoryAttributeItem;
 }(React.Component);
 exports.default = CategoryAttributeItem;
-},{"tslib":"../node_modules/tslib/tslib.es6.js","react":"../node_modules/react/index.js","@material-ui/core":"../node_modules/@material-ui/core/index.es.js","@material-ui/icons/Category":"../node_modules/@material-ui/icons/Category.js","@material-ui/icons/ExpandLess":"../node_modules/@material-ui/icons/ExpandLess.js","@material-ui/icons/ExpandMore":"../node_modules/@material-ui/icons/ExpandMore.js","@material-ui/icons/Add":"../node_modules/@material-ui/icons/Add.js","../../../../attr-parser/evaluators.ts":"attr-parser/evaluators.ts","./NumberAttributeItem.tsx":"components/common/CharacterSheetEditor/AttributeItem/NumberAttributeItem.tsx","./EnumAttributeItem.tsx":"components/common/CharacterSheetEditor/AttributeItem/EnumAttributeItem.tsx","./ComputedEnumAttributeItem.tsx":"components/common/CharacterSheetEditor/AttributeItem/ComputedEnumAttributeItem.tsx","./ComputedNumberAttributeItem.tsx":"components/common/CharacterSheetEditor/AttributeItem/ComputedNumberAttributeItem.tsx"}],"components/common/CharacterSheetEditor/index.tsx":[function(require,module,exports) {
+},{"tslib":"../node_modules/tslib/tslib.es6.js","react":"../node_modules/react/index.js","@material-ui/core":"../node_modules/@material-ui/core/index.es.js","@material-ui/icons/Category":"../node_modules/@material-ui/icons/Category.js","@material-ui/icons/ExpandLess":"../node_modules/@material-ui/icons/ExpandLess.js","@material-ui/icons/ExpandMore":"../node_modules/@material-ui/icons/ExpandMore.js","@material-ui/icons/Add":"../node_modules/@material-ui/icons/Add.js","../../../../attr-parser/evaluators.ts":"attr-parser/evaluators.ts","./NumberAttributeItem.tsx":"components/common/CharacterSheetEditor/AttributeItem/NumberAttributeItem.tsx","./EnumAttributeItem.tsx":"components/common/CharacterSheetEditor/AttributeItem/EnumAttributeItem.tsx","./ComputedEnumAttributeItem.tsx":"components/common/CharacterSheetEditor/AttributeItem/ComputedEnumAttributeItem.tsx","./ComputedNumberAttributeItem.tsx":"components/common/CharacterSheetEditor/AttributeItem/ComputedNumberAttributeItem.tsx","./Base.tsx":"components/common/CharacterSheetEditor/AttributeItem/Base.tsx"}],"components/common/CharacterSheetEditor/index.tsx":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -101662,11 +101717,19 @@ var CharacterSheetEditor = /** @class */function (_super) {
         var _this = this;
         var refs = convertor_ts_1.getAllReferanciables(this.state.tree);
         return React.createElement(core_1.Paper, null, React.createElement(index_tsx_1.default, { id: "", attr: this.state.tree, onSave: function onSave(id, attr) {
-                var newTree = fast_json_patch_1.applyOperation(_this.state.tree, {
-                    op: "replace",
-                    path: id,
-                    value: attr
-                }).newDocument;
+                var newTree;
+                if (!attr) {
+                    newTree = fast_json_patch_1.applyOperation(_this.state.tree, {
+                        op: "remove",
+                        path: id
+                    }).newDocument;
+                } else {
+                    newTree = fast_json_patch_1.applyOperation(_this.state.tree, {
+                        op: "replace",
+                        path: id,
+                        value: attr
+                    }).newDocument;
+                }
                 _this.setState({
                     tree: newTree
                 });
@@ -101759,6 +101822,7 @@ var React = require("react");
 var core_1 = require("@material-ui/core");
 var CharacterSheetEditor_tsx_1 = require("../containers/CharacterSheetEditor.tsx");
 var CharacterSheets_ts_1 = require("../../states/CharacterSheets.ts");
+var util_ts_1 = require("../../db/util.ts");
 var CharacterSheetEditorPage = /** @class */function (_super) {
     tslib_1.__extends(CharacterSheetEditorPage, _super);
     function CharacterSheetEditorPage() {
@@ -101771,16 +101835,30 @@ var CharacterSheetEditorPage = /** @class */function (_super) {
     };
     CharacterSheetEditorPage.prototype.componentWillReceiveProps = function (nextProps) {
         return tslib_1.__awaiter(this, void 0, void 0, function () {
-            var _a, _b;
+            var id, _a, _b;
             return tslib_1.__generator(this, function (_c) {
                 switch (_c.label) {
                     case 0:
                         this.setState({ sheet: undefined });
+                        id = nextProps.match.params.id;
+                        if (!(id.toLocaleLowerCase() === "test")) return [3 /*break*/, 1];
+                        this.setState({
+                            sheet: new CharacterSheets_ts_1.CharacterSheet({
+                                name: "Test",
+                                description: "Sample Tree",
+                                tree: util_ts_1.genDefaultTree(),
+                                owner: null
+                            })
+                        });
+                        return [3 /*break*/, 3];
+                    case 1:
                         _a = this.setState;
                         _b = {};
                         return [4 /*yield*/, CharacterSheets_ts_1.CharacterSheet.loadFromId(nextProps.match.params.id)];
-                    case 1:
+                    case 2:
                         _a.apply(this, [(_b.sheet = _c.sent(), _b)]);
+                        _c.label = 3;
+                    case 3:
                         return [2 /*return*/];
                 }
             });
@@ -101796,7 +101874,7 @@ var CharacterSheetEditorPage = /** @class */function (_super) {
     return CharacterSheetEditorPage;
 }(React.Component);
 exports.default = CharacterSheetEditorPage;
-},{"tslib":"../node_modules/tslib/tslib.es6.js","react":"../node_modules/react/index.js","@material-ui/core":"../node_modules/@material-ui/core/index.es.js","../containers/CharacterSheetEditor.tsx":"components/containers/CharacterSheetEditor.tsx","../../states/CharacterSheets.ts":"states/CharacterSheets.ts"}],"components/router/index.tsx":[function(require,module,exports) {
+},{"tslib":"../node_modules/tslib/tslib.es6.js","react":"../node_modules/react/index.js","@material-ui/core":"../node_modules/@material-ui/core/index.es.js","../containers/CharacterSheetEditor.tsx":"components/containers/CharacterSheetEditor.tsx","../../states/CharacterSheets.ts":"states/CharacterSheets.ts","../../db/util.ts":"db/util.ts"}],"components/router/index.tsx":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -101885,7 +101963,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = '' || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + '40079' + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + '34737' + '/');
   ws.onmessage = function (event) {
     var data = JSON.parse(event.data);
 

@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Grid, ListItem, ListItemText, ListItemIcon, Button, Dialog, DialogContent, DialogTitle } from '@material-ui/core';
+import { Grid, ListItem, ListItemText, ListItemIcon, Button, Dialog, DialogContent, DialogTitle, Typography } from '@material-ui/core';
 
 import ComputedIcon from '@material-ui/icons/Computer';
 import EditIcon from '@material-ui/icons/Edit';
@@ -17,8 +17,12 @@ export default class ComputedNumberAttributeItem extends React.Component<Attribu
         return <BaseAttributeItem {...props}
             icon={<ComputedIcon/>}
             content={<ListItemText>
+                {props.attr.formula.operands.length > 0 && <span style={{ marginRight: "2px" }}>
+                    = 
+                </span>}
                 <Button onClick={ () => this.setState({ enableEdit: true }) }>
                     <Expression expression={props.attr.formula} getRef={ s => props.refs.getRef(s) }/>
+                    {props.attr.formula.operands.length === 0 && <span>@ Create Formula</span>}
                     <EditIcon/>
                 </Button>
                 <Dialog onClose={ () => this.setState({ enableEdit: false })} open={enableEdit}>

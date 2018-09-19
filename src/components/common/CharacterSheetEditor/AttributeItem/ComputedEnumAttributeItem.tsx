@@ -1,5 +1,5 @@
 import * as React from "react";
-import { ListItem, ListItemText, ListItemIcon, Collapse, TextField, Button, Dialog, DialogTitle, DialogContent, Grid } from '@material-ui/core';
+import { ListItem, ListItemText, ListItemIcon, Collapse, TextField, Button, Dialog, DialogTitle, DialogContent, Grid, Typography } from '@material-ui/core';
 
 import EnumIcon from '@material-ui/icons/Menu';
 import EditIcon from '@material-ui/icons/Edit';
@@ -64,8 +64,12 @@ export default class ComputedEnumAttributeItem extends React.Component<Attribute
         const { props, state: { newVal, enableEdit } } = this;
         return <BaseAttributeItem {...props} icon={<EnumIcon/>}
             content={<ListItemText>
+                {props.attr.formula.operands.length > 0 && <span style={{ marginRight: "2px" }}>
+                    = 
+                </span>}
                 <Button onClick={ () => this.setState({ enableEdit: true }) }>
                     <Expression expression={props.attr.formula} getRef={ s => props.refs.getRef(s) }/>
+                    {props.attr.formula.operands.length === 0 && <span>@ Create Formula</span>}
                     <EditIcon/>
                 </Button>
                 <Dialog onClose={ () => this.setState({ enableEdit: false })} open={enableEdit}>

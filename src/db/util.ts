@@ -3,7 +3,7 @@ import { OPERATIONS } from '@/attr-parser/evaluators';
 
 export const genDefaultTree = () : Attributes.Category => ({
     type: "category",
-    name: "$root",
+    name: "Character Sheet",
     attributes: {
         about: { 
             type: "category",

@@ -1,5 +1,5 @@
 import * as React from "react";
-import {  List, ListItem, ListItemText, ListItemIcon, Collapse, IconButton, Divider, TextField, ListItemSecondaryAction, FormControl, NativeSelect } from '@material-ui/core';
+import {  List, ListItem, ListItemText, ListItemIcon, Collapse, IconButton, Divider, TextField, ListItemSecondaryAction, FormControl, NativeSelect, InputLabel } from '@material-ui/core';
 
 import CategoryIcon from "@material-ui/icons/Category";
 import ExpandLessIcon from '@material-ui/icons/ExpandLess';
@@ -15,6 +15,7 @@ import NumberAttributeItem from '@/components/common/CharacterSheetEditor/Attrib
 import EnumAttributeItem from '@/components/common/CharacterSheetEditor/AttributeItem/EnumAttributeItem';
 import ComputedEnumAttributeItem from '@/components/common/CharacterSheetEditor/AttributeItem/ComputedEnumAttributeItem';
 import ComputedNumberAttributeItem from '@/components/common/CharacterSheetEditor/AttributeItem/ComputedNumberAttributeItem';
+import BaseAttributeItem from '@/components/common/CharacterSheetEditor/AttributeItem/Base';
 
 function AttributeItem( props: AttributeProps<Attributes.Attribute> ) {
     switch (props.attr.type) {
@@ -79,14 +80,27 @@ export default class CategoryAttributeItem extends React.Component<AttributeProp
         }
     }
     render() {
-        const { props: { id, attr, onSave, refs }, state: { isOpen, currentNew, currentNewValue }, menuOpts } = this;
-        return [
-            <ListItem key={id + "_item"}>
-                <ListItemIcon><CategoryIcon/></ListItemIcon>
-                <ListItemText inset primary={attr.name}/>
-                <ListItemSecondaryAction>
-                    <form onSubmit={ e => {
-                        e.preventDefault();
+        const { props, state: { isOpen, currentNew, currentNewValue }, menuOpts } = this;
+        const { id, attr, onSave, refs } = props;
+        return <BaseAttributeItem {...props} isRoot={id.trim() === ""} icon={<CategoryIcon/>}
+            content={<ListItemSecondaryAction>
+                <form onSubmit={ e => {
+                    e.preventDefault();
+                    if ( currentNew === "points" && !attr.points ) {
+                        this.setState({ isOpen: true })
+                        onSave(id, {
+                            ...attr,
+                            points: {
+                                name: currentNewValue.trim(),
+                                type: "computed-number",
+                                formula: {
+                                    type: "exprs",
+                                    operation: OPERATIONS.ADDITION,
+                                    operands: [],
+                                }
+                            }
+                        })
+                    }   else    if( currentNew !== "" ) {
                         this.setState({ isOpen: true })
                         onSave(id, {
                             ...attr, attributes: {
@@ -94,43 +108,53 @@ export default class CategoryAttributeItem extends React.Component<AttributeProp
                                 ...this.genNewAttrs(),
                             }
                         });
-                    }}>
-                        <FormControl>
-                            <NativeSelect value={currentNew} onChange={ e => this.setState({ currentNew: e.currentTarget.value as any }) } >
-                                <option value="">
-                                    None
-                                </option>
-                                {menuOpts.map( ({ key, name }) => <option key={key} value={key}>
-                                    {name}
-                                </option> )}
-                            </NativeSelect>
-                            <span> </span>
-                        </FormControl>
-                        <TextField
-                            label="Name"
-                            disabled={currentNew === ""}
-                            value={currentNewValue} onChange={e => this.setState({
-                                currentNewValue: e.currentTarget.value,
-                            })}
-                        />
-                        <IconButton disabled={currentNew === ""} type="submit">
-                            <AddIcon/>
-                        </IconButton>
-                        <IconButton onClick={ _ => this.setState({ isOpen: !isOpen }) }>
-                            {isOpen ? <ExpandLessIcon/> : <ExpandMoreIcon/>}
-                        </IconButton>
-                    </form>
-                </ListItemSecondaryAction>
-            </ListItem>,
-            <Collapse key={id + "_sublist"} in={isOpen} style={{ marginLeft: "2%" }}>
+                    }
+                }}>
+                    <FormControl>
+                        <InputLabel htmlFor={`${id}_new_maker`}>Create New</InputLabel>
+                        <NativeSelect id={`${id}_new_maker`} value={currentNew} onChange={ e => {
+                            const newCurrentNew = e.currentTarget.value as any;
+                            if (newCurrentNew === "points") {
+                                this.setState({
+                                    currentNew: newCurrentNew,
+                                    currentNewValue: `${attr.name}'s Points`,
+                                })
+                            } else {
+                                this.setState({ currentNew: newCurrentNew })
+                            }
+                        } } >
+                            <option value=""></option>
+                            {!attr.points && <option value="points">Points</option>}
+                            {menuOpts.map( ({ key, name }) => <option key={key} value={key}>
+                                {name}
+                            </option> )}
+                        </NativeSelect>
+                    </FormControl>
+                    <TextField
+                        label="Name"
+                        disabled={currentNew === ""}
+                        value={currentNewValue} onChange={e => this.setState({
+                            currentNewValue: e.currentTarget.value,
+                        })}
+                    />
+                    <IconButton disabled={currentNew === ""} type="submit">
+                        <AddIcon/>
+                    </IconButton>
+                    <IconButton onClick={ _ => this.setState({ isOpen: !isOpen }) }>
+                        {isOpen ? <ExpandLessIcon/> : <ExpandMoreIcon/>}
+                    </IconButton>
+                </form>
+            </ListItemSecondaryAction>}
+            sibling={<Collapse key={id + "_sublist"} in={isOpen} style={{ marginLeft: "2%" }}>
                 <Divider/>
                 <List component="div" disablePadding>
+                    {!!attr.points && <AttributeItem key="points" id={id + "/points"} attr={attr.points} onSave={onSave} refs={refs} />}
                     {Object.keys(attr.attributes).map( subid => 
                         <AttributeItem key={subid} id={id+"/attributes/"+subid} attr={attr.attributes[subid]} onSave={onSave} refs={refs}/>
                     )}
                 </List>
-            </Collapse>
-        ]
+            </Collapse>}
+        />
     }
 }
 

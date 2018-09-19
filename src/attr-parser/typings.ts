@@ -3,6 +3,7 @@ export namespace Attributes {
         name: string;
         type: "category";
         attributes: Record<string, Attribute>;
+        points?: ComputedAttribute;
     }
     export type ReferentiableAttribute = { key: string; } & (NumberAttribute | EnumAttribute | ComputedEnumAttribute | ComputedAttribute);
     export type Attribute = Category | NumberAttribute | EnumAttribute | ComputedEnumAttribute | ComputedAttribute | TextAttribute;

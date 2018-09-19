@@ -40,11 +40,21 @@ export default class CharacterSheetEditor extends React.Component<IProps, IState
         const refs = getAllReferanciables(this.state.tree);
         return <Paper>
             <CategoryAttributeItem id="" attr={this.state.tree} onSave={ (id, attr) => {
-                const newTree = applyOperation(this.state.tree, {
-                    op: "replace",
-                    path: id,
-                    value: attr,
-                }).newDocument;
+
+                let newTree: Attributes.Category;
+                if (!attr) {
+                    newTree = applyOperation(this.state.tree, {
+                        op: "remove",
+                        path: id,
+                    }).newDocument;
+                }   else    {
+                    newTree = applyOperation(this.state.tree, {
+                        op: "replace",
+                        path: id,
+                        value: attr,
+                    }).newDocument;
+                }
+
                 this.setState({
                     tree: newTree,
                 })                
