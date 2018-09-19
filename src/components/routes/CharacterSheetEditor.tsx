@@ -4,6 +4,7 @@ import { Grid, LinearProgress } from '@material-ui/core';
 import CharacterSheetEditorContainer from '@/components/containers/CharacterSheetEditor';
 import { CharacterSheet } from '@/states/CharacterSheets';
 import { genDefaultTree } from '@/db/util';
+import NavBar from '@/components/layouts/NavBar';
 
 export interface IProps extends RouteComponentProps<{ id: string }> {
 
@@ -18,24 +19,29 @@ export default class CharacterSheetEditorPage extends React.Component<IProps, IS
         this.componentWillReceiveProps(this.props);
     }
     async componentWillReceiveProps(nextProps: IProps) {
-        this.setState({ sheet: undefined })
+        this.setState({ sheet: undefined });
+        NavBar.setCustomHeader(`Sheet/...`);
+
         const { params: { id } } = nextProps.match;
+        let sheet:CharacterSheet;
+
         if ( id.toLocaleLowerCase() === "test" ) {
-            this.setState({
-                sheet: new CharacterSheet({
-                    name: "Test",
-                    description: "Sample Tree",
-                    tree: genDefaultTree(),
-                    owner: null,
-                })
-            })
-        }   else     {
-            this.setState({
-                sheet: await CharacterSheet.loadFromId(nextProps.match.params.id),
+            sheet = new CharacterSheet({
+                name: "Test",
+                description: "Sample Tree",
+                tree: genDefaultTree(),
+                owner: null,
             });
+        }   else     {
+            sheet = await CharacterSheet.loadFromId(nextProps.match.params.id);
+        }
+        if (sheet) {
+            this.setState({
+                sheet
+            });
+            NavBar.setCustomHeader(`Sheet / ${sheet.name}`);
         }
     }
-
     render() {
         if (this.state.sheet) {
             return <Grid container justify="center" direction="column">

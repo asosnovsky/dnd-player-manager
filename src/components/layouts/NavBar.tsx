@@ -8,20 +8,28 @@ import Toolbar from "@material-ui/core/Toolbar";
 import { Typography, DialogContent, DialogTitle } from "@material-ui/core";
 import { state, PAGES, goTo } from "@/components/router/history";
 import { observer } from "mobx-react";
-import { computed, toJS } from "mobx";
+import { computed, toJS, observable } from "mobx";
 import { gameState } from "@/states";
 import EditableText from '@/components/common/EditableText';
 import QRGameID from '@/components/common/QRGameID';
 import LinkIcon from "@material-ui/icons/Adjust";
 
-interface IState {
-    showQR: boolean;
-}
+const internalState = observable({
+    showQR: false,
+    customHeader: "",
+})
 
 @observer
-export default class extends React.Component<{},IState> {
-    state = { showQR: false }
+export default class NavBar extends React.Component<{}> {
+
+    static setCustomHeader(header: string) {
+        internalState.customHeader = header;
+    }
+
     @computed get title() {
+        if ( internalState.customHeader !== "" ) {
+            return internalState.customHeader;
+        }
         switch(state.currentPage) {
             case PAGES.HOME: return ""
             case PAGES.PLAYER: return "Player Mode"
@@ -41,9 +49,7 @@ export default class extends React.Component<{},IState> {
                 <Typography color="inherit" variant="title">
                     {this.title}
                     {isGameOverviewPage && <Button onClick={() => {
-                            this.setState({
-                                showQR: !!gameState.id,
-                            })
+                            internalState.showQR = !!gameState.id;
                     }}>QR Code <LinkIcon/></Button>}
                     <br/>
                     <EditableText defaultValue={playerName} onSave={s => {
@@ -51,7 +57,7 @@ export default class extends React.Component<{},IState> {
                     }} />
                 </Typography>
             </Toolbar>
-            {isGameOverviewPage && <Dialog open={this.state.showQR} onClose={_ => this.setState({showQR: false})}>
+            {isGameOverviewPage && <Dialog open={internalState.showQR} onClose={_ => {internalState.showQR = false}}>
                 <DialogTitle>{gameState.id}</DialogTitle>
                 <DialogContent>
                     <QRGameID/>

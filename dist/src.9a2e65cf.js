@@ -98421,15 +98421,23 @@ var index_ts_1 = require("../../states/index.ts");
 var EditableText_tsx_1 = require("../common/EditableText.tsx");
 var QRGameID_tsx_1 = require("../common/QRGameID.tsx");
 var Adjust_1 = require("@material-ui/icons/Adjust");
-var default_1 = /** @class */function (_super) {
-    tslib_1.__extends(default_1, _super);
-    function default_1() {
-        var _this = _super !== null && _super.apply(this, arguments) || this;
-        _this.state = { showQR: false };
-        return _this;
+var internalState = mobx_1.observable({
+    showQR: false,
+    customHeader: ""
+});
+var NavBar = /** @class */function (_super) {
+    tslib_1.__extends(NavBar, _super);
+    function NavBar() {
+        return _super !== null && _super.apply(this, arguments) || this;
     }
-    Object.defineProperty(default_1.prototype, "title", {
+    NavBar.setCustomHeader = function (header) {
+        internalState.customHeader = header;
+    };
+    Object.defineProperty(NavBar.prototype, "title", {
         get: function get() {
+            if (internalState.customHeader !== "") {
+                return internalState.customHeader;
+            }
             switch (history_ts_1.state.currentPage) {
                 case history_ts_1.PAGES.HOME:
                     return "";
@@ -98448,27 +98456,24 @@ var default_1 = /** @class */function (_super) {
         enumerable: true,
         configurable: true
     });
-    default_1.prototype.render = function () {
-        var _this = this;
+    NavBar.prototype.render = function () {
         var playerName = index_ts_1.gameState.curretPlayerName;
         var isGameOverviewPage = history_ts_1.state.currentPage === history_ts_1.PAGES.GAME_OVERVIEW;
         return React.createElement(AppBar_1.default, { position: "sticky", color: "primary" }, React.createElement(Toolbar_1.default, null, React.createElement(Button_1.default, { color: "inherit", onClick: function onClick(_) {
                 return SideBar_1.state.isOpen = true;
             } }, "\u2630"), React.createElement(core_1.Typography, { color: "inherit", variant: "title" }, this.title, isGameOverviewPage && React.createElement(Button_1.default, { onClick: function onClick() {
-                _this.setState({
-                    showQR: !!index_ts_1.gameState.id
-                });
+                internalState.showQR = !!index_ts_1.gameState.id;
             } }, "QR Code ", React.createElement(Adjust_1.default, null)), React.createElement("br", null), React.createElement(EditableText_tsx_1.default, { defaultValue: playerName, onSave: function onSave(s) {
                 index_ts_1.gameState.updatePlayerName(s);
-            } }))), isGameOverviewPage && React.createElement(Dialog_1.default, { open: this.state.showQR, onClose: function onClose(_) {
-                return _this.setState({ showQR: false });
+            } }))), isGameOverviewPage && React.createElement(Dialog_1.default, { open: internalState.showQR, onClose: function onClose(_) {
+                internalState.showQR = false;
             } }, React.createElement(core_1.DialogTitle, null, index_ts_1.gameState.id), React.createElement(core_1.DialogContent, null, React.createElement(QRGameID_tsx_1.default, null))));
     };
-    tslib_1.__decorate([mobx_1.computed], default_1.prototype, "title", null);
-    default_1 = tslib_1.__decorate([mobx_react_1.observer], default_1);
-    return default_1;
+    tslib_1.__decorate([mobx_1.computed], NavBar.prototype, "title", null);
+    NavBar = tslib_1.__decorate([mobx_react_1.observer], NavBar);
+    return NavBar;
 }(React.Component);
-exports.default = default_1;
+exports.default = NavBar;
 },{"tslib":"../node_modules/tslib/tslib.es6.js","react":"../node_modules/react/index.js","./SideBar":"components/layouts/SideBar.tsx","@material-ui/core/AppBar":"../node_modules/@material-ui/core/AppBar/index.js","@material-ui/core/Button":"../node_modules/@material-ui/core/Button/index.js","@material-ui/core/Dialog":"../node_modules/@material-ui/core/Dialog/index.js","@material-ui/core/Toolbar":"../node_modules/@material-ui/core/Toolbar/index.js","@material-ui/core":"../node_modules/@material-ui/core/index.es.js","../router/history.ts":"components/router/history.ts","mobx-react":"../node_modules/mobx-react/index.module.js","mobx":"../node_modules/mobx/lib/mobx.module.js","../../states/index.ts":"states/index.ts","../common/EditableText.tsx":"components/common/EditableText.tsx","../common/QRGameID.tsx":"components/common/QRGameID.tsx","@material-ui/icons/Adjust":"../node_modules/@material-ui/icons/Adjust.js"}],"components/layouts/ErrorBoundary.tsx":[function(require,module,exports) {
 "use strict";
 
@@ -101855,6 +101860,7 @@ var core_1 = require("@material-ui/core");
 var CharacterSheetEditor_tsx_1 = require("../containers/CharacterSheetEditor.tsx");
 var CharacterSheets_ts_1 = require("../../states/CharacterSheets.ts");
 var util_ts_1 = require("../../db/util.ts");
+var NavBar_tsx_1 = require("../layouts/NavBar.tsx");
 var CharacterSheetEditorPage = /** @class */function (_super) {
     tslib_1.__extends(CharacterSheetEditorPage, _super);
     function CharacterSheetEditorPage() {
@@ -101867,30 +101873,33 @@ var CharacterSheetEditorPage = /** @class */function (_super) {
     };
     CharacterSheetEditorPage.prototype.componentWillReceiveProps = function (nextProps) {
         return tslib_1.__awaiter(this, void 0, void 0, function () {
-            var id, _a, _b;
-            return tslib_1.__generator(this, function (_c) {
-                switch (_c.label) {
+            var id, sheet;
+            return tslib_1.__generator(this, function (_a) {
+                switch (_a.label) {
                     case 0:
                         this.setState({ sheet: undefined });
+                        NavBar_tsx_1.default.setCustomHeader("Sheet/...");
                         id = nextProps.match.params.id;
                         if (!(id.toLocaleLowerCase() === "test")) return [3 /*break*/, 1];
-                        this.setState({
-                            sheet: new CharacterSheets_ts_1.CharacterSheet({
-                                name: "Test",
-                                description: "Sample Tree",
-                                tree: util_ts_1.genDefaultTree(),
-                                owner: null
-                            })
+                        sheet = new CharacterSheets_ts_1.CharacterSheet({
+                            name: "Test",
+                            description: "Sample Tree",
+                            tree: util_ts_1.genDefaultTree(),
+                            owner: null
                         });
                         return [3 /*break*/, 3];
                     case 1:
-                        _a = this.setState;
-                        _b = {};
                         return [4 /*yield*/, CharacterSheets_ts_1.CharacterSheet.loadFromId(nextProps.match.params.id)];
                     case 2:
-                        _a.apply(this, [(_b.sheet = _c.sent(), _b)]);
-                        _c.label = 3;
+                        sheet = _a.sent();
+                        _a.label = 3;
                     case 3:
+                        if (sheet) {
+                            this.setState({
+                                sheet: sheet
+                            });
+                            NavBar_tsx_1.default.setCustomHeader("Sheet / " + sheet.name);
+                        }
                         return [2 /*return*/];
                 }
             });
@@ -101906,7 +101915,7 @@ var CharacterSheetEditorPage = /** @class */function (_super) {
     return CharacterSheetEditorPage;
 }(React.Component);
 exports.default = CharacterSheetEditorPage;
-},{"tslib":"../node_modules/tslib/tslib.es6.js","react":"../node_modules/react/index.js","@material-ui/core":"../node_modules/@material-ui/core/index.es.js","../containers/CharacterSheetEditor.tsx":"components/containers/CharacterSheetEditor.tsx","../../states/CharacterSheets.ts":"states/CharacterSheets.ts","../../db/util.ts":"db/util.ts"}],"components/router/index.tsx":[function(require,module,exports) {
+},{"tslib":"../node_modules/tslib/tslib.es6.js","react":"../node_modules/react/index.js","@material-ui/core":"../node_modules/@material-ui/core/index.es.js","../containers/CharacterSheetEditor.tsx":"components/containers/CharacterSheetEditor.tsx","../../states/CharacterSheets.ts":"states/CharacterSheets.ts","../../db/util.ts":"db/util.ts","../layouts/NavBar.tsx":"components/layouts/NavBar.tsx"}],"components/router/index.tsx":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
