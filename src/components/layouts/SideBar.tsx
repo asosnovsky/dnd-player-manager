@@ -10,13 +10,13 @@ import Person from "@material-ui/icons/Person";
 import Home from "@material-ui/icons/Home";
 import CreateNewFolder from "@material-ui/icons/CreateNewFolder";
 import CharacterSheetIcon from "@material-ui/icons/People";
-import {goHomeOrBack, history, PAGES, goTo} from "@/components/router/history";
+import {goHomeOrBack, history, PAGES, goTo, state as historyState} from "@/components/router/history";
 
 export const state = observable({isOpen: false});
 
 @observer
 export default class extends React.Component {
-    goTo = (path: PAGES, master: boolean = false) => {
+    goTo = (path: PAGES, master: boolean = true) => {
         return () => {
             state.isOpen = false;
             if (path === PAGES.HOME && !master) {
@@ -26,34 +26,25 @@ export default class extends React.Component {
             }
         }
     }
+    links = [
+        { icon: <Home/>, page: PAGES.HOME, },
+        { icon: <Person/>, page: PAGES.PLAYER, },
+        { icon: <CreateNewFolder/>, page: PAGES.GAME_MASTER, },
+        { icon: <CharacterSheetIcon/>, page: PAGES.CHARACTER_LSTING, },
+    ]
     render() {
         return <Drawer open={state.isOpen} onClose={_ => state.isOpen = false}>
             <List>
                 {window.location.pathname !== PAGES.HOME && <ListItem>
-                    <IconButton onClick={this.goTo(PAGES.HOME, true)}>
+                    <IconButton onClick={this.goTo(PAGES.HOME, false)}>
                         <ArrowBack/>
                     </IconButton>
                 </ListItem>}
-                <ListItem>
-                    <IconButton onClick={this.goTo(PAGES.HOME)}>
-                        <Home/>
+                {this.links.map( (link, idx) => <ListItem key={idx}>
+                    <IconButton onClick={this.goTo(link.page)}>
+                        {link.icon}
                     </IconButton>
-                </ListItem>
-                <ListItem>
-                    <IconButton onClick={this.goTo(PAGES.PLAYER)}>
-                        <Person/>
-                    </IconButton>
-                </ListItem>
-                <ListItem>
-                    <IconButton onClick={this.goTo(PAGES.GAME_MASTER)}>
-                        <CreateNewFolder/>
-                    </IconButton>
-                </ListItem>
-                <ListItem>
-                    <IconButton onClick={this.goTo(PAGES.CHARACTER_LSTING)}>
-                        <CharacterSheetIcon/>
-                    </IconButton>
-                </ListItem>
+                </ListItem> )}
             </List>
         </Drawer>
     }
