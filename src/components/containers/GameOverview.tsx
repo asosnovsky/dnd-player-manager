@@ -24,26 +24,33 @@ export default class GameOverview extends React.Component<IProps, IState> {
     }
     render() {
         const isHost = gameState.isHost;
-        return <Grid container justify="center" direction="column">
-            <EditableText defaultValue={gameState.title} restrictEdit={!isHost} onSave={ v => {
-                gameState.title = v;
-                gameState.saveMeta();
-            } }/>
-            <EditableText defaultValue={gameState.host.name} restrictEdit={!isHost} onSave={ name => 
-                gameState.curretPlayer.update({ name }).save()
-            }/>
-            <Typography variant="display1">Players</Typography>
-            <Table>
-                <TableHead>
-                    <TableRow>
-                        <TableCell>ID</TableCell>
-                        <TableCell>Name</TableCell>
-                    </TableRow>
-                </TableHead>
-                <TableBody>
-                    {this.renderPlayers()}
-                </TableBody>
-            </Table>
+        return <Grid container justify="center">
+            <Grid item xs={12} md={10}>
+                <EditableText variant="" defaultValue={gameState.title} restrictEdit={!isHost} onSave={ v => {
+                    gameState.title = v;
+                    gameState.saveMeta();
+                } }/>
+            </Grid>
+            <Grid item xs={12} md={10}>
+                <EditableText defaultValue={gameState.host.name || "N/A"} restrictEdit={!isHost} onSave={ name => 
+                    gameState.curretPlayer.update({ name }).save()
+                }/>
+            </Grid>
+            <Grid item xs={12} md={10}>
+                <Typography variant="display1">Players</Typography>
+                <Table>
+                    <TableHead>
+                        <TableRow>
+                            <TableCell>ID</TableCell>
+                            <TableCell>Name</TableCell>
+                        </TableRow>
+                    </TableHead>
+                    <TableBody>
+                        {this.renderPlayers()}
+                    </TableBody>
+                </Table>
+            </Grid>
+
         </Grid>
     }
 }

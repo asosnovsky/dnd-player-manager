@@ -32,9 +32,9 @@ export default class NavBar extends React.Component<{}> {
         }
         switch(state.currentPage) {
             case PAGES.HOME: return ""
-            case PAGES.PLAYER: return "Player Mode"
-            case PAGES.GAME_MASTER: return "GM Mode"
-            case PAGES.GAME_OVERVIEW: return `Game Mode`
+            case PAGES.PLAYER: return "Login as Player"
+            case PAGES.GAME_MASTER: return "Create new Game"
+            case PAGES.GAME_OVERVIEW: return `Game Overview`
             case PAGES.CHARACTER_LSTING: return `Character Sheets`
             default:
                 return state.currentPage;

@@ -2,6 +2,8 @@ import * as React from "react";
 import { Route } from "react-router";
 import { Grid, Typography, Card, CardContent, Button, Divider } from "@material-ui/core";
 import { history, goTo, PAGES } from "@/components/router/history";
+import { gameState } from '@/states';
+import { observe } from 'mobx';
 
 export default class IndexPage extends Route {
 

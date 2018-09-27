@@ -98609,11 +98609,11 @@ var NavBar = /** @class */function (_super) {
                 case history_ts_1.PAGES.HOME:
                     return "";
                 case history_ts_1.PAGES.PLAYER:
-                    return "Player Mode";
+                    return "Login as Player";
                 case history_ts_1.PAGES.GAME_MASTER:
-                    return "GM Mode";
+                    return "Create new Game";
                 case history_ts_1.PAGES.GAME_OVERVIEW:
-                    return "Game Mode";
+                    return "Game Overview";
                 case history_ts_1.PAGES.CHARACTER_LSTING:
                     return "Character Sheets";
                 default:
@@ -99836,12 +99836,12 @@ var GameOverview = /** @class */function (_super) {
     };
     GameOverview.prototype.render = function () {
         var isHost = index_ts_1.gameState.isHost;
-        return React.createElement(core_1.Grid, { container: true, justify: "center", direction: "column" }, React.createElement(EditableText_tsx_1.default, { defaultValue: index_ts_1.gameState.title, restrictEdit: !isHost, onSave: function onSave(v) {
+        return React.createElement(core_1.Grid, { container: true, justify: "center" }, React.createElement(core_1.Grid, { item: true, xs: 12, md: 10 }, React.createElement(EditableText_tsx_1.default, { defaultValue: index_ts_1.gameState.title, restrictEdit: !isHost, onSave: function onSave(v) {
                 index_ts_1.gameState.title = v;
                 index_ts_1.gameState.saveMeta();
-            } }), React.createElement(EditableText_tsx_1.default, { defaultValue: index_ts_1.gameState.host.name, restrictEdit: !isHost, onSave: function onSave(name) {
+            } })), React.createElement(core_1.Grid, { item: true, xs: 12, md: 10 }, React.createElement(EditableText_tsx_1.default, { defaultValue: index_ts_1.gameState.host.name || "N/A", restrictEdit: !isHost, onSave: function onSave(name) {
                 return index_ts_1.gameState.curretPlayer.update({ name: name }).save();
-            } }), React.createElement(core_1.Typography, { variant: "display1" }, "Players"), React.createElement(core_1.Table, null, React.createElement(core_1.TableHead, null, React.createElement(core_1.TableRow, null, React.createElement(core_1.TableCell, null, "ID"), React.createElement(core_1.TableCell, null, "Name"))), React.createElement(core_1.TableBody, null, this.renderPlayers())));
+            } })), React.createElement(core_1.Grid, { item: true, xs: 12, md: 10 }, React.createElement(core_1.Typography, { variant: "display1" }, "Players"), React.createElement(core_1.Table, null, React.createElement(core_1.TableHead, null, React.createElement(core_1.TableRow, null, React.createElement(core_1.TableCell, null, "ID"), React.createElement(core_1.TableCell, null, "Name"))), React.createElement(core_1.TableBody, null, this.renderPlayers()))));
     };
     GameOverview = tslib_1.__decorate([mobx_react_1.observer], GameOverview);
     return GameOverview;

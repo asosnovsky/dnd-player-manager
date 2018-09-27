@@ -1,5 +1,6 @@
 import * as React from "react";
 import Typography from "@material-ui/core/Typography"
+import { Style as TypographyVariants } from "@material-ui/core/styles/createTypography";
 import { TextField, PropTypes } from '@material-ui/core';
 
 interface IState {
@@ -15,6 +16,7 @@ interface IProps {
     gutterBottom?: boolean;
     noWrap?: boolean;
     paragraph?: boolean;
+    variant?: TypographyVariants;
 }
 export default class extends React.Component<IProps, IState> {
     state = { isEditable: false, value: "" };
