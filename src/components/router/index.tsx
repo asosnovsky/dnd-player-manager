@@ -8,15 +8,16 @@ import ErrorBoundary from "@/components/layouts/ErrorBoundary";
 import Notifier from '@/components/layouts/Notifier';
 import SideBar from "@/components/layouts/SideBar";
 
+import { PAGES } from "@/components/router/routes.enums";
+
 import ExamplePage from "@/components/routes/ExamplePage";
 import NotFoundPage from "@/components/routes/NotFoundPage";
 import IndexPage from "@/components/routes/IndexPage";
-import PlayerPage from "@/components/routes/PlayerPage";
-import { PAGES } from "@/components/router/routes.enums";
-import GameMasterPage from "@/components/routes/GameMasterPage";
-import GameOverviewPage from "@/components/routes/GameOverviewPage";
-import CharacterSheetListingPage from '@/components/routes/CharacterSheetListingPage';
-import CharacterSheetEditorPage from '@/components/routes/CharacterSheetEditor';
+import PlayerPage from "@/components/routes/game/PlayerPage";
+import GameMasterPage from "@/components/routes/game/GameMasterPage";
+import GameOverviewPage from "@/components/routes/game/GameOverviewPage";
+import CharacterSheetListingPage from '@/components/routes/character-sheets/CharacterSheetListingPage';
+import CharacterSheetEditorPage from '@/components/routes/character-sheets/CharacterSheetEditor';
 
 export default class AppRouter extends React.Component {
     public render() {

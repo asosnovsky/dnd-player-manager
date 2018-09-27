@@ -1,8 +1,7 @@
 import * as React from "react";
 import { gameState } from '@/states';
-import QRCode from 'qrcode.react';
-import { Grid, Typography } from '@material-ui/core';
-
+import * as QRCode from 'qrcode.react';
+import { Grid } from '@material-ui/core';
 
 export default () => <Grid container direction="column" justify="center">
     <Grid item>

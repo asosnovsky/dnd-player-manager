@@ -50,7 +50,7 @@ export default class NavBar extends React.Component<{}> {
                     {this.title}
                     {isGameOverviewPage && <Button onClick={() => {
                             internalState.showQR = !!gameState.id;
-                    }}>QR Code <LinkIcon/></Button>}
+                        }}>QR Code <LinkIcon/></Button>}
                     <br/>
                     <EditableText defaultValue={playerName} onSave={s => {
                         gameState.updatePlayerName(s)

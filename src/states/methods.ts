@@ -6,12 +6,13 @@ import { gameState } from "./GameState";
 import { games } from "@/db";
 import Notifier from '@/components/layouts/Notifier';
 import { goHomeOrBack } from '@/components/router/history';
+import { CharacterSheet } from '@/states/CharacterSheets';
 
 export function __updateFromRef(ref: database.Reference) {
     let first = true;
     return new Promise( res => {
         ref.off('value');
-        ref.on('value', snap => {
+        ref.on('value', async snap => {
             const val = snap.val();
             if (!val) {
                 Notifier.notify("Could not find game.");
@@ -21,8 +22,10 @@ export function __updateFromRef(ref: database.Reference) {
             }
             const players = val.players || {};
             const host = val.host || {};
+            
             gameState.id = snap.key;
             gameState.title = val.title;
+
             let unparsedPlayerKeys = Object.keys(players);
             gameState.players.forEach( (player, key) => {
                 const upPK = unparsedPlayerKeys.indexOf(key);
@@ -40,6 +43,15 @@ export function __updateFromRef(ref: database.Reference) {
                 gameState.host.update(host);
             }   else    {
                 gameState.host = new GameMaster(host, ref);
+            }
+            if (val.characterSheetId) {
+                if ( typeof val.characterSheetId !== "string") {
+                    Notifier.notify("Unexpected Error Occured: CODE=ICSID49")
+                    throw new Error("Invalid Character Sheet ID")
+                }   else if ( gameState.sheet && gameState.sheet.id === val.characterSheetId ) {
+                }   else    {
+                    gameState.sheet = await CharacterSheet.loadFromId(val.characterSheetId);
+                }
             }
 
             if (first) {

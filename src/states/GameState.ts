@@ -4,11 +4,13 @@ import { games } from "@/db";
 import * as cache from "@/cache";
 import GameMaster from "@/states/Players/GameMaster";
 import Player from "@/states/Players/Player";
+import { CharacterSheet } from '@/states/CharacterSheets';
 
 class GameState {
     @observable id: string;
     @observable title: string;
     @observable currentPlayerKey: string | 'host';
+    @observable sheet: CharacterSheet;
     
     @observable host: GameMaster;
     @observable players = new Map<string, Player>();
@@ -24,6 +26,7 @@ class GameState {
     @action updatePlayerName(newName: string) {
         const player = this.curretPlayer;
         if (!player)  throw new Error("Cannot update player.name without an existing game.")
+        console.log({ newName })
         return player.update({ name: newName }).save()
     }
 

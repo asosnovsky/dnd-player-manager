@@ -67485,11 +67485,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var PAGES;
 (function (PAGES) {
     PAGES["HOME"] = "/";
-    PAGES["GAME_MASTER"] = "/game-master";
-    PAGES["PLAYER"] = "/player";
-    PAGES["GAME_OVERVIEW"] = "/game-overview";
-    PAGES["CHARACTER_EDITOR"] = "/character-editor";
-    PAGES["CHARACTER_LSTING"] = "/character-listing";
+    PAGES["GAME_MASTER"] = "/game/master";
+    PAGES["PLAYER"] = "/game/player";
+    PAGES["GAME_OVERVIEW"] = "/game/overview";
+    PAGES["CHARACTER_EDITOR"] = "/character-sheets/editor";
+    PAGES["CHARACTER_LSTING"] = "/character-sheets/listing";
 })(PAGES = exports.PAGES || (exports.PAGES = {}));
 },{}],"components/router/history.ts":[function(require,module,exports) {
 "use strict";
@@ -68912,7 +68912,7 @@ var default_1 = /** @class */function (_super) {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         _this.goTo = function (path, master) {
             if (master === void 0) {
-                master = false;
+                master = true;
             }
             return function () {
                 exports.state.isOpen = false;
@@ -68923,12 +68923,16 @@ var default_1 = /** @class */function (_super) {
                 }
             };
         };
+        _this.links = [{ icon: React.createElement(Home_1.default, null), page: history_ts_1.PAGES.HOME }, { icon: React.createElement(Person_1.default, null), page: history_ts_1.PAGES.PLAYER }, { icon: React.createElement(CreateNewFolder_1.default, null), page: history_ts_1.PAGES.GAME_MASTER }, { icon: React.createElement(People_1.default, null), page: history_ts_1.PAGES.CHARACTER_LSTING }];
         return _this;
     }
     default_1.prototype.render = function () {
+        var _this = this;
         return React.createElement(Drawer_1.default, { open: exports.state.isOpen, onClose: function onClose(_) {
                 return exports.state.isOpen = false;
-            } }, React.createElement(List_1.default, null, window.location.pathname !== history_ts_1.PAGES.HOME && React.createElement(core_1.ListItem, null, React.createElement(core_1.IconButton, { onClick: this.goTo(history_ts_1.PAGES.HOME, true) }, React.createElement(ArrowBack_1.default, null))), React.createElement(core_1.ListItem, null, React.createElement(core_1.IconButton, { onClick: this.goTo(history_ts_1.PAGES.HOME) }, React.createElement(Home_1.default, null))), React.createElement(core_1.ListItem, null, React.createElement(core_1.IconButton, { onClick: this.goTo(history_ts_1.PAGES.PLAYER) }, React.createElement(Person_1.default, null))), React.createElement(core_1.ListItem, null, React.createElement(core_1.IconButton, { onClick: this.goTo(history_ts_1.PAGES.GAME_MASTER) }, React.createElement(CreateNewFolder_1.default, null))), React.createElement(core_1.ListItem, null, React.createElement(core_1.IconButton, { onClick: this.goTo(history_ts_1.PAGES.CHARACTER_LSTING) }, React.createElement(People_1.default, null)))));
+            } }, React.createElement(List_1.default, null, window.location.pathname !== history_ts_1.PAGES.HOME && React.createElement(core_1.ListItem, null, React.createElement(core_1.IconButton, { onClick: this.goTo(history_ts_1.PAGES.HOME, false) }, React.createElement(ArrowBack_1.default, null))), this.links.map(function (link, idx) {
+            return React.createElement(core_1.ListItem, { key: idx }, React.createElement(core_1.IconButton, { onClick: _this.goTo(link.page) }, link.icon));
+        })));
     };
     default_1 = tslib_1.__decorate([mobx_react_1.observer], default_1);
     return default_1;
@@ -96398,6 +96402,7 @@ var GameState = /** @class */function () {
     GameState.prototype.updatePlayerName = function (newName) {
         var player = this.curretPlayer;
         if (!player) throw new Error("Cannot update player.name without an existing game.");
+        console.log({ newName: newName });
         return player.update({ name: newName }).save();
     };
     Object.defineProperty(GameState.prototype, "ref", {
@@ -96450,6 +96455,7 @@ var GameState = /** @class */function () {
     tslib_1.__decorate([mobx_1.observable], GameState.prototype, "id", void 0);
     tslib_1.__decorate([mobx_1.observable], GameState.prototype, "title", void 0);
     tslib_1.__decorate([mobx_1.observable], GameState.prototype, "currentPlayerKey", void 0);
+    tslib_1.__decorate([mobx_1.observable], GameState.prototype, "sheet", void 0);
     tslib_1.__decorate([mobx_1.observable], GameState.prototype, "host", void 0);
     tslib_1.__decorate([mobx_1.observable], GameState.prototype, "players", void 0);
     tslib_1.__decorate([mobx_1.action], GameState.prototype, "reset", null);
@@ -96503,17 +96509,29 @@ var PlayerBase = /** @class */function () {
         return this;
     };
     PlayerBase.prototype.save = function () {
-        var _a = this.toJson(),
-            id = _a.id,
-            role = _a.role,
-            data = _a.data;
-        if (role === "gm") {
-            return this.databaseRef.child("host").set({
-                role: role, data: data
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
+            var _a, id, role, data;
+            return tslib_1.__generator(this, function (_b) {
+                switch (_b.label) {
+                    case 0:
+                        _a = this.toJson(), id = _a.id, role = _a.role, data = _a.data;
+                        console.log({
+                            id: id, role: role, data: data, key: this.databaseRef.key
+                        });
+                        if (!(role === "gm")) return [3 /*break*/, 2];
+                        return [4 /*yield*/, this.databaseRef.child("host").set({
+                            role: role, data: data
+                        }).then()];
+                    case 1:
+                        return [2 /*return*/, _b.sent()];
+                    case 2:
+                        return [4 /*yield*/, this.databaseRef.child("users/" + id).set({
+                            role: role, data: data
+                        }).then()];
+                    case 3:
+                        return [2 /*return*/, _b.sent()];
+                }
             });
-        }
-        return this.databaseRef.child("users/" + id).set({
-            role: role, data: data
         });
     };
     tslib_1.__decorate([mobx_1.observable], PlayerBase.prototype, "id", void 0);
@@ -96591,54 +96609,203 @@ var Notifier = /** @class */function (_super) {
     return Notifier;
 }(React.Component);
 exports.default = Notifier;
-},{"tslib":"../node_modules/tslib/tslib.es6.js","react":"../node_modules/react/index.js","mobx":"../node_modules/mobx/lib/mobx.module.js","mobx-react":"../node_modules/mobx-react/index.module.js","@material-ui/core":"../node_modules/@material-ui/core/index.es.js"}],"states/methods.ts":[function(require,module,exports) {
+},{"tslib":"../node_modules/tslib/tslib.es6.js","react":"../node_modules/react/index.js","mobx":"../node_modules/mobx/lib/mobx.module.js","mobx-react":"../node_modules/mobx-react/index.module.js","@material-ui/core":"../node_modules/@material-ui/core/index.es.js"}],"db/DBObject.ts":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+var tslib_1 = require("tslib");
+var mobx_1 = require("mobx");
+var DBObject = /** @class */function () {
+    function DBObject(data, ref) {
+        this.ref = ref;
+        this.data = data;
+    }
+    DBObject.prototype.toJson = function () {
+        return JSON.parse(JSON.stringify(this.data));
+    };
+    DBObject.prototype.update = function (data) {
+        this.data = tslib_1.__assign({}, this.data, data);
+        return this;
+    };
+    DBObject.prototype.save = function () {
+        var data = this.toJson();
+        return this.ref.update(data);
+    };
+    DBObject.prototype.get = function (key) {
+        return this.data[key];
+    };
+    tslib_1.__decorate([mobx_1.observable], DBObject.prototype, "data", void 0);
+    return DBObject;
+}();
+exports.default = DBObject;
+},{"tslib":"../node_modules/tslib/tslib.es6.js","mobx":"../node_modules/mobx/lib/mobx.module.js"}],"states/CharacterSheets.ts":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var tslib_1 = require("tslib");
+var DBObject_ts_1 = require("../db/DBObject.ts");
+var index_ts_1 = require("../db/index.ts");
+var mobx_1 = require("mobx");
+var CharacterSheet = /** @class */function (_super) {
+    tslib_1.__extends(CharacterSheet, _super);
+    function CharacterSheet(data) {
+        var _this = this;
+        if ('id' in data) {
+            _this = _super.call(this, data, index_ts_1.characterSheets.child(data.id)) || this;
+        } else {
+            var ref = index_ts_1.characterSheets.push(data);
+            data.id = ref.key;
+            _this = _super.call(this, data, ref) || this;
+        }
+        return _this;
+    }
+    Object.defineProperty(CharacterSheet.prototype, "id", {
+        get: function get() {
+            return this.get('id');
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(CharacterSheet.prototype, "tree", {
+        get: function get() {
+            return tslib_1.__assign({ name: "$root", type: "category", attributes: {} }, this.get('tree') || {});
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(CharacterSheet.prototype, "name", {
+        get: function get() {
+            return this.get("name");
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(CharacterSheet.prototype, "description", {
+        get: function get() {
+            return this.get("description");
+        },
+        enumerable: true,
+        configurable: true
+    });
+    CharacterSheet.refreshListing = function (startAt) {
+        var ref;
+        if (startAt) {
+            ref = index_ts_1.characterSheets.startAt(startAt);
+            if (CharacterSheet.listings && CharacterSheet.listings.length > 0) {
+                CharacterSheet.lastStart = CharacterSheet.listings[0].id;
+            }
+        } else {
+            ref = index_ts_1.characterSheets;
+            CharacterSheet.lastStart = null;
+        }
+        ref.limitToFirst(11).once('value', function (snap) {
+            if (snap.exists()) {
+                var val_1 = snap.val();
+                CharacterSheet.listings = Object.keys(val_1).map(function (k) {
+                    return tslib_1.__assign({ id: k }, val_1[k]);
+                });
+            }
+        });
+    };
+    CharacterSheet.loadFromId = function (id) {
+        return tslib_1.__awaiter(this, void 0, Promise, function () {
+            return tslib_1.__generator(this, function (_a) {
+                return [2 /*return*/, new Promise(function (res, rej) {
+                    index_ts_1.characterSheets.child(id).once('value', function (snap) {
+                        console.log("Loading sheet...", id);
+                        if (!snap.exists()) {
+                            console.error("NOT FOUND");
+                            rej("Sheet Not Found");
+                        }
+                        var data = snap.val();
+                        console.log(data);
+                        res(new CharacterSheet(tslib_1.__assign({ id: id }, data)));
+                    });
+                })];
+            });
+        });
+    };
+    CharacterSheet.listings = [];
+    CharacterSheet.lastStart = null;
+    tslib_1.__decorate([mobx_1.observable], CharacterSheet, "listings", void 0);
+    tslib_1.__decorate([mobx_1.observable], CharacterSheet, "lastStart", void 0);
+    return CharacterSheet;
+}(DBObject_ts_1.default);
+exports.CharacterSheet = CharacterSheet;
+},{"tslib":"../node_modules/tslib/tslib.es6.js","../db/DBObject.ts":"db/DBObject.ts","../db/index.ts":"db/index.ts","mobx":"../node_modules/mobx/lib/mobx.module.js"}],"states/methods.ts":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var tslib_1 = require("tslib");
 var GameMaster_ts_1 = require("./Players/GameMaster.ts");
 var Player_ts_1 = require("./Players/Player.ts");
 var GameState_1 = require("./GameState");
 var index_ts_1 = require("../db/index.ts");
 var Notifier_tsx_1 = require("../components/layouts/Notifier.tsx");
 var history_ts_1 = require("../components/router/history.ts");
+var CharacterSheets_ts_1 = require("./CharacterSheets.ts");
 function __updateFromRef(ref) {
+    var _this = this;
     var first = true;
     return new Promise(function (res) {
         ref.off('value');
         ref.on('value', function (snap) {
-            var val = snap.val();
-            if (!val) {
-                Notifier_tsx_1.default.notify("Could not find game.");
-                GameState_1.gameState.reset();
-                history_ts_1.goHomeOrBack();
-                return;
-            }
-            var players = val.players || {};
-            var host = val.host || {};
-            GameState_1.gameState.id = snap.key;
-            GameState_1.gameState.title = val.title;
-            var unparsedPlayerKeys = Object.keys(players);
-            GameState_1.gameState.players.forEach(function (player, key) {
-                var upPK = unparsedPlayerKeys.indexOf(key);
-                if (upPK < 0) {
-                    GameState_1.gameState.players.delete(key);
-                } else {
-                    unparsedPlayerKeys = unparsedPlayerKeys.splice(upPK, 1);
-                    player.update(players[key]);
-                }
+            return tslib_1.__awaiter(_this, void 0, void 0, function () {
+                var val, players, host, unparsedPlayerKeys, _a;
+                return tslib_1.__generator(this, function (_b) {
+                    switch (_b.label) {
+                        case 0:
+                            val = snap.val();
+                            if (!val) {
+                                Notifier_tsx_1.default.notify("Could not find game.");
+                                GameState_1.gameState.reset();
+                                history_ts_1.goHomeOrBack();
+                                return [2 /*return*/];
+                            }
+                            players = val.players || {};
+                            host = val.host || {};
+                            GameState_1.gameState.id = snap.key;
+                            GameState_1.gameState.title = val.title;
+                            unparsedPlayerKeys = Object.keys(players);
+                            GameState_1.gameState.players.forEach(function (player, key) {
+                                var upPK = unparsedPlayerKeys.indexOf(key);
+                                if (upPK < 0) {
+                                    GameState_1.gameState.players.delete(key);
+                                } else {
+                                    unparsedPlayerKeys = unparsedPlayerKeys.splice(upPK, 1);
+                                    player.update(players[key]);
+                                }
+                            });
+                            unparsedPlayerKeys.forEach(function (key) {
+                                GameState_1.gameState.players.set(key, new Player_ts_1.default(key, players[key], ref));
+                            });
+                            if (GameState_1.gameState.host) {
+                                GameState_1.gameState.host.update(host);
+                            } else {
+                                GameState_1.gameState.host = new GameMaster_ts_1.default(host, ref);
+                            }
+                            if (!val.characterSheetId) return [3 /*break*/, 4];
+                            if (!(typeof val.characterSheetId !== "string")) return [3 /*break*/, 1];
+                            Notifier_tsx_1.default.notify("Unexpected Error Occured: CODE=ICSID49");
+                            throw new Error("Invalid Character Sheet ID");
+                        case 1:
+                            if (!(GameState_1.gameState.sheet && GameState_1.gameState.sheet.id === val.characterSheetId)) return [3 /*break*/, 2];
+                            return [3 /*break*/, 4];
+                        case 2:
+                            _a = GameState_1.gameState;
+                            return [4 /*yield*/, CharacterSheets_ts_1.CharacterSheet.loadFromId(val.characterSheetId)];
+                        case 3:
+                            _a.sheet = _b.sent();
+                            _b.label = 4;
+                        case 4:
+                            if (first) {
+                                first = false;
+                                res();
+                            }
+                            return [2 /*return*/];
+                    }
+                });
             });
-            unparsedPlayerKeys.forEach(function (key) {
-                GameState_1.gameState.players.set(key, new Player_ts_1.default(key, players[key], ref));
-            });
-            if (GameState_1.gameState.host) {
-                GameState_1.gameState.host.update(host);
-            } else {
-                GameState_1.gameState.host = new GameMaster_ts_1.default(host, ref);
-            }
-            if (first) {
-                first = false;
-                res();
-            }
         });
     });
 }
@@ -96673,7 +96840,7 @@ function joinGame(gameId, playerKey) {
     return __updateFromRef(ref);
 }
 exports.joinGame = joinGame;
-},{"./Players/GameMaster.ts":"states/Players/GameMaster.ts","./Players/Player.ts":"states/Players/Player.ts","./GameState":"states/GameState.ts","../db/index.ts":"db/index.ts","../components/layouts/Notifier.tsx":"components/layouts/Notifier.tsx","../components/router/history.ts":"components/router/history.ts"}],"states/cache-loader.ts":[function(require,module,exports) {
+},{"tslib":"../node_modules/tslib/tslib.es6.js","./Players/GameMaster.ts":"states/Players/GameMaster.ts","./Players/Player.ts":"states/Players/Player.ts","./GameState":"states/GameState.ts","../db/index.ts":"db/index.ts","../components/layouts/Notifier.tsx":"components/layouts/Notifier.tsx","../components/router/history.ts":"components/router/history.ts","./CharacterSheets.ts":"states/CharacterSheets.ts"}],"states/cache-loader.ts":[function(require,module,exports) {
 "use strict";
 
 var _this = this;
@@ -98369,10 +98536,10 @@ module.exports = QRCode;
 Object.defineProperty(exports, "__esModule", { value: true });
 var React = require("react");
 var index_ts_1 = require("../../states/index.ts");
-var qrcode_react_1 = require("qrcode.react");
+var QRCode = require("qrcode.react");
 var core_1 = require("@material-ui/core");
 exports.default = function () {
-    return React.createElement(core_1.Grid, { container: true, direction: "column", justify: "center" }, React.createElement(core_1.Grid, { item: true }, React.createElement(qrcode_react_1.default, { value: index_ts_1.gameState.id || "N/A", style: {
+    return React.createElement(core_1.Grid, { container: true, direction: "column", justify: "center" }, React.createElement(core_1.Grid, { item: true }, React.createElement(QRCode, { value: index_ts_1.gameState.id || "N/A", style: {
             paddingLeft: 0,
             paddingRight: 0,
             marginLeft: 'auto',
@@ -99542,15 +99709,15 @@ var IndexPage = /** @class */function (_super) {
     }
     IndexPage.prototype.render = function () {
         return React.createElement(core_1.Grid, { container: true, alignItems: "center", justify: "center" }, React.createElement(core_1.Grid, { item: true, xs: 12, style: { marginBottom: "5%" } }, React.createElement(core_1.Typography, { align: "center", variant: "headline" }, "Role Playing Games Manager")), React.createElement(core_1.Grid, { item: true, xs: 12 }, React.createElement(core_1.Divider, null), React.createElement(core_1.Card, null, React.createElement(core_1.CardContent, null, React.createElement(core_1.Typography, { variant: "body1", align: "center" }, "Select Mode:")), React.createElement(core_1.Grid, { style: { padding: "2%", paddingTop: 0 }, container: true, justify: "center" }, React.createElement(core_1.Button, { style: { marginRight: "2%" }, variant: "raised", color: "primary", onClick: function onClick(_) {
-                return history_ts_1.history.push("/game-master");
+                return history_ts_1.goTo(history_ts_1.PAGES.GAME_MASTER);
             } }, "Game Master"), React.createElement(core_1.Button, { style: { marginLeft: "2%" }, variant: "raised", color: "secondary", onClick: function onClick(_) {
-                return history_ts_1.history.push("/player");
+                return history_ts_1.goTo(history_ts_1.PAGES.PLAYER);
             } }, "Player")))));
     };
     return IndexPage;
 }(react_router_1.Route);
 exports.default = IndexPage;
-},{"tslib":"../node_modules/tslib/tslib.es6.js","react":"../node_modules/react/index.js","react-router":"../node_modules/react-router/es/index.js","@material-ui/core":"../node_modules/@material-ui/core/index.es.js","../router/history.ts":"components/router/history.ts"}],"components/routes/PlayerPage.tsx":[function(require,module,exports) {
+},{"tslib":"../node_modules/tslib/tslib.es6.js","react":"../node_modules/react/index.js","react-router":"../node_modules/react-router/es/index.js","@material-ui/core":"../node_modules/@material-ui/core/index.es.js","../router/history.ts":"components/router/history.ts"}],"components/routes/game/PlayerPage.tsx":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -99558,8 +99725,8 @@ var tslib_1 = require("tslib");
 var React = require("react");
 var react_router_1 = require("react-router");
 var core_1 = require("@material-ui/core");
-var index_ts_1 = require("../../states/index.ts");
-var history_ts_1 = require("../router/history.ts");
+var index_ts_1 = require("../../../states/index.ts");
+var history_ts_1 = require("../../router/history.ts");
 var PlayerPage = /** @class */function (_super) {
     tslib_1.__extends(PlayerPage, _super);
     function PlayerPage() {
@@ -99602,7 +99769,7 @@ var GameHostSearch = /** @class */function (_super) {
     };
     return GameHostSearch;
 }(React.Component);
-},{"tslib":"../node_modules/tslib/tslib.es6.js","react":"../node_modules/react/index.js","react-router":"../node_modules/react-router/es/index.js","@material-ui/core":"../node_modules/@material-ui/core/index.es.js","../../states/index.ts":"states/index.ts","../router/history.ts":"components/router/history.ts"}],"components/routes/GameMasterPage.tsx":[function(require,module,exports) {
+},{"tslib":"../node_modules/tslib/tslib.es6.js","react":"../node_modules/react/index.js","react-router":"../node_modules/react-router/es/index.js","@material-ui/core":"../node_modules/@material-ui/core/index.es.js","../../../states/index.ts":"states/index.ts","../../router/history.ts":"components/router/history.ts"}],"components/routes/game/GameMasterPage.tsx":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -99610,9 +99777,9 @@ var tslib_1 = require("tslib");
 var React = require("react");
 var react_router_1 = require("react-router");
 var core_1 = require("@material-ui/core");
-var index_ts_1 = require("../../states/index.ts");
+var index_ts_1 = require("../../../states/index.ts");
 var mobx_react_1 = require("mobx-react");
-var history_ts_1 = require("../router/history.ts");
+var history_ts_1 = require("../../router/history.ts");
 var GameMasterPage = /** @class */function (_super) {
     tslib_1.__extends(GameMasterPage, _super);
     function GameMasterPage() {
@@ -99643,7 +99810,7 @@ var GameMasterPage = /** @class */function (_super) {
     return GameMasterPage;
 }(react_router_1.Route);
 exports.default = GameMasterPage;
-},{"tslib":"../node_modules/tslib/tslib.es6.js","react":"../node_modules/react/index.js","react-router":"../node_modules/react-router/es/index.js","@material-ui/core":"../node_modules/@material-ui/core/index.es.js","../../states/index.ts":"states/index.ts","mobx-react":"../node_modules/mobx-react/index.module.js","../router/history.ts":"components/router/history.ts"}],"components/containers/GameOverview.tsx":[function(require,module,exports) {
+},{"tslib":"../node_modules/tslib/tslib.es6.js","react":"../node_modules/react/index.js","react-router":"../node_modules/react-router/es/index.js","@material-ui/core":"../node_modules/@material-ui/core/index.es.js","../../../states/index.ts":"states/index.ts","mobx-react":"../node_modules/mobx-react/index.module.js","../../router/history.ts":"components/router/history.ts"}],"components/containers/GameOverview.tsx":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -99680,16 +99847,16 @@ var GameOverview = /** @class */function (_super) {
     return GameOverview;
 }(React.Component);
 exports.default = GameOverview;
-},{"tslib":"../node_modules/tslib/tslib.es6.js","react":"../node_modules/react/index.js","@material-ui/core":"../node_modules/@material-ui/core/index.es.js","mobx-react":"../node_modules/mobx-react/index.module.js","../../states/index.ts":"states/index.ts","../common/EditableText.tsx":"components/common/EditableText.tsx"}],"components/routes/GameOverviewPage.tsx":[function(require,module,exports) {
+},{"tslib":"../node_modules/tslib/tslib.es6.js","react":"../node_modules/react/index.js","@material-ui/core":"../node_modules/@material-ui/core/index.es.js","mobx-react":"../node_modules/mobx-react/index.module.js","../../states/index.ts":"states/index.ts","../common/EditableText.tsx":"components/common/EditableText.tsx"}],"components/routes/game/GameOverviewPage.tsx":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = require("tslib");
 var React = require("react");
 var react_router_1 = require("react-router");
-var GameOverview_tsx_1 = require("../containers/GameOverview.tsx");
-var index_ts_1 = require("../../states/index.ts");
-var history_ts_1 = require("../router/history.ts");
+var GameOverview_tsx_1 = require("../../containers/GameOverview.tsx");
+var index_ts_1 = require("../../../states/index.ts");
+var history_ts_1 = require("../../router/history.ts");
 var core_1 = require("@material-ui/core");
 var timeout;
 var GameOverviewPage = /** @class */function (_super) {
@@ -99711,130 +99878,7 @@ var GameOverviewPage = /** @class */function (_super) {
     return GameOverviewPage;
 }(react_router_1.Route);
 exports.default = GameOverviewPage;
-},{"tslib":"../node_modules/tslib/tslib.es6.js","react":"../node_modules/react/index.js","react-router":"../node_modules/react-router/es/index.js","../containers/GameOverview.tsx":"components/containers/GameOverview.tsx","../../states/index.ts":"states/index.ts","../router/history.ts":"components/router/history.ts","@material-ui/core":"../node_modules/@material-ui/core/index.es.js"}],"db/DBObject.ts":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-var tslib_1 = require("tslib");
-var mobx_1 = require("mobx");
-var DBObject = /** @class */function () {
-    function DBObject(data, ref) {
-        this.ref = ref;
-        this.data = data;
-    }
-    DBObject.prototype.toJson = function () {
-        return JSON.parse(JSON.stringify(this.data));
-    };
-    DBObject.prototype.update = function (data) {
-        this.data = tslib_1.__assign({}, this.data, data);
-        return this;
-    };
-    DBObject.prototype.save = function () {
-        var data = this.toJson();
-        return this.ref.update(data);
-    };
-    DBObject.prototype.get = function (key) {
-        return this.data[key];
-    };
-    tslib_1.__decorate([mobx_1.observable], DBObject.prototype, "data", void 0);
-    return DBObject;
-}();
-exports.default = DBObject;
-},{"tslib":"../node_modules/tslib/tslib.es6.js","mobx":"../node_modules/mobx/lib/mobx.module.js"}],"states/CharacterSheets.ts":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-var tslib_1 = require("tslib");
-var DBObject_ts_1 = require("../db/DBObject.ts");
-var index_ts_1 = require("../db/index.ts");
-var mobx_1 = require("mobx");
-var CharacterSheet = /** @class */function (_super) {
-    tslib_1.__extends(CharacterSheet, _super);
-    function CharacterSheet(data) {
-        var _this = this;
-        if ('id' in data) {
-            _this = _super.call(this, data, index_ts_1.characterSheets.child(data.id)) || this;
-        } else {
-            var ref = index_ts_1.characterSheets.push(data);
-            data.id = ref.key;
-            _this = _super.call(this, data, ref) || this;
-        }
-        return _this;
-    }
-    Object.defineProperty(CharacterSheet.prototype, "id", {
-        get: function get() {
-            return this.get('id');
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(CharacterSheet.prototype, "tree", {
-        get: function get() {
-            return tslib_1.__assign({ name: "$root", type: "category", attributes: {} }, this.get('tree') || {});
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(CharacterSheet.prototype, "name", {
-        get: function get() {
-            return this.get("name");
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(CharacterSheet.prototype, "description", {
-        get: function get() {
-            return this.get("description");
-        },
-        enumerable: true,
-        configurable: true
-    });
-    CharacterSheet.refreshListing = function (startAt) {
-        var ref;
-        if (startAt) {
-            ref = index_ts_1.characterSheets.startAt(startAt);
-            if (CharacterSheet.listings && CharacterSheet.listings.length > 0) {
-                CharacterSheet.lastStart = CharacterSheet.listings[0].id;
-            }
-        } else {
-            ref = index_ts_1.characterSheets;
-            CharacterSheet.lastStart = null;
-        }
-        ref.limitToFirst(11).once('value', function (snap) {
-            if (snap.exists()) {
-                var val_1 = snap.val();
-                CharacterSheet.listings = Object.keys(val_1).map(function (k) {
-                    return tslib_1.__assign({ id: k }, val_1[k]);
-                });
-            }
-        });
-    };
-    CharacterSheet.loadFromId = function (id) {
-        return tslib_1.__awaiter(this, void 0, Promise, function () {
-            return tslib_1.__generator(this, function (_a) {
-                return [2 /*return*/, new Promise(function (res, rej) {
-                    index_ts_1.characterSheets.child(id).once('value', function (snap) {
-                        console.log("Loading sheet...", id);
-                        if (!snap.exists()) {
-                            console.error("NOT FOUND");
-                            rej("Sheet Not Found");
-                        }
-                        var data = snap.val();
-                        console.log(data);
-                        res(new CharacterSheet(tslib_1.__assign({ id: id }, data)));
-                    });
-                })];
-            });
-        });
-    };
-    CharacterSheet.listings = [];
-    CharacterSheet.lastStart = null;
-    tslib_1.__decorate([mobx_1.observable], CharacterSheet, "listings", void 0);
-    tslib_1.__decorate([mobx_1.observable], CharacterSheet, "lastStart", void 0);
-    return CharacterSheet;
-}(DBObject_ts_1.default);
-exports.CharacterSheet = CharacterSheet;
-},{"tslib":"../node_modules/tslib/tslib.es6.js","../db/DBObject.ts":"db/DBObject.ts","../db/index.ts":"db/index.ts","mobx":"../node_modules/mobx/lib/mobx.module.js"}],"../node_modules/@material-ui/icons/KeyboardArrowLeft.js":[function(require,module,exports) {
+},{"tslib":"../node_modules/tslib/tslib.es6.js","react":"../node_modules/react/index.js","react-router":"../node_modules/react-router/es/index.js","../../containers/GameOverview.tsx":"components/containers/GameOverview.tsx","../../../states/index.ts":"states/index.ts","../../router/history.ts":"components/router/history.ts","@material-ui/core":"../node_modules/@material-ui/core/index.es.js"}],"../node_modules/@material-ui/icons/KeyboardArrowLeft.js":[function(require,module,exports) {
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -100050,7 +100094,7 @@ exports.genDefaultTree = function () {
         }
     };
 };
-},{"../attr-parser/evaluators.ts":"attr-parser/evaluators.ts"}],"components/routes/CharacterSheetListingPage.tsx":[function(require,module,exports) {
+},{"../attr-parser/evaluators.ts":"attr-parser/evaluators.ts"}],"components/routes/character-sheets/CharacterSheetListingPage.tsx":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -100058,11 +100102,11 @@ var tslib_1 = require("tslib");
 var React = require("react");
 var react_router_1 = require("react-router");
 var core_1 = require("@material-ui/core");
-var CharacterSheetListing_tsx_1 = require("../containers/CharacterSheetListing.tsx");
-var history_ts_1 = require("../router/history.ts");
-var CharacterSheets_ts_1 = require("../../states/CharacterSheets.ts");
-var app_ts_1 = require("../../db/app.ts");
-var util_ts_1 = require("../../db/util.ts");
+var CharacterSheetListing_tsx_1 = require("../../containers/CharacterSheetListing.tsx");
+var history_ts_1 = require("../../router/history.ts");
+var CharacterSheets_ts_1 = require("../../../states/CharacterSheets.ts");
+var app_ts_1 = require("../../../db/app.ts");
+var util_ts_1 = require("../../../db/util.ts");
 var CharacterSheetListingPage = /** @class */function (_super) {
     tslib_1.__extends(CharacterSheetListingPage, _super);
     function CharacterSheetListingPage() {
@@ -100092,7 +100136,7 @@ var CharacterSheetListingPage = /** @class */function (_super) {
     return CharacterSheetListingPage;
 }(react_router_1.Route);
 exports.default = CharacterSheetListingPage;
-},{"tslib":"../node_modules/tslib/tslib.es6.js","react":"../node_modules/react/index.js","react-router":"../node_modules/react-router/es/index.js","@material-ui/core":"../node_modules/@material-ui/core/index.es.js","../containers/CharacterSheetListing.tsx":"components/containers/CharacterSheetListing.tsx","../router/history.ts":"components/router/history.ts","../../states/CharacterSheets.ts":"states/CharacterSheets.ts","../../db/app.ts":"db/app.ts","../../db/util.ts":"db/util.ts"}],"../node_modules/deep-equal/lib/keys.js":[function(require,module,exports) {
+},{"tslib":"../node_modules/tslib/tslib.es6.js","react":"../node_modules/react/index.js","react-router":"../node_modules/react-router/es/index.js","@material-ui/core":"../node_modules/@material-ui/core/index.es.js","../../containers/CharacterSheetListing.tsx":"components/containers/CharacterSheetListing.tsx","../../router/history.ts":"components/router/history.ts","../../../states/CharacterSheets.ts":"states/CharacterSheets.ts","../../../db/app.ts":"db/app.ts","../../../db/util.ts":"db/util.ts"}],"../node_modules/deep-equal/lib/keys.js":[function(require,module,exports) {
 exports = module.exports = typeof Object.keys === 'function'
   ? Object.keys : shim;
 
@@ -101850,17 +101894,17 @@ var CharacterSheetEditorContainer = /** @class */function (_super) {
     return CharacterSheetEditorContainer;
 }(React.Component);
 exports.default = CharacterSheetEditorContainer;
-},{"tslib":"../node_modules/tslib/tslib.es6.js","react":"../node_modules/react/index.js","@material-ui/core":"../node_modules/@material-ui/core/index.es.js","../common/CharacterSheetEditor/index.tsx":"components/common/CharacterSheetEditor/index.tsx","../layouts/Notifier.tsx":"components/layouts/Notifier.tsx"}],"components/routes/CharacterSheetEditor.tsx":[function(require,module,exports) {
+},{"tslib":"../node_modules/tslib/tslib.es6.js","react":"../node_modules/react/index.js","@material-ui/core":"../node_modules/@material-ui/core/index.es.js","../common/CharacterSheetEditor/index.tsx":"components/common/CharacterSheetEditor/index.tsx","../layouts/Notifier.tsx":"components/layouts/Notifier.tsx"}],"components/routes/character-sheets/CharacterSheetEditor.tsx":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = require("tslib");
 var React = require("react");
 var core_1 = require("@material-ui/core");
-var CharacterSheetEditor_tsx_1 = require("../containers/CharacterSheetEditor.tsx");
-var CharacterSheets_ts_1 = require("../../states/CharacterSheets.ts");
-var util_ts_1 = require("../../db/util.ts");
-var NavBar_tsx_1 = require("../layouts/NavBar.tsx");
+var CharacterSheetEditor_tsx_1 = require("../../containers/CharacterSheetEditor.tsx");
+var CharacterSheets_ts_1 = require("../../../states/CharacterSheets.ts");
+var util_ts_1 = require("../../../db/util.ts");
+var NavBar_tsx_1 = require("../../layouts/NavBar.tsx");
 var CharacterSheetEditorPage = /** @class */function (_super) {
     tslib_1.__extends(CharacterSheetEditorPage, _super);
     function CharacterSheetEditorPage() {
@@ -101915,7 +101959,7 @@ var CharacterSheetEditorPage = /** @class */function (_super) {
     return CharacterSheetEditorPage;
 }(React.Component);
 exports.default = CharacterSheetEditorPage;
-},{"tslib":"../node_modules/tslib/tslib.es6.js","react":"../node_modules/react/index.js","@material-ui/core":"../node_modules/@material-ui/core/index.es.js","../containers/CharacterSheetEditor.tsx":"components/containers/CharacterSheetEditor.tsx","../../states/CharacterSheets.ts":"states/CharacterSheets.ts","../../db/util.ts":"db/util.ts","../layouts/NavBar.tsx":"components/layouts/NavBar.tsx"}],"components/router/index.tsx":[function(require,module,exports) {
+},{"tslib":"../node_modules/tslib/tslib.es6.js","react":"../node_modules/react/index.js","@material-ui/core":"../node_modules/@material-ui/core/index.es.js","../../containers/CharacterSheetEditor.tsx":"components/containers/CharacterSheetEditor.tsx","../../../states/CharacterSheets.ts":"states/CharacterSheets.ts","../../../db/util.ts":"db/util.ts","../../layouts/NavBar.tsx":"components/layouts/NavBar.tsx"}],"components/router/index.tsx":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -101927,15 +101971,15 @@ var NavBar_tsx_1 = require("../layouts/NavBar.tsx");
 var ErrorBoundary_tsx_1 = require("../layouts/ErrorBoundary.tsx");
 var Notifier_tsx_1 = require("../layouts/Notifier.tsx");
 var SideBar_tsx_1 = require("../layouts/SideBar.tsx");
+var routes_enums_ts_1 = require("./routes.enums.ts");
 var ExamplePage_tsx_1 = require("../routes/ExamplePage.tsx");
 var NotFoundPage_tsx_1 = require("../routes/NotFoundPage.tsx");
 var IndexPage_tsx_1 = require("../routes/IndexPage.tsx");
-var PlayerPage_tsx_1 = require("../routes/PlayerPage.tsx");
-var routes_enums_ts_1 = require("./routes.enums.ts");
-var GameMasterPage_tsx_1 = require("../routes/GameMasterPage.tsx");
-var GameOverviewPage_tsx_1 = require("../routes/GameOverviewPage.tsx");
-var CharacterSheetListingPage_tsx_1 = require("../routes/CharacterSheetListingPage.tsx");
-var CharacterSheetEditor_tsx_1 = require("../routes/CharacterSheetEditor.tsx");
+var PlayerPage_tsx_1 = require("../routes/game/PlayerPage.tsx");
+var GameMasterPage_tsx_1 = require("../routes/game/GameMasterPage.tsx");
+var GameOverviewPage_tsx_1 = require("../routes/game/GameOverviewPage.tsx");
+var CharacterSheetListingPage_tsx_1 = require("../routes/character-sheets/CharacterSheetListingPage.tsx");
+var CharacterSheetEditor_tsx_1 = require("../routes/character-sheets/CharacterSheetEditor.tsx");
 var AppRouter = /** @class */function (_super) {
     tslib_1.__extends(AppRouter, _super);
     function AppRouter() {
@@ -101947,7 +101991,7 @@ var AppRouter = /** @class */function (_super) {
     return AppRouter;
 }(React.Component);
 exports.default = AppRouter;
-},{"tslib":"../node_modules/tslib/tslib.es6.js","react":"../node_modules/react/index.js","react-router":"../node_modules/react-router/es/index.js","./history":"components/router/history.ts","../layouts/NavBar.tsx":"components/layouts/NavBar.tsx","../layouts/ErrorBoundary.tsx":"components/layouts/ErrorBoundary.tsx","../layouts/Notifier.tsx":"components/layouts/Notifier.tsx","../layouts/SideBar.tsx":"components/layouts/SideBar.tsx","../routes/ExamplePage.tsx":"components/routes/ExamplePage.tsx","../routes/NotFoundPage.tsx":"components/routes/NotFoundPage.tsx","../routes/IndexPage.tsx":"components/routes/IndexPage.tsx","../routes/PlayerPage.tsx":"components/routes/PlayerPage.tsx","./routes.enums.ts":"components/router/routes.enums.ts","../routes/GameMasterPage.tsx":"components/routes/GameMasterPage.tsx","../routes/GameOverviewPage.tsx":"components/routes/GameOverviewPage.tsx","../routes/CharacterSheetListingPage.tsx":"components/routes/CharacterSheetListingPage.tsx","../routes/CharacterSheetEditor.tsx":"components/routes/CharacterSheetEditor.tsx"}],"App.tsx":[function(require,module,exports) {
+},{"tslib":"../node_modules/tslib/tslib.es6.js","react":"../node_modules/react/index.js","react-router":"../node_modules/react-router/es/index.js","./history":"components/router/history.ts","../layouts/NavBar.tsx":"components/layouts/NavBar.tsx","../layouts/ErrorBoundary.tsx":"components/layouts/ErrorBoundary.tsx","../layouts/Notifier.tsx":"components/layouts/Notifier.tsx","../layouts/SideBar.tsx":"components/layouts/SideBar.tsx","./routes.enums.ts":"components/router/routes.enums.ts","../routes/ExamplePage.tsx":"components/routes/ExamplePage.tsx","../routes/NotFoundPage.tsx":"components/routes/NotFoundPage.tsx","../routes/IndexPage.tsx":"components/routes/IndexPage.tsx","../routes/game/PlayerPage.tsx":"components/routes/game/PlayerPage.tsx","../routes/game/GameMasterPage.tsx":"components/routes/game/GameMasterPage.tsx","../routes/game/GameOverviewPage.tsx":"components/routes/game/GameOverviewPage.tsx","../routes/character-sheets/CharacterSheetListingPage.tsx":"components/routes/character-sheets/CharacterSheetListingPage.tsx","../routes/character-sheets/CharacterSheetEditor.tsx":"components/routes/character-sheets/CharacterSheetEditor.tsx"}],"App.tsx":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -102004,7 +102048,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = '' || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + '34737' + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + '44835' + '/');
   ws.onmessage = function (event) {
     var data = JSON.parse(event.data);
 

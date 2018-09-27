@@ -1,7 +1,7 @@
 import * as React from "react";
 import { Route } from "react-router";
 import { Grid, Typography, Card, CardContent, Button, Divider } from "@material-ui/core";
-import { history } from "@/components/router/history";
+import { history, goTo, PAGES } from "@/components/router/history";
 
 export default class IndexPage extends Route {
 
@@ -20,11 +20,11 @@ export default class IndexPage extends Route {
                     </CardContent>
                     <Grid style={{ padding: "2%", paddingTop: 0 }} container justify="center">
                         <Button style={{ marginRight: "2%" }} variant="raised" color="primary" 
-                                onClick={_ => history.push("/game-master")}>
+                                onClick={_ => goTo(PAGES.GAME_MASTER)}>
                             Game Master
                         </Button>
                         <Button style={{ marginLeft: "2%" }} variant="raised" color="secondary" 
-                                onClick={_ => history.push("/player")}>
+                                onClick={_ =>goTo(PAGES.PLAYER)}>
                             Player
                         </Button>
                     </Grid>

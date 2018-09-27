@@ -40,15 +40,18 @@ export default class PlayerBase<Data extends PlayerBaseData> {
         return this;
     }
 
-    save() {
+    async save() {
         const { id, role, data } = this.toJson();
+        console.log({
+            id, role, data, key: this.databaseRef.key,
+        })
         if ( role === "gm" ) {
-            return this.databaseRef.child(`host`).set({
+            return await this.databaseRef.child(`host`).set({
                 role, data,
-            });
+            }).then();
         } 
-        return  this.databaseRef.child(`users/${id}`).set({
+        return await this.databaseRef.child(`users/${id}`).set({
             role, data,
-        });
+        }).then();
     }
 }
